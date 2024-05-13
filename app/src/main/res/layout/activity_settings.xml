@@ -19,9 +19,9 @@
             android:id="@+id/openMain"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:foreground="?attr/selectableItemBackground"
             android:paddingEnd="24dp"
-            android:src="@drawable/arrowback"
-            android:foreground="?attr/selectableItemBackground"/>
+            android:src="@drawable/arrowback" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -29,8 +29,6 @@
             android:text="@string/main_button_3"
             android:textColor="@color/black"
             android:textSize="@dimen/main_textSize" />
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -52,7 +50,6 @@
             android:layout_width="48dp"
             android:layout_height="match_parent"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -73,8 +70,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/share" />
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -95,8 +90,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/support" />
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -117,7 +110,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/arrowforward" />
-
     </LinearLayout>
 
 </LinearLayout>
