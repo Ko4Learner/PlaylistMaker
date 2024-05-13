@@ -14,57 +14,63 @@
         android:layout_gravity="start"
         android:text="@string/app_name"
         android:textColor="@color/white"
-        android:textSize="@dimen/textSize" />
+        android:textSize="@dimen/main_textSize" />
 
     <Button
+        android:id="@+id/openSearch"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="36dp"
         android:layout_weight="1"
         android:backgroundTint="@color/white"
+        android:foreground="?attr/selectableItemBackground"
         android:text="@string/main_button_1"
         android:textColor="@color/black"
-        android:textSize="@dimen/textSize"
+        android:textSize="@dimen/main_textSize"
         app:cornerRadius="@dimen/buttonRadius"
         app:icon="@drawable/magnifier"
-        app:iconTint="@color/black"
         app:iconGravity="textStart"
-        app:iconPadding="@dimen/iconPadding">
+        app:iconPadding="@dimen/iconPadding"
+        app:iconTint="@color/black">
 
 
     </Button>
 
     <Button
+        android:id="@+id/openMedia"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="16dp"
         android:layout_weight="1"
         android:backgroundTint="@color/white"
+        android:foreground="?attr/selectableItemBackground"
         android:text="@string/main_button_2"
         android:textColor="@color/black"
-        android:textSize="@dimen/textSize"
+        android:textSize="@dimen/main_textSize"
         app:cornerRadius="@dimen/buttonRadius"
         app:icon="@drawable/media"
-        app:iconTint="@color/black"
         app:iconGravity="textStart"
-        app:iconPadding="@dimen/iconPadding">
+        app:iconPadding="@dimen/iconPadding"
+        app:iconTint="@color/black">
 
     </Button>
 
     <Button
+        android:id="@+id/openSettings"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="16dp"
         android:layout_weight="1"
         android:backgroundTint="@color/white"
+        android:foreground="?attr/selectableItemBackground"
         android:text="@string/main_button_3"
         android:textColor="@color/black"
-        android:textSize="@dimen/textSize"
+        android:textSize="@dimen/main_textSize"
         app:cornerRadius="@dimen/buttonRadius"
         app:icon="@drawable/gear"
-        app:iconTint="@color/black"
         app:iconGravity="textStart"
-        app:iconPadding="@dimen/iconPadding">
+        app:iconPadding="@dimen/iconPadding"
+        app:iconTint="@color/black">
 
     </Button>
 

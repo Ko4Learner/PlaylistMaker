@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="buttonRadius">16dp</dimen>
-    <dimen name="textSize">22sp</dimen>
+    <dimen name="main_textSize">22sp</dimen>
+    <dimen name="settings_textSize">16sp</dimen>
     <dimen name="iconPadding">8dp</dimen>
+    <dimen name="settings_paddingHorizontal">16dp</dimen>
+    <dimen name="settings_layoutHeight">61dp</dimen>
 </resources>
