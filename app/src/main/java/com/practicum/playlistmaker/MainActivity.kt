@@ -1,20 +1,33 @@
 package com.practicum.playlistmaker
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("MissingInflatedId", "ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        val buttonSearch = findViewById<Button>(R.id.openSearch)
+        buttonSearch.setOnClickListener {
+            val searchIntent = Intent(this, SearchActivity::class.java)
+            startActivity(searchIntent)
+        }
+
+        val buttonMedia = findViewById<Button>(R.id.openMedia)
+        buttonMedia.setOnClickListener {
+            val mediaLibrariesIntent = Intent(this, MediaLibrariesActivity::class.java)
+            startActivity(mediaLibrariesIntent)
+        }
+
+        val buttonSettings = findViewById<Button>(R.id.openSettings)
+        buttonSettings.setOnClickListener {
+            val settingsIntent = Intent(this, SettingsActivity::class.java)
+            startActivity(settingsIntent)
         }
     }
 }

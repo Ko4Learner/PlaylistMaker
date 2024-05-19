@@ -1,19 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="start"
+        android:text="@string/app_name"
+        android:textColor="@color/white"
+        android:textSize="@dimen/main_textSize" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <Button
+        android:id="@+id/openSearch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="36dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/white"
+        android:foreground="?attr/selectableItemBackground"
+        android:text="@string/main_button_search"
+        android:textColor="@color/black"
+        android:textSize="@dimen/main_textSize"
+        app:cornerRadius="@dimen/buttonRadius"
+        android:textAllCaps="false"
+        app:icon="@drawable/magnifier"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/iconPadding"
+        app:iconTint="@color/black" />
+
+    <Button
+        android:id="@+id/openMedia"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/white"
+        android:foreground="?attr/selectableItemBackground"
+        android:text="@string/main_button_media"
+        android:textColor="@color/black"
+        android:textSize="@dimen/main_textSize"
+        android:textAllCaps="false"
+        app:cornerRadius="@dimen/buttonRadius"
+        app:icon="@drawable/media"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/iconPadding"
+        app:iconTint="@color/black" />
+
+    <Button
+        android:id="@+id/openSettings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/white"
+        android:foreground="?attr/selectableItemBackground"
+        android:text="@string/main_button_settings"
+        android:textColor="@color/black"
+        android:textSize="@dimen/main_textSize"
+        android:textAllCaps="false"
+        app:cornerRadius="@dimen/buttonRadius"
+        app:icon="@drawable/gear"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/iconPadding"
+        app:iconTint="@color/black" />
+
+</LinearLayout>
