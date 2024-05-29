@@ -4,107 +4,72 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/background"
     android:orientation="vertical"
     android:paddingHorizontal="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:layout_marginBottom="24dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/openMain"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_button_settings"
-            android:textColor="@color/black"
-            android:textSize="@dimen/main_textSize"
-            android:foreground="?attr/selectableItemBackground"
-            android:drawablePadding="24dp"
-            app:drawableStartCompat="@drawable/arrowback"
-            app:drawableTint="@color/black" />
+            android:id="@+id/returnFromSettings"
+            style="@style/toolbarTextView"
+            android:text="@string/main_button_settings"/>
 
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_layoutHeight"
-        android:layout_marginTop="24dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+    <LinearLayout style="@style/SettingsLinearLayout">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/settings_blackStyle"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_textSize" />
+            style="@style/SettingsTextView"
+            android:text="@string/settings_blackStyle" />
 
         <Switch
+            android:id="@+id/switchDayNight"
             android:layout_width="48dp"
             android:layout_height="match_parent"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_layoutHeight"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+    <LinearLayout style="@style/SettingsLinearLayout">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/settings_share"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_textSize" />
+            style="@style/SettingsTextView"
+            android:text="@string/settings_share" />
 
         <ImageView
+            android:id="@+id/shareApplication"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/share" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_layoutHeight"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+    <LinearLayout style="@style/SettingsLinearLayout">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/settings_support"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_textSize" />
+            style="@style/SettingsTextView"
+            android:text="@string/settings_support" />
 
         <ImageView
+            android:id="@+id/sendToSupport"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/support" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_layoutHeight"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+    <LinearLayout style="@style/SettingsLinearLayout">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/settings_userAgreement"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_textSize" />
+            style="@style/SettingsTextView"
+            android:text="@string/settings_userAgreement" />
 
         <ImageView
+            android:id="@+id/openUserAgreement"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/arrowforward" />

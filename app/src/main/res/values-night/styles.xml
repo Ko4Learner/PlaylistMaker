@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="main_background">#1A1B22</color>
+    <color name="background">@color/yp_black</color>
+    <color name="textColor">@color/yp_white</color>
+    <color name="iconColor">@color/yp_white</color>
+    <color name="editTextBackground">@color/yp_white</color>
+    <color name="editTextColorHint">@color/yp_black</color>
+
+</resources>
