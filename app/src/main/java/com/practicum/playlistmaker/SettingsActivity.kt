@@ -39,13 +39,13 @@ class SettingsActivity : AppCompatActivity() {
         sendToSupport.setOnClickListener {
             val sendToSupportIntent = Intent().apply {
                 action = Intent.ACTION_SENDTO
-                data = Uri.parse("mailto:${getString(R.string.myEmailForSupportService)}")
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.myEmailForSupportService)))
                 putExtra(Intent.EXTRA_SUBJECT, getString(R.string.mailThemeForSupportService))
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.mailTextForSupportService))
             }
 
             startActivity(sendToSupportIntent)
-
         }
 
         val openUserAgreement = findViewById<ImageView>(R.id.openUserAgreement)

@@ -50,6 +50,7 @@
             android:textColor="@color/yp_black"
             android:textColorHint="@color/editTextColorHint"
             android:textFontWeight="400"
+            android:textCursorDrawable="@drawable/cursor_edit_text"
             android:textSize="@dimen/settings_textSize" />
 
         <ImageView
