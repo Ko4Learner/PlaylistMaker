@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -49,9 +50,9 @@
             android:maxLines="1"
             android:textColor="@color/yp_black"
             android:textColorHint="@color/editTextColorHint"
-            android:textFontWeight="400"
             android:textCursorDrawable="@drawable/cursor_edit_text"
-            android:textSize="@dimen/settings_textSize" />
+            android:textFontWeight="400"
+            android:textSize="@dimen/medium_textSize" />
 
         <ImageView
             android:id="@+id/clearSearchBar"
@@ -63,5 +64,15 @@
             app:tint="@color/editTextColorHint" />
 
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycleViewTrack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="5"
+        tools:listitem="@layout/track_view" />
 
 </LinearLayout>

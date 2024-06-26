@@ -13,5 +13,8 @@
     <string name="mailThemeForSupportService">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="mailTextForSupportService">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="editTextHint">Поиск</string>
+    <string name="mockTrackName">TrackName</string>
+    <string name="mockArtistName">Artist</string>
+    <string name="mockTrackTime">00:00</string>
 
 </resources>

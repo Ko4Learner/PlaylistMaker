@@ -7,5 +7,6 @@
     <color name="iconColor">@color/yp_white</color>
     <color name="editTextBackground">@color/yp_white</color>
     <color name="editTextColorHint">@color/yp_black</color>
+    <color name="artistTextColor">@color/yp_white</color>
 
 </resources>

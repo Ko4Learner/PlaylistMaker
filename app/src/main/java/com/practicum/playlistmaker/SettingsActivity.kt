@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -57,6 +59,7 @@ class SettingsActivity : AppCompatActivity() {
 
             startActivity(openUserAgreementIntent)
         }
+
 
     }
 }
