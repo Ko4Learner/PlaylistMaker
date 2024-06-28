@@ -16,5 +16,8 @@
     <string name="mockTrackName">TrackName</string>
     <string name="mockArtistName">Artist</string>
     <string name="mockTrackTime">00:00</string>
+    <string name="updateSearchButton">Обновить</string>
+    <string name="errorSearchInternetTextView">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="emptySearchTextView">Ничего не нашлось</string>
 
 </resources>

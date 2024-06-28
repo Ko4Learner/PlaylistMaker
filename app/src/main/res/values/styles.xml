@@ -12,9 +12,25 @@
         <item name="android:textAllCaps">false</item>
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">@dimen/iconPadding</item>
-        <item name="cornerRadius">@dimen/buttonRadius</item>
+        <item name="cornerRadius">@dimen/mainButtonRadius</item>
         <item name="iconTint">@color/yp_black</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+
+    <style name="UpdateSearchButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">104dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:backgroundTint">@color/UpdateSearchButtonColor</item>
+        <item name="android:textColor">@color/UpdateSearchButtonTextColor</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="cornerRadius">54dp</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">500</item>
         <item name="android:elevation">0dp</item>
@@ -60,6 +76,9 @@
     <color name="editTextBackground">#E6E8EB</color>
     <color name="editTextColorHint">#AEAFB4</color>
     <color name="artistTextColor">#AEAFB4</color>
+    <color name="UpdateSearchButtonColor">@color/yp_black</color>
+    <color name="UpdateSearchButtonTextColor">@color/yp_white</color>
+
 
 
 </resources>

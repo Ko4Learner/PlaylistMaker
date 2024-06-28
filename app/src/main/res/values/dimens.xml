@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="buttonRadius">16dp</dimen>
+    <dimen name="mainButtonRadius">16dp</dimen>
     <dimen name="large_textSize">22sp</dimen>
     <dimen name="medium_textSize">16sp</dimen>
     <dimen name="small_textSize">12sp</dimen>
