@@ -71,15 +71,43 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycleViewTrack"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:itemCount="2"
-            tools:listitem="@layout/track_view" />
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/searchHistoryTextView"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:fontFamily="@font/ys_display_medium"
+                android:gravity="center"
+                android:text="@string/searchHistoryTextView"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/large_textSize"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycleViewTrack"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="3"
+                tools:listitem="@layout/track_view" />
+
+            <Button
+                android:id="@+id/searchHistoryButton"
+                style="@style/SearchButtons"
+                android:layout_width="160dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/searchHistoryButton"
+                android:visibility="gone"/>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/errorSearchLayout"
@@ -110,7 +138,8 @@
 
             <Button
                 android:id="@+id/updateSearchButton"
-                style="@style/UpdateSearchButton"
+                style="@style/SearchButtons"
+                android:layout_width="104dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/updateSearchButton" />
 

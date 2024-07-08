@@ -4,30 +4,46 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.switchmaterial.SwitchMaterial
+import com.practicum.playlistmaker.databinding.ActivitySearchBinding
+import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 
+const val APP_PREFERENCES = "app_preferences"
+const val THEME_KEY = "theme_text"
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySettingsBinding
+
     @SuppressLint("MissingInflatedId", "UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
 
-        val returnMain = findViewById<TextView>(R.id.returnFromSettings)
-        returnMain.setOnClickListener {
+        binding = ActivitySettingsBinding.inflate(LayoutInflater.from(this))
+        setContentView(binding.root)
+
+        binding.returnFromSettings.setOnClickListener {
             finish()
         }
 
-        val switchDayNight = findViewById<Switch>(R.id.switchDayNight)
-        //переключение темы
+        binding.switchDayNight.setChecked((applicationContext as App).darkTheme)
 
-        val shareApplication = findViewById<ImageView>(R.id.shareApplication)
-        shareApplication.setOnClickListener {
+        binding.switchDayNight.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+            val sharedPrefs = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
+            sharedPrefs.edit()
+                .putBoolean(THEME_KEY, checked)
+                .apply()
+        }
+
+        binding.shareApplication.setOnClickListener {
             val shareApplicationIntent = Intent().apply {
                 action = Intent.ACTION_SEND
                 setType("text/plain")
@@ -37,8 +53,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(shareApplicationIntent, "Choose sharing method"))
         }
 
-        val sendToSupport = findViewById<ImageView>(R.id.sendToSupport)
-        sendToSupport.setOnClickListener {
+        binding.sendToSupport.setOnClickListener {
             val sendToSupportIntent = Intent().apply {
                 action = Intent.ACTION_SENDTO
                 data = Uri.parse("mailto:")
@@ -50,8 +65,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(sendToSupportIntent)
         }
 
-        val openUserAgreement = findViewById<ImageView>(R.id.openUserAgreement)
-        openUserAgreement.setOnClickListener {
+        binding.openUserAgreement.setOnClickListener {
             val openUserAgreementIntent = Intent().apply {
                 action = Intent.ACTION_VIEW
                 data = Uri.parse(getString(R.string.practicum_offer))

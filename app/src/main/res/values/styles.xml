@@ -23,8 +23,7 @@
     </style>
 
 
-    <style name="UpdateSearchButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="android:layout_width">104dp</item>
+    <style name="SearchButtons" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_height">48dp</item>
         <item name="android:backgroundTint">@color/UpdateSearchButtonColor</item>
         <item name="android:textColor">@color/UpdateSearchButtonTextColor</item>
