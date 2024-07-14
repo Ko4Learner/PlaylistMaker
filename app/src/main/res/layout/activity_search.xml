@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:paddingHorizontal="16dp">
 
     <LinearLayout
@@ -93,8 +93,8 @@
                 android:id="@+id/recycleViewTrack"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:layout_marginTop="8dp"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="3"
@@ -106,7 +106,7 @@
                 android:layout_width="160dp"
                 android:layout_marginTop="24dp"
                 android:text="@string/searchHistoryButton"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout

@@ -10,7 +10,7 @@ class SearchHistory(private val sharedPrefs: SharedPreferences) {
 
     fun read(): MutableList<Track> {
         val trackListType = object : TypeToken<MutableList<Track>>() {}.type
-        val json = sharedPrefs.getString(TRACK_LIST, null)?:return ArrayList()
+        val json = sharedPrefs.getString(TRACK_LIST, null) ?: return ArrayList()
         return Gson().fromJson(json, trackListType)
     }
 
@@ -19,9 +19,10 @@ class SearchHistory(private val sharedPrefs: SharedPreferences) {
     }
 
     fun addNewTrack(track: Track) {
+        val historySize = 10
         val tracks = read()
         tracks.removeIf { it.trackId == track.trackId }
-        if (tracks.size >= 10) tracks.removeAt(9)
+        if (tracks.size >= historySize) tracks.removeAt(historySize - 1)
         tracks.add(0, track)
         clearHistory()
         sharedPrefs.edit().putString(TRACK_LIST, Gson().toJson(tracks)).apply()

@@ -33,7 +33,7 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        binding.switchDayNight.setChecked((applicationContext as App).darkTheme)
+        binding.switchDayNight.setChecked((applicationContext as App).getDarkTheme())
 
         binding.switchDayNight.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
@@ -50,7 +50,12 @@ class SettingsActivity : AppCompatActivity() {
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.address_AndroidDevelopment))
             }
 
-            startActivity(Intent.createChooser(shareApplicationIntent, "Choose sharing method"))
+            startActivity(
+                Intent.createChooser(
+                    shareApplicationIntent,
+                    getString(R.string.sharingMethod)
+                )
+            )
         }
 
         binding.sendToSupport.setOnClickListener {

@@ -21,5 +21,6 @@
     <string name="emptySearchTextView">Ничего не нашлось</string>
     <string name="searchHistoryTextView">Вы искали</string>
     <string name="searchHistoryButton">Очистить историю</string>
+    <string name="sharingMethod">Выбирите приложение</string>
 
 </resources>

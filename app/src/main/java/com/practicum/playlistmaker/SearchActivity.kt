@@ -95,7 +95,7 @@ class SearchActivity : AppCompatActivity() {
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // empty
+
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -113,7 +113,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                // empty
+
             }
         }
         binding.inputEditText.addTextChangedListener(simpleTextWatcher)
@@ -129,13 +129,11 @@ class SearchActivity : AppCompatActivity() {
 
         trackAdapter.onItemClick = { track ->
             SearchHistory(sharedPrefs).addNewTrack(track)
-            //Log.d("trackList", SearchHistory(sharedPrefs).read().toString())
         }
 
         binding.searchHistoryButton.setOnClickListener {
             SearchHistory(sharedPrefs).clearHistory()
             showHistory()
-            //Log.d("trackList", SearchHistory(sharedPrefs).read().toString())
         }
 
     }
@@ -152,7 +150,6 @@ class SearchActivity : AppCompatActivity() {
         }
         tracks.clear()
         tracks.addAll(SearchHistory(sharedPrefs).read())
-        //Log.d("trackList", tracks.toString())
         trackAdapter.notifyDataSetChanged()
     }
 
@@ -165,24 +162,22 @@ class SearchActivity : AppCompatActivity() {
                     call: Call<TracksResponse>,
                     response: Response<TracksResponse>,
                 ) {
-                    //Log.d("trackList", "Код ответа ${response.code()}")
-                    //Log.d("trackList", binding.inputEditText.text.toString())
                     when (response.code()) {
                         200 -> {
-                            //Log.d("trackList", "Тело ответа ${response.body()?.results}")
                             if (response.body()?.results?.isNotEmpty() == true) {
                                 binding.errorSearchLayout.visibility = View.GONE
                                 tracks.clear()
                                 tracks.addAll(response.body()?.results!!)
-                                //Log.d("trackList", tracks.toString())
                                 trackAdapter.notifyDataSetChanged()
                             } else {
                                 tracks.clear()
                                 trackAdapter.notifyDataSetChanged()
-                                binding.errorSearchText.setText(R.string.emptySearchTextView)
-                                binding.errorSearchImage.setImageResource(R.drawable.emptysearch)
-                                binding.updateSearchButton.visibility = View.GONE
-                                binding.errorSearchLayout.visibility = View.VISIBLE
+                                with(binding) {
+                                    errorSearchText.setText(R.string.emptySearchTextView)
+                                    errorSearchImage.setImageResource(R.drawable.emptysearch)
+                                    updateSearchButton.visibility = View.GONE
+                                    errorSearchLayout.visibility = View.VISIBLE
+                                }
                             }
                         }
 
@@ -203,9 +198,11 @@ class SearchActivity : AppCompatActivity() {
     private fun showErrorInternetLayout() {
         tracks.clear()
         trackAdapter.notifyDataSetChanged()
-        binding.errorSearchText.setText(R.string.errorSearchInternetTextView)
-        binding.errorSearchImage.setImageResource(R.drawable.errorinternet)
-        binding.updateSearchButton.visibility = View.VISIBLE
-        binding.errorSearchLayout.visibility = View.VISIBLE
+        with(binding) {
+            errorSearchText.setText(R.string.errorSearchInternetTextView)
+            errorSearchImage.setImageResource(R.drawable.errorinternet)
+            updateSearchButton.visibility = View.VISIBLE
+            errorSearchLayout.visibility = View.VISIBLE
+        }
     }
 }
