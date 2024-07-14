@@ -2,21 +2,18 @@ package com.practicum.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.iTunesApi.TracksResponse
 import com.practicum.playlistmaker.iTunesApi.iTunesApi
 import retrofit2.Call
@@ -27,15 +24,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivitySearchBinding
+    private lateinit var sharedPrefs: SharedPreferences
     private lateinit var trackAdapter: TrackAdapter
-    private lateinit var recycleViewTrack: RecyclerView
-
-    private lateinit var errorSearchLayout: LinearLayout
-    private lateinit var errorSearchImage: ImageView
-    private lateinit var errorSearchText: TextView
-    private lateinit var updateSearchButton: Button
-
-    private lateinit var inputEditText: EditText
 
     private fun clearSearchBarVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -63,105 +54,130 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private val iTunesBaseUrl = "https://itunes.apple.com"
-
     private val retrofit = Retrofit.Builder()
         .baseUrl(iTunesBaseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
     private val iTunesService = retrofit.create(iTunesApi::class.java)
 
-    private val tracks = ArrayList<Track>()
+    private var tracks: MutableList<Track> = mutableListOf()
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @SuppressLint("MissingInflatedId", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        binding = ActivitySearchBinding.inflate(LayoutInflater.from(this))
+        setContentView(binding.root)
 
-        Log.d("trackList", "Create Activity")
-        val returnMain = findViewById<TextView>(R.id.returnFromSearch)
-        returnMain.setOnClickListener {
+        sharedPrefs = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
+
+        binding.recycleViewTrack.layoutManager = LinearLayoutManager(this)
+        trackAdapter = TrackAdapter(tracks)
+        binding.recycleViewTrack.adapter = trackAdapter
+
+
+        binding.returnFromSearch.setOnClickListener {
             finish()
         }
 
-        val clearSearchBar = findViewById<ImageView>(R.id.clearSearchBar)
-        inputEditText = findViewById(R.id.inputEditText)
-        errorSearchLayout = findViewById(R.id.errorSearchLayout)
-        errorSearchImage = findViewById(R.id.errorSearchImage)
-        errorSearchText = findViewById(R.id.errorSearchText)
-        updateSearchButton = findViewById(R.id.updateSearchButton)
-
-        updateSearchButton.setOnClickListener {
+        binding.updateSearchButton.setOnClickListener {
             search()
         }
 
-
-        clearSearchBar.setOnClickListener {
-            inputEditText.setText("")
+        binding.clearSearchBar.setOnClickListener {
+            binding.inputEditText.setText("")
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(inputEditText.windowToken, 0)
-            tracks.clear()
-            trackAdapter.notifyDataSetChanged()
-            errorSearchLayout.visibility = View.GONE
-
+            inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
+            binding.errorSearchLayout.visibility = View.GONE
+            showHistory()
         }
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // empty
+
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearSearchBar.visibility = clearSearchBarVisibility(s)
+                binding.clearSearchBar.visibility = clearSearchBarVisibility(s)
                 searchRequest = s.toString()
+                if (s?.isEmpty() == true) {
+                    showHistory()
+                } else {
+                    binding.searchHistoryTextView.visibility = View.GONE
+                    binding.searchHistoryButton.visibility = View.GONE
+                    tracks.clear()
+                    trackAdapter.notifyDataSetChanged()
+                }
+
             }
 
             override fun afterTextChanged(s: Editable?) {
-                // empty
+
             }
         }
-        inputEditText.addTextChangedListener(simpleTextWatcher)
-        inputEditText.setText(searchRequest)
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
+        binding.inputEditText.addTextChangedListener(simpleTextWatcher)
+        binding.inputEditText.setText(searchRequest)
+
+        binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 search()
                 true
             }
             false
         }
-        recycleViewTrack = findViewById(R.id.recycleViewTrack)
-        recycleViewTrack.layoutManager = LinearLayoutManager(this)
-        trackAdapter = TrackAdapter(tracks)
-        recycleViewTrack.adapter = trackAdapter
+
+        trackAdapter.onItemClick = { track ->
+            SearchHistory(sharedPrefs).addNewTrack(track)
+        }
+
+        binding.searchHistoryButton.setOnClickListener {
+            SearchHistory(sharedPrefs).clearHistory()
+            showHistory()
+        }
+
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun showHistory() {
+        if (SearchHistory(sharedPrefs).read().isNotEmpty()) {
+            binding.searchHistoryTextView.visibility = View.VISIBLE
+            binding.searchHistoryButton.visibility = View.VISIBLE
+        } else {
+            binding.searchHistoryTextView.visibility = View.GONE
+            binding.searchHistoryButton.visibility = View.GONE
+        }
+        tracks.clear()
+        tracks.addAll(SearchHistory(sharedPrefs).read())
+        trackAdapter.notifyDataSetChanged()
     }
 
 
     private fun search() {
-        iTunesService.search(inputEditText.text.toString())
+        iTunesService.search(binding.inputEditText.text.toString())
             .enqueue(object : Callback<TracksResponse> {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun onResponse(
                     call: Call<TracksResponse>,
                     response: Response<TracksResponse>,
                 ) {
-                    Log.d("trackList", "Код ответа ${response.code()}")
-                    Log.d("trackList", inputEditText.text.toString())
                     when (response.code()) {
                         200 -> {
-                            Log.d("trackList", "Тело ответа ${response.body()?.results}")
                             if (response.body()?.results?.isNotEmpty() == true) {
-                                errorSearchLayout.visibility = View.GONE
+                                binding.errorSearchLayout.visibility = View.GONE
                                 tracks.clear()
                                 tracks.addAll(response.body()?.results!!)
                                 trackAdapter.notifyDataSetChanged()
                             } else {
                                 tracks.clear()
                                 trackAdapter.notifyDataSetChanged()
-                                errorSearchText.setText(R.string.emptySearchTextView)
-                                errorSearchImage.setImageResource(R.drawable.emptysearch)
-                                updateSearchButton.visibility = View.GONE
-                                errorSearchLayout.visibility = View.VISIBLE
+                                with(binding) {
+                                    errorSearchText.setText(R.string.emptySearchTextView)
+                                    errorSearchImage.setImageResource(R.drawable.emptysearch)
+                                    updateSearchButton.visibility = View.GONE
+                                    errorSearchLayout.visibility = View.VISIBLE
+                                }
                             }
                         }
 
@@ -178,12 +194,15 @@ class SearchActivity : AppCompatActivity() {
             })
     }
 
-    fun showErrorInternetLayout() {
+    @SuppressLint("NotifyDataSetChanged")
+    private fun showErrorInternetLayout() {
         tracks.clear()
         trackAdapter.notifyDataSetChanged()
-        errorSearchText.setText(R.string.errorSearchInternetTextView)
-        errorSearchImage.setImageResource(R.drawable.errorinternet)
-        updateSearchButton.visibility = View.VISIBLE
-        errorSearchLayout.visibility = View.VISIBLE
+        with(binding) {
+            errorSearchText.setText(R.string.errorSearchInternetTextView)
+            errorSearchImage.setImageResource(R.drawable.errorinternet)
+            updateSearchButton.visibility = View.VISIBLE
+            errorSearchLayout.visibility = View.VISIBLE
+        }
     }
 }
