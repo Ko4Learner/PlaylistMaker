@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AudioPlayer">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/leftBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/rightBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/chainBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <TextView
+        android:id="@+id/countryField"
+        style="@style/AudioPlayerFieldTextView"
+        android:layout_marginBottom="16dp"
+        android:text="@string/countryField"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/primaryGenreNameField"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
+
+    <TextView
+        android:id="@+id/primaryGenreNameField"
+        style="@style/AudioPlayerFieldTextView"
+        android:text="@string/primaryGenreNameField"
+        app:layout_constraintBottom_toTopOf="@id/countryField"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/releaseDateField" />
+
+    <TextView
+        android:id="@+id/releaseDateField"
+        style="@style/AudioPlayerFieldTextView"
+        android:text="@string/releaseDateField"
+        app:layout_constraintBottom_toTopOf="@id/primaryGenreNameField"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/collectionNameField" />
+
+    <TextView
+        android:id="@+id/collectionNameField"
+        style="@style/AudioPlayerFieldTextView"
+        android:text="@string/collectionNameField"
+        app:layout_constraintBottom_toTopOf="@id/releaseDateField"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/trackTimeField" />
+
+    <TextView
+        android:id="@+id/trackTimeField"
+        style="@style/AudioPlayerFieldTextView"
+        android:text="@string/trackTimeField"
+        app:layout_constraintBottom_toTopOf="@id/collectionNameField"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chainBorder" />
+
+    <TextView
+        android:id="@+id/country"
+        style="@style/AudioPlayerTextView"
+        android:layout_marginBottom="16dp"
+        android:maxLines="1"
+        android:text="@string/countryField"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/primaryGenreName"
+        app:layout_constraintWidth_max="192dp" />
+
+    <TextView
+        android:id="@+id/primaryGenreName"
+        style="@style/AudioPlayerTextView"
+        android:maxLines="1"
+        android:text="@string/primaryGenreNameField"
+        app:layout_constraintBottom_toTopOf="@id/country"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/releaseDate"
+        app:layout_constraintWidth_max="192dp" />
+
+    <TextView
+        android:id="@+id/releaseDate"
+        style="@style/AudioPlayerTextView"
+        android:text="@string/releaseDateField"
+        app:layout_constraintBottom_toTopOf="@id/primaryGenreName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/collectionName" />
+
+    <TextView
+        android:id="@+id/collectionName"
+        style="@style/AudioPlayerTextView"
+        android:maxLines="1"
+        android:text="@string/collectionNameField"
+        app:layout_constraintBottom_toTopOf="@id/releaseDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/trackTime"
+        app:layout_constraintWidth_max="192dp" />
+
+    <TextView
+        android:id="@+id/trackTime"
+        style="@style/AudioPlayerTextView"
+        android:text="@string/trackTimeField"
+        app:layout_constraintBottom_toTopOf="@id/collectionName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chainBorder"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
+
+    <TextView
+        android:id="@+id/listenedTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="@font/ys_display_medium"
+        android:text="@string/listenedTime"
+        android:textColor="@color/textColor"
+        android:textFontWeight="500"
+        app:layout_constraintBottom_toTopOf="@id/chainBorder"
+        app:layout_constraintEnd_toStartOf="@id/rightBorder"
+        app:layout_constraintStart_toStartOf="@id/leftBorder" />
+
+    <ImageButton
+        android:id="@+id/startButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@null"
+        android:src="@drawable/audioplayerstartbutton"
+        app:layout_constraintBottom_toTopOf="@id/listenedTime"
+        app:layout_constraintEnd_toEndOf="@id/rightBorder"
+        app:layout_constraintStart_toStartOf="@id/leftBorder" />
+
+    <ImageButton
+        android:id="@+id/addToPlaylist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:src="@drawable/addtoplaylist"
+        app:layout_constraintBottom_toBottomOf="@id/startButton"
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintTop_toTopOf="@id/startButton" />
+
+    <ImageButton
+        android:id="@+id/addToFavorites"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:src="@drawable/addtofavorites"
+        app:layout_constraintBottom_toBottomOf="@id/startButton"
+        app:layout_constraintEnd_toEndOf="@id/rightBorder"
+        app:layout_constraintTop_toTopOf="@id/startButton" />
+
+    <TextView
+        android:id="@+id/artistName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/ys_display_medium"
+        android:maxLines="1"
+        android:text="@string/artistName"
+        android:textColor="@color/textColor"
+        android:textSize="@dimen/medium_textSize"
+        app:layout_constraintBottom_toTopOf="@id/startButton"
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintWidth_max="320dp" />
+
+    <TextView
+        android:id="@+id/trackName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/ys_display_medium"
+        android:maxLines="1"
+        android:text="@string/trackName"
+        android:textColor="@color/textColor"
+        android:textSize="@dimen/large_textSize"
+        app:layout_constraintBottom_toTopOf="@id/artistName"
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintWidth_max="320dp" />
+
+
+    <ImageButton
+        android:id="@+id/returnFromAudioPlayer"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:background="@null"
+        android:src="@drawable/arrowback"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/trackImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/placeholder"
+        app:layout_constraintBottom_toTopOf="@id/trackName"
+        app:layout_constraintEnd_toEndOf="@id/rightBorder"
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintTop_toBottomOf="@id/returnFromAudioPlayer" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
