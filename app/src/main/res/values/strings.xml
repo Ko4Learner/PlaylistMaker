@@ -22,5 +22,13 @@
     <string name="searchHistoryTextView">Вы искали</string>
     <string name="searchHistoryButton">Очистить историю</string>
     <string name="sharingMethod">Выбирите приложение</string>
+    <string name="countryField">Страна</string>
+    <string name="primaryGenreNameField">Жанр</string>
+    <string name="releaseDateField">Год</string>
+    <string name="collectionNameField">Альбом</string>
+    <string name="trackTimeField">Длительность</string>
+    <string name="listenedTime">0:30</string>
+    <string name="trackName">Название трека</string>
+    <string name="artistName">Название группы</string>
 
 </resources>
