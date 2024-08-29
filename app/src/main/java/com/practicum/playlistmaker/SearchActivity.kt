@@ -2,7 +2,9 @@ package com.practicum.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +15,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.iTunesApi.TracksResponse
 import com.practicum.playlistmaker.iTunesApi.iTunesApi
@@ -129,6 +132,11 @@ class SearchActivity : AppCompatActivity() {
 
         trackAdapter.onItemClick = { track ->
             SearchHistory(sharedPrefs).addNewTrack(track)
+
+            val audioPlayerIntent = Intent(this, AudioPlayer::class.java).apply {
+                putExtra("Track", Gson().toJson(track))
+            }
+            startActivity(audioPlayerIntent)
         }
 
         binding.searchHistoryButton.setOnClickListener {
