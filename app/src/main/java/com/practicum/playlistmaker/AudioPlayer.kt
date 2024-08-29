@@ -1,10 +1,15 @@
 package com.practicum.playlistmaker
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
@@ -13,17 +18,33 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class AudioPlayer : AppCompatActivity() {
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val REFRESH_LISTENED_TIME_DELAY_MILLIS = 500L
+    }
+
+    private var mainThreadHandler: Handler? = null
+    private var playerState = STATE_DEFAULT
+    private var mediaPlayer = MediaPlayer()
+    private lateinit var track: Track
+    private lateinit var binding: ActivityAudioPlayerBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
+        binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
+
+        mainThreadHandler = Handler(Looper.getMainLooper())
 
         binding.returnFromAudioPlayer.setOnClickListener {
             finish()
         }
 
-        val track = Gson().fromJson(intent.getStringExtra("Track"), Track::class.java)
+        track = Gson().fromJson(intent.getStringExtra("Track"), Track::class.java)
 
         with(binding.trackImage) {
             Glide.with(applicationContext)
@@ -41,7 +62,6 @@ class AudioPlayer : AppCompatActivity() {
                 )
                 .into(binding.trackImage)
         }
-
         with(binding) {
             trackName.text = track.trackName
             artistName.text = track.artistName
@@ -53,5 +73,88 @@ class AudioPlayer : AppCompatActivity() {
             country.text = track.country
         }
 
+        preparePlayer()
+
+        binding.startButton.setOnClickListener {
+            playbackControl()
+
+            mainThreadHandler?.postDelayed(
+                object : Runnable {
+                    override fun run() {
+
+                        when (playerState) {
+                            STATE_PLAYING -> {
+                                binding.listenedTime.text =
+                                    SimpleDateFormat(
+                                        "mm:ss",
+                                        Locale.getDefault()
+                                    ).format(mediaPlayer.currentPosition)
+                                mainThreadHandler?.postDelayed(
+                                    this,
+                                    REFRESH_LISTENED_TIME_DELAY_MILLIS
+                                )
+                            }
+
+                            STATE_DEFAULT, STATE_PREPARED -> {
+                                binding.listenedTime.setText(R.string.listenedTime)
+                                mainThreadHandler!!.removeCallbacksAndMessages(null)
+                            }
+
+                            STATE_PAUSED -> mainThreadHandler!!.removeCallbacksAndMessages(null)
+                        }
+                    }
+                },
+                REFRESH_LISTENED_TIME_DELAY_MILLIS
+            )
+        }
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
+        mainThreadHandler!!.removeCallbacksAndMessages(null)
+    }
+
+    private fun preparePlayer() {
+        mediaPlayer.setDataSource(track.previewUrl)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            binding.startButton.isEnabled = true
+            playerState = STATE_PREPARED
+        }
+        mediaPlayer.setOnCompletionListener {
+            binding.startButton.setImageResource(R.drawable.audioplayerstartbutton)
+            playerState = STATE_PREPARED
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        binding.startButton.setImageResource(R.drawable.audioplayerpausebutton)
+        playerState = STATE_PLAYING
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        binding.startButton.setImageResource(R.drawable.audioplayerstartbutton)
+        playerState = STATE_PAUSED
+    }
+
+    private fun playbackControl() {
+        when (playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
     }
 }

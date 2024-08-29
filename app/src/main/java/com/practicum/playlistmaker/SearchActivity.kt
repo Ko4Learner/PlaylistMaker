@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -27,24 +29,33 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
+    companion object {
+        private const val SEARCH_BAR = "SEARCH_BAR"
+        private const val SEARCH_REQUEST = ""
+        private const val TRACK = "Track"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+    }
+
     private lateinit var binding: ActivitySearchBinding
     private lateinit var sharedPrefs: SharedPreferences
     private lateinit var trackAdapter: TrackAdapter
 
-    private fun clearSearchBarVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-    }
-
-    companion object {
-        const val SEARCH_BAR = "SEARCH_BAR"
-        const val SEARCH_REQUEST = ""
-    }
-
     private var searchRequest: String = SEARCH_REQUEST
+
+    private val iTunesBaseUrl = "https://itunes.apple.com"
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(iTunesBaseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    private val iTunesService = retrofit.create(iTunesApi::class.java)
+
+    private var tracks: MutableList<Track> = mutableListOf()
+
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { search() }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -56,17 +67,8 @@ class SearchActivity : AppCompatActivity() {
         searchRequest = savedInstanceState.getString(SEARCH_BAR, SEARCH_REQUEST)
     }
 
-    private val iTunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val iTunesService = retrofit.create(iTunesApi::class.java)
-
-    private var tracks: MutableList<Track> = mutableListOf()
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @SuppressLint("MissingInflatedId", "NotifyDataSetChanged")
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(LayoutInflater.from(this))
@@ -110,9 +112,9 @@ class SearchActivity : AppCompatActivity() {
                     binding.searchHistoryTextView.visibility = View.GONE
                     binding.searchHistoryButton.visibility = View.GONE
                     tracks.clear()
-                    trackAdapter.notifyDataSetChanged()
+                    trackAdapter.updateItems(tracks)
+                    searchDebounce()
                 }
-
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -122,21 +124,14 @@ class SearchActivity : AppCompatActivity() {
         binding.inputEditText.addTextChangedListener(simpleTextWatcher)
         binding.inputEditText.setText(searchRequest)
 
-        binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                search()
-                true
-            }
-            false
-        }
-
         trackAdapter.onItemClick = { track ->
             SearchHistory(sharedPrefs).addNewTrack(track)
-
-            val audioPlayerIntent = Intent(this, AudioPlayer::class.java).apply {
-                putExtra("Track", Gson().toJson(track))
+            if (clickDebounce()) {
+                val audioPlayerIntent = Intent(this, AudioPlayer::class.java).apply {
+                    putExtra(TRACK, Gson().toJson(track))
+                }
+                startActivity(audioPlayerIntent)
             }
-            startActivity(audioPlayerIntent)
         }
 
         binding.searchHistoryButton.setOnClickListener {
@@ -147,7 +142,15 @@ class SearchActivity : AppCompatActivity() {
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @SuppressLint("NotifyDataSetChanged")
+
+    private fun clearSearchBarVisibility(s: CharSequence?): Int {
+        return if (s.isNullOrEmpty()) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+    }
+
     private fun showHistory() {
         if (SearchHistory(sharedPrefs).read().isNotEmpty()) {
             binding.searchHistoryTextView.visibility = View.VISIBLE
@@ -158,28 +161,30 @@ class SearchActivity : AppCompatActivity() {
         }
         tracks.clear()
         tracks.addAll(SearchHistory(sharedPrefs).read())
-        trackAdapter.notifyDataSetChanged()
+        trackAdapter.updateItems(tracks)
     }
 
 
     private fun search() {
+        binding.progressBar.visibility = View.VISIBLE
+
         iTunesService.search(binding.inputEditText.text.toString())
             .enqueue(object : Callback<TracksResponse> {
-                @SuppressLint("NotifyDataSetChanged")
                 override fun onResponse(
                     call: Call<TracksResponse>,
                     response: Response<TracksResponse>,
                 ) {
+                    binding.progressBar.visibility = View.GONE
                     when (response.code()) {
                         200 -> {
                             if (response.body()?.results?.isNotEmpty() == true) {
                                 binding.errorSearchLayout.visibility = View.GONE
                                 tracks.clear()
                                 tracks.addAll(response.body()?.results!!)
-                                trackAdapter.notifyDataSetChanged()
+                                trackAdapter.updateItems(tracks)
                             } else {
                                 tracks.clear()
-                                trackAdapter.notifyDataSetChanged()
+                                trackAdapter.updateItems(tracks)
                                 with(binding) {
                                     errorSearchText.setText(R.string.emptySearchTextView)
                                     errorSearchImage.setImageResource(R.drawable.emptysearch)
@@ -195,22 +200,37 @@ class SearchActivity : AppCompatActivity() {
                     }
                 }
 
-                @SuppressLint("NotifyDataSetChanged")
                 override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                    binding.progressBar.visibility = View.GONE
                     showErrorInternetLayout()
                 }
             })
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun showErrorInternetLayout() {
         tracks.clear()
-        trackAdapter.notifyDataSetChanged()
+        trackAdapter.updateItems(tracks)
         with(binding) {
             errorSearchText.setText(R.string.errorSearchInternetTextView)
             errorSearchImage.setImageResource(R.drawable.errorinternet)
             updateSearchButton.visibility = View.VISIBLE
             errorSearchLayout.visibility = View.VISIBLE
         }
+    }
+
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+
     }
 }

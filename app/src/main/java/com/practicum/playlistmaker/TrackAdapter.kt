@@ -6,14 +6,43 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackAdapter(private val trackList: MutableList<Track>) :
+class TrackAdapter(private var trackList: MutableList<Track>) :
     RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
+
+    fun updateItems(items: List<Track>) {
+
+        val oldItems = this.trackList
+        val newItems = items.toMutableList()
+        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int {
+                return oldItems.size
+            }
+
+            override fun getNewListSize(): Int {
+                return newItems.size
+            }
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldItems[oldItemPosition].trackId == newItems[newItemPosition].trackId
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldItems[oldItemPosition] == newItems[newItemPosition]
+            }
+
+        })
+
+        this.trackList = newItems.toMutableList()
+        diffResult.dispatchUpdatesTo(this)
+    }
+
 
     var onItemClick: ((Track) -> Unit)? = null
 
