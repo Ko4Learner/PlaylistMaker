@@ -4,12 +4,10 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.drawable.toDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
@@ -20,6 +18,7 @@ import java.util.Locale
 class AudioPlayer : AppCompatActivity() {
 
     companion object {
+        private const val TRACK = "Track"
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
@@ -33,6 +32,7 @@ class AudioPlayer : AppCompatActivity() {
     private lateinit var track: Track
     private lateinit var binding: ActivityAudioPlayerBinding
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
@@ -44,7 +44,7 @@ class AudioPlayer : AppCompatActivity() {
             finish()
         }
 
-        track = Gson().fromJson(intent.getStringExtra("Track"), Track::class.java)
+        track = Gson().fromJson(intent.getStringExtra(TRACK), Track::class.java)
 
         with(binding.trackImage) {
             Glide.with(applicationContext)
@@ -112,7 +112,9 @@ class AudioPlayer : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        if (playerState == STATE_PLAYING) {
+            pausePlayer()
+        }
     }
 
     override fun onDestroy() {
