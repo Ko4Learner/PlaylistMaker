@@ -1,7 +1,9 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.practicum.playlistmaker.ui.settings.APP_PREFERENCES
+import com.practicum.playlistmaker.ui.settings.THEME_KEY
 
 
 class App : Application() {
