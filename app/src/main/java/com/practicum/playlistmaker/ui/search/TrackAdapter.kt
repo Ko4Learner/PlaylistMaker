@@ -79,7 +79,7 @@ class TrackAdapter(private var trackList: MutableList<Track>) :
 
             trackName.text = model.trackName
             trackArtist.text = model.artistName
-            trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime)
+            trackTime.text = model.trackTime
 
         }
     }

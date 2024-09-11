@@ -67,7 +67,7 @@ class AudioPlayer : AppCompatActivity() {
         with(binding) {
             trackName.text = track.trackName
             artistName.text = track.artistName
-            trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime)
+            trackTime.text = track.trackTime
             if (track.collectionName == "") collectionName.visibility = View.GONE
             else collectionName.text = track.collectionName
             releaseDate.text = track.releaseDate.replaceAfter('-', "").replace("-", "")

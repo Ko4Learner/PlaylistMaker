@@ -16,18 +16,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.domain.use_case.SearchHistory
 import com.practicum.playlistmaker.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.data.dto.TracksResponse
-import com.practicum.playlistmaker.data.network.iTunesApi
+
+import com.practicum.playlistmaker.domain.use_case.TracksSearchUseCase
+
 import com.practicum.playlistmaker.ui.player.AudioPlayer
 import com.practicum.playlistmaker.ui.settings.APP_PREFERENCES
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
@@ -38,6 +35,8 @@ class SearchActivity : AppCompatActivity() {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
+    private val provideReadTracksSearchHistoryUseCase = Creator.provideReadTracksSearchHistoryUseCase()
+    private val provideTracksSearchUseCase = Creator.provideTracksSearchUseCase()
 
     private lateinit var binding: ActivitySearchBinding
     private lateinit var sharedPrefs: SharedPreferences
@@ -45,12 +44,6 @@ class SearchActivity : AppCompatActivity() {
 
     private var searchRequest: String = SEARCH_REQUEST
 
-    private val iTunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val iTunesService = retrofit.create(iTunesApi::class.java)
 
     private var tracks: MutableList<Track> = mutableListOf()
 
@@ -154,7 +147,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showHistory() {
-        if (SearchHistory(sharedPrefs).read().isNotEmpty()) {
+        if (provideReadTracksSearchHistoryUseCase.execute().isNotEmpty()) {
             binding.searchHistoryTextView.visibility = View.VISIBLE
             binding.searchHistoryButton.visibility = View.VISIBLE
         } else {
@@ -162,49 +155,38 @@ class SearchActivity : AppCompatActivity() {
             binding.searchHistoryButton.visibility = View.GONE
         }
         tracks.clear()
-        tracks.addAll(SearchHistory(sharedPrefs).read())
+        tracks.addAll(provideReadTracksSearchHistoryUseCase.execute())
         trackAdapter.updateItems(tracks)
     }
 
 
     private fun search() {
         binding.progressBar.visibility = View.VISIBLE
-
-        iTunesService.search(binding.inputEditText.text.toString())
-            .enqueue(object : Callback<TracksResponse> {
-                override fun onResponse(
-                    call: Call<TracksResponse>,
-                    response: Response<TracksResponse>,
-                ) {
-                    binding.progressBar.visibility = View.GONE
-                    when (response.code()) {
-                        200 -> {
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                binding.errorSearchLayout.visibility = View.GONE
-                                tracks.clear()
-                                tracks.addAll(response.body()?.results!!)
-                                trackAdapter.updateItems(tracks)
-                            } else {
-                                tracks.clear()
-                                trackAdapter.updateItems(tracks)
-                                with(binding) {
-                                    errorSearchText.setText(R.string.emptySearchTextView)
-                                    errorSearchImage.setImageResource(R.drawable.emptysearch)
-                                    updateSearchButton.visibility = View.GONE
-                                    errorSearchLayout.visibility = View.VISIBLE
-                                }
+        provideTracksSearchUseCase.searchTracks(
+            binding.inputEditText.text.toString(),
+            object : TracksSearchUseCase.TracksConsumer {
+                override fun consume(foundTracks: List<Track>) {
+                    if (foundTracks == emptyList<Track>()) {
+                        handler.post {
+                            tracks.clear()
+                            trackAdapter.updateItems(tracks)
+                            with(binding) {
+                                progressBar.visibility = View.GONE
+                                errorSearchText.setText(R.string.emptySearchTextView)
+                                errorSearchImage.setImageResource(R.drawable.emptysearch)
+                                updateSearchButton.visibility = View.GONE
+                                errorSearchLayout.visibility = View.VISIBLE
                             }
                         }
-
-                        else -> {
-                            showErrorInternetLayout()
+                    } else {
+                        handler.post {
+                            binding.progressBar.visibility = View.GONE
+                            binding.errorSearchLayout.visibility = View.GONE
+                            tracks.clear()
+                            tracks.addAll(foundTracks)
+                            trackAdapter.updateItems(tracks)
                         }
                     }
-                }
-
-                override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                    binding.progressBar.visibility = View.GONE
-                    showErrorInternetLayout()
                 }
             })
     }

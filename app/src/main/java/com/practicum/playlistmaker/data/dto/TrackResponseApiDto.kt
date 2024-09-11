@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.data.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class TrackDto(
+data class TrackResponseApiDto(
     val trackId: Int,
     val trackName: String,
     val artistName: String,
