@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.domain.model.Track
 
 const val TRACK_LIST = "track_list"
+const val TRACKS_SEARCH_HISTORY_SIZE = 10
 
 class SearchHistory(private val sharedPrefs: SharedPreferences) {
 
@@ -20,7 +21,7 @@ class SearchHistory(private val sharedPrefs: SharedPreferences) {
     }
 
     fun addNewTrack(track: Track) {
-        val historySize = 10
+        val historySize = TRACKS_SEARCH_HISTORY_SIZE
         val tracks = read()
         tracks.removeIf { it.trackId == track.trackId }
         if (tracks.size >= historySize) tracks.removeAt(historySize - 1)
