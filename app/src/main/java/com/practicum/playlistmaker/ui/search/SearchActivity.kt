@@ -1,9 +1,8 @@
 package com.practicum.playlistmaker.ui.search
 
-import android.annotation.SuppressLint
+
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,14 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.creator.Creator
-import com.practicum.playlistmaker.domain.use_case.SearchHistory
 import com.practicum.playlistmaker.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-
-import com.practicum.playlistmaker.domain.use_case.TracksSearchUseCase
-
+import com.practicum.playlistmaker.domain.use_case.tracks_search.TracksSearchUseCase
 import com.practicum.playlistmaker.ui.player.AudioPlayer
-import com.practicum.playlistmaker.ui.settings.APP_PREFERENCES
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -35,15 +31,17 @@ class SearchActivity : AppCompatActivity() {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
-    private val provideReadTracksSearchHistoryUseCase = Creator.provideReadTracksSearchHistoryUseCase()
+
+    private val provideReadTracksSearchHistoryUseCase =
+        Creator.provideReadTracksSearchHistoryUseCase()
+    private val provideClearTracksSearchHistoryUseCase =
+        Creator.provideClearTracksSearchHistoryUseCase()
+    private val provideAddNewTrackSearchHistoryUseCase =
+        Creator.provideAddNewTrackSearchHistoryUseCase()
     private val provideTracksSearchUseCase = Creator.provideTracksSearchUseCase()
 
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var sharedPrefs: SharedPreferences
     private lateinit var trackAdapter: TrackAdapter
-
-    private var searchRequest: String = SEARCH_REQUEST
-
 
     private var tracks: MutableList<Track> = mutableListOf()
 
@@ -51,6 +49,8 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { search() }
 
+
+    private var searchRequest: String = SEARCH_REQUEST
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -62,14 +62,11 @@ class SearchActivity : AppCompatActivity() {
         searchRequest = savedInstanceState.getString(SEARCH_BAR, SEARCH_REQUEST)
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @SuppressLint("MissingInflatedId")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
-
-        sharedPrefs = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 
         binding.recycleViewTrack.layoutManager = LinearLayoutManager(this)
         trackAdapter = TrackAdapter(tracks)
@@ -120,8 +117,8 @@ class SearchActivity : AppCompatActivity() {
         binding.inputEditText.setText(searchRequest)
 
         trackAdapter.onItemClick = { track ->
-            SearchHistory(sharedPrefs).addNewTrack(track)
             if (clickDebounce()) {
+                provideAddNewTrackSearchHistoryUseCase.execute(track)
                 val audioPlayerIntent = Intent(this, AudioPlayer::class.java).apply {
                     putExtra(TRACK, Gson().toJson(track))
                 }
@@ -130,12 +127,11 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.searchHistoryButton.setOnClickListener {
-            SearchHistory(sharedPrefs).clearHistory()
+            provideClearTracksSearchHistoryUseCase.execute()
             showHistory()
         }
 
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     private fun clearSearchBarVisibility(s: CharSequence?): Int {
@@ -147,7 +143,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showHistory() {
-        if (provideReadTracksSearchHistoryUseCase.execute().isNotEmpty()) {
+        if (provideReadTracksSearchHistoryUseCase.execute() != emptyList<Track>()) {
             binding.searchHistoryTextView.visibility = View.VISIBLE
             binding.searchHistoryButton.visibility = View.VISIBLE
         } else {

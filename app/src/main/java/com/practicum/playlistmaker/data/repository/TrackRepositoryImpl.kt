@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.data.repository
 
-import com.practicum.playlistmaker.data.dto.TrackStorageDto
+
 import com.practicum.playlistmaker.data.dto.TracksResponse
 import com.practicum.playlistmaker.data.dto.TracksSearchRequest
 import com.practicum.playlistmaker.data.mapper.TracksMapper
@@ -16,10 +16,10 @@ class TrackRepositoryImpl(
 
     override fun searchTracks(expression: String): List<Track> {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
-        if (response.resultCode == 200) {
-            return TracksMapper.mapTrackResponse(response as TracksResponse)
+        return if (response.resultCode == 200) {
+            TracksMapper.mapTrackResponse(response as TracksResponse)
         } else {
-            return emptyList()
+            emptyList()
         }
     }
 
@@ -32,7 +32,7 @@ class TrackRepositoryImpl(
     }
 
     override fun addNewTrack(track: Track) {
-        return tracksHistoryStorage.addNewTrack(TracksMapper.trackToTrackStorageDto(track))
+        tracksHistoryStorage.addNewTrack(TracksMapper.trackToTrackStorageDto(track))
 
     }
 }

@@ -28,7 +28,7 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        binding.switchDayNight.setChecked((applicationContext as App).getDarkTheme())
+        binding.switchDayNight.isChecked = (applicationContext as App).getDarkTheme()
 
         binding.switchDayNight.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)

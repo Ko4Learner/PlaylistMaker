@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.domain.use_case
+package com.practicum.playlistmaker.domain.use_case.tracks_search
 
 import com.practicum.playlistmaker.domain.repository.TracksRepository
 import java.util.concurrent.Executors

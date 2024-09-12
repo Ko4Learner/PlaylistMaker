@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.data.dto.TrackStorageDto
 
 
-
 const val APP_PREFERENCES = "app_preferences"
 const val TRACK_LIST = "track_list"
 const val TRACKS_SEARCH_HISTORY_SIZE = 10
