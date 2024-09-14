@@ -7,15 +7,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 import com.practicum.playlistmaker.ui.App
 
-const val APP_PREFERENCES = "app_preferences"
-const val THEME_KEY = "theme_text"
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
+
+    private val provideGetThemeUseCase = Creator.provideGetThemeUseCase()
+    private val provideChangeThemeUseCase = Creator.provideChangeThemeUseCase()
 
     @SuppressLint("MissingInflatedId", "UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,14 +30,11 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        binding.switchDayNight.isChecked = (applicationContext as App).getDarkTheme()
+        binding.switchDayNight.isChecked = provideGetThemeUseCase.execute()
 
         binding.switchDayNight.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
-            val sharedPrefs = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
-            sharedPrefs.edit()
-                .putBoolean(THEME_KEY, checked)
-                .apply()
+            provideChangeThemeUseCase.execute(checked)
         }
 
         binding.shareApplication.setOnClickListener {
@@ -73,7 +72,6 @@ class SettingsActivity : AppCompatActivity() {
 
             startActivity(openUserAgreementIntent)
         }
-
 
     }
 }

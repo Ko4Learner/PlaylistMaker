@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.data.storage
+package com.practicum.playlistmaker.data.storage.tracks
 
 import com.practicum.playlistmaker.data.dto.TrackStorageDto
 

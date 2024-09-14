@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.data.storage
+package com.practicum.playlistmaker.data.storage.tracks
 
 import android.content.Context
 import com.google.gson.Gson
@@ -10,8 +10,8 @@ const val APP_PREFERENCES = "app_preferences"
 const val TRACK_LIST = "track_list"
 const val TRACKS_SEARCH_HISTORY_SIZE = 10
 
-class SharedPreferencesTracksHistoryStorage(context: Context) :
-    TracksHistoryStorage{
+class SharedPreferencesTracksStorage(context: Context) :
+    TracksHistoryStorage {
 
     private val sharedPreferences =
         context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)

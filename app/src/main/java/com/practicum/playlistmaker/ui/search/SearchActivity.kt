@@ -18,7 +18,8 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.domain.use_case.tracks_search.TracksSearchUseCase
+import com.practicum.playlistmaker.domain.consumer.Consumer
+import com.practicum.playlistmaker.domain.consumer.ConsumerData
 import com.practicum.playlistmaker.ui.player.AudioPlayer
 
 
@@ -133,6 +134,11 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
+    }
+
 
     private fun clearSearchBarVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -158,30 +164,25 @@ class SearchActivity : AppCompatActivity() {
 
     private fun search() {
         binding.progressBar.visibility = View.VISIBLE
-        provideTracksSearchUseCase.searchTracks(
+        provideTracksSearchUseCase.execute(
             binding.inputEditText.text.toString(),
-            object : TracksSearchUseCase.TracksConsumer {
-                override fun consume(foundTracks: List<Track>) {
-                    if (foundTracks == emptyList<Track>()) {
-                        handler.post {
-                            tracks.clear()
-                            trackAdapter.updateItems(tracks)
-                            with(binding) {
-                                progressBar.visibility = View.GONE
-                                errorSearchText.setText(R.string.emptySearchTextView)
-                                errorSearchImage.setImageResource(R.drawable.emptysearch)
-                                updateSearchButton.visibility = View.GONE
-                                errorSearchLayout.visibility = View.VISIBLE
+            object : Consumer<List<Track>> {
+                override fun consume(data: ConsumerData<List<Track>>) {
+                    when (data) {
+
+                        is ConsumerData.Error ->
+                            handler.post {
+                                showErrorInternetLayout()
                             }
-                        }
-                    } else {
-                        handler.post {
-                            binding.progressBar.visibility = View.GONE
-                            binding.errorSearchLayout.visibility = View.GONE
-                            tracks.clear()
-                            tracks.addAll(foundTracks)
-                            trackAdapter.updateItems(tracks)
-                        }
+
+                        is ConsumerData.Data ->
+                            handler.post {
+                                if (data.value != emptyList<Track>()) {
+                                    showTracksSearchResults(data.value)
+                                } else {
+                                    showErrorEmptyList()
+                                }
+                            }
                     }
                 }
             })
@@ -196,6 +197,26 @@ class SearchActivity : AppCompatActivity() {
             updateSearchButton.visibility = View.VISIBLE
             errorSearchLayout.visibility = View.VISIBLE
         }
+    }
+
+    private fun showErrorEmptyList() {
+        tracks.clear()
+        trackAdapter.updateItems(tracks)
+        with(binding) {
+            progressBar.visibility = View.GONE
+            errorSearchText.setText(R.string.emptySearchTextView)
+            errorSearchImage.setImageResource(R.drawable.emptysearch)
+            updateSearchButton.visibility = View.GONE
+            errorSearchLayout.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showTracksSearchResults(trackList: List<Track>) {
+        binding.progressBar.visibility = View.GONE
+        binding.errorSearchLayout.visibility = View.GONE
+        tracks.clear()
+        tracks.addAll(trackList)
+        trackAdapter.updateItems(tracks)
     }
 
 

@@ -4,7 +4,9 @@ package com.practicum.playlistmaker.data.repository
 import com.practicum.playlistmaker.data.dto.TracksResponse
 import com.practicum.playlistmaker.data.dto.TracksSearchRequest
 import com.practicum.playlistmaker.data.mapper.TracksMapper
-import com.practicum.playlistmaker.data.storage.TracksHistoryStorage
+import com.practicum.playlistmaker.data.network.NetworkClient
+import com.practicum.playlistmaker.data.storage.tracks.TracksHistoryStorage
+import com.practicum.playlistmaker.domain.model.Resource
 import com.practicum.playlistmaker.domain.model.Track
 import com.practicum.playlistmaker.domain.repository.TracksRepository
 
@@ -14,12 +16,13 @@ class TrackRepositoryImpl(
     private val tracksHistoryStorage: TracksHistoryStorage,
 ) : TracksRepository {
 
-    override fun searchTracks(expression: String): List<Track> {
+    override fun searchTracks(expression: String): Resource<List<Track>> {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
-        return if (response.resultCode == 200) {
-            TracksMapper.mapTrackResponse(response as TracksResponse)
+
+        return if (response is TracksResponse) {
+            Resource.Success(TracksMapper.mapTrackResponse(response))
         } else {
-            emptyList()
+            Resource.Error("Произошла сетевая ошибка")
         }
     }
 
