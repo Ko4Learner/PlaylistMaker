@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.ui.main_menu
+package com.practicum.playlistmaker.presentation.main_menu
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
-import com.practicum.playlistmaker.ui.media_libraries.MediaLibrariesActivity
-import com.practicum.playlistmaker.ui.search.SearchActivity
-import com.practicum.playlistmaker.ui.settings.SettingsActivity
+import com.practicum.playlistmaker.presentation.media_libraries.MediaLibrariesActivity
+import com.practicum.playlistmaker.presentation.search.SearchActivity
+import com.practicum.playlistmaker.presentation.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 

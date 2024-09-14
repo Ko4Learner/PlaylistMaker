@@ -13,7 +13,7 @@ import com.practicum.playlistmaker.domain.use_case.dark_theme.GetThemeUseCase
 import com.practicum.playlistmaker.domain.use_case.tracks_search_history.AddNewTrackSearchHistoryUseCase
 import com.practicum.playlistmaker.domain.use_case.tracks_search_history.ClearTracksSearchHistoryUseCase
 import com.practicum.playlistmaker.domain.use_case.tracks_search_history.ReadTracksSearchHistoryUseCase
-import com.practicum.playlistmaker.ui.App.Companion.appContext
+import com.practicum.playlistmaker.presentation.App.Companion.appContext
 
 object Creator {
 
