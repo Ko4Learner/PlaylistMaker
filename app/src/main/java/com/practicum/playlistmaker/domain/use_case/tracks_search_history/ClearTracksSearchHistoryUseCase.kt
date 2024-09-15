@@ -5,7 +5,7 @@ import com.practicum.playlistmaker.domain.repository.TracksRepository
 
 class ClearTracksSearchHistoryUseCase (private val tracksRepository: TracksRepository) {
 
-    fun execute() {
+    operator fun invoke() {
         tracksRepository.clearHistory()
     }
 }

@@ -6,7 +6,7 @@ import com.practicum.playlistmaker.domain.repository.TracksRepository
 
 class ReadTracksSearchHistoryUseCase(private val tracksRepository: TracksRepository) {
 
-    fun execute(): MutableList<Track> {
+    operator fun invoke(): MutableList<Track> {
         return tracksRepository.readHistory()
     }
 }

@@ -1,20 +1,16 @@
 package com.practicum.playlistmaker.data.storage.tracks
 
-import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.data.dto.TrackStorageDto
 
-
-const val APP_PREFERENCES = "app_preferences"
 const val TRACK_LIST = "track_list"
 const val TRACKS_SEARCH_HISTORY_SIZE = 10
 
-class SharedPreferencesTracksStorage(context: Context) :
+class SharedPreferencesTracksStorage(private val sharedPreferences: SharedPreferences) :
     TracksHistoryStorage {
 
-    private val sharedPreferences =
-        context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
 
     override fun read(): MutableList<TrackStorageDto> {
         val trackListType = object : TypeToken<MutableList<TrackStorageDto>>() {}.type

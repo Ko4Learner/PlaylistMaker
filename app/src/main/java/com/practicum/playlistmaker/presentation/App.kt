@@ -16,8 +16,8 @@ class App : Application() {
 
         super.onCreate()
         appContext = applicationContext
-        val provideGetThemeUseCase = Creator.provideGetThemeUseCase()
-        switchTheme(provideGetThemeUseCase.execute())
+        val getThemeUseCase = Creator.provideGetThemeUseCase()
+        switchTheme(getThemeUseCase())
     }
 
 

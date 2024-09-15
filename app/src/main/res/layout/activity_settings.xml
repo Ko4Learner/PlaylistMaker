@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -18,7 +17,7 @@
         <TextView
             android:id="@+id/returnFromSettings"
             style="@style/toolbarTextView"
-            android:text="@string/main_button_settings"/>
+            android:text="@string/main_button_settings" />
 
     </LinearLayout>
 
@@ -29,11 +28,11 @@
             style="@style/SettingsTextView"
             android:text="@string/settings_blackStyle" />
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchDayNight"
             android:layout_width="48dp"
             android:layout_height="match_parent"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            android:theme="@style/SwitchTheme" />
     </LinearLayout>
 
     <LinearLayout style="@style/SettingsLinearLayout">

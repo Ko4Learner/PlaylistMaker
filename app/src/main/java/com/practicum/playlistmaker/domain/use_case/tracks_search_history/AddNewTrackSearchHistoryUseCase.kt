@@ -5,7 +5,7 @@ import com.practicum.playlistmaker.domain.repository.TracksRepository
 
 class AddNewTrackSearchHistoryUseCase(private val tracksRepository: TracksRepository) {
 
-    fun execute(track: Track) {
+    operator fun invoke(track: Track) {
         tracksRepository.addNewTrack(track)
     }
 }

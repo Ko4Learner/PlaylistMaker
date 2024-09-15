@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.presentation.settings
 
-import android.annotation.SuppressLint
+
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -16,10 +16,10 @@ class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
 
-    private val provideGetThemeUseCase = Creator.provideGetThemeUseCase()
-    private val provideChangeThemeUseCase = Creator.provideChangeThemeUseCase()
+    private val getThemeUseCase = Creator.provideGetThemeUseCase()
+    private val changeThemeUseCase = Creator.provideChangeThemeUseCase()
 
-    @SuppressLint("MissingInflatedId", "UseSwitchCompatOrMaterialCode")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -30,11 +30,11 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        binding.switchDayNight.isChecked = provideGetThemeUseCase.execute()
+        binding.switchDayNight.isChecked = getThemeUseCase()
 
         binding.switchDayNight.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
-            provideChangeThemeUseCase.execute(checked)
+            changeThemeUseCase(checked)
         }
 
         binding.shareApplication.setOnClickListener {

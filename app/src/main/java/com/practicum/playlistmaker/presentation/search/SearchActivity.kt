@@ -33,13 +33,13 @@ class SearchActivity : AppCompatActivity() {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
-    private val provideReadTracksSearchHistoryUseCase =
+    private val readTracksSearchHistoryUseCase =
         Creator.provideReadTracksSearchHistoryUseCase()
-    private val provideClearTracksSearchHistoryUseCase =
+    private val clearTracksSearchHistoryUseCase =
         Creator.provideClearTracksSearchHistoryUseCase()
-    private val provideAddNewTrackSearchHistoryUseCase =
+    private val addNewTrackSearchHistoryUseCase =
         Creator.provideAddNewTrackSearchHistoryUseCase()
-    private val provideTracksSearchUseCase = Creator.provideTracksSearchUseCase()
+    private val tracksSearchUseCase = Creator.provideTracksSearchUseCase()
 
     private lateinit var binding: ActivitySearchBinding
     private lateinit var trackAdapter: TrackAdapter
@@ -119,7 +119,7 @@ class SearchActivity : AppCompatActivity() {
 
         trackAdapter.onItemClick = { track ->
             if (clickDebounce()) {
-                provideAddNewTrackSearchHistoryUseCase.execute(track)
+                addNewTrackSearchHistoryUseCase(track)
                 val audioPlayerIntent = Intent(this, AudioPlayer::class.java).apply {
                     putExtra(TRACK, Gson().toJson(track))
                 }
@@ -128,7 +128,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.searchHistoryButton.setOnClickListener {
-            provideClearTracksSearchHistoryUseCase.execute()
+            clearTracksSearchHistoryUseCase()
             showHistory()
         }
 
@@ -149,7 +149,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showHistory() {
-        if (provideReadTracksSearchHistoryUseCase.execute() != emptyList<Track>()) {
+        if (readTracksSearchHistoryUseCase() != emptyList<Track>()) {
             binding.searchHistoryTextView.visibility = View.VISIBLE
             binding.searchHistoryButton.visibility = View.VISIBLE
         } else {
@@ -157,14 +157,14 @@ class SearchActivity : AppCompatActivity() {
             binding.searchHistoryButton.visibility = View.GONE
         }
         tracks.clear()
-        tracks.addAll(provideReadTracksSearchHistoryUseCase.execute())
+        tracks.addAll(readTracksSearchHistoryUseCase())
         trackAdapter.updateItems(tracks)
     }
 
 
     private fun search() {
         binding.progressBar.visibility = View.VISIBLE
-        provideTracksSearchUseCase.execute(
+        tracksSearchUseCase(
             binding.inputEditText.text.toString(),
             object : Consumer<List<Track>> {
                 override fun consume(data: ConsumerData<List<Track>>) {

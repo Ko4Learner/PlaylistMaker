@@ -4,7 +4,7 @@ import com.practicum.playlistmaker.domain.repository.DarkThemeRepository
 
 class ChangeThemeUseCase(private val darkThemeRepository: DarkThemeRepository) {
 
-    fun execute(darkTheme: Boolean) {
+    operator fun invoke(darkTheme: Boolean) {
         darkThemeRepository.changeStorageTheme(darkTheme)
     }
 }

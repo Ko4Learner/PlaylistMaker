@@ -12,7 +12,7 @@ class TracksSearchUseCase(private val repository: TracksRepository) {
 
     private val executor = Executors.newCachedThreadPool()
 
-    fun execute(expression: String, consumer: Consumer<List<Track>>) {
+    operator fun invoke(expression: String, consumer: Consumer<List<Track>>) {
 
         executor.execute {
 

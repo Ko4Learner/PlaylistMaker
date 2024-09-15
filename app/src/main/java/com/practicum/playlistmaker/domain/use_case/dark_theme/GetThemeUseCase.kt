@@ -4,5 +4,5 @@ import com.practicum.playlistmaker.domain.repository.DarkThemeRepository
 
 class GetThemeUseCase(private val darkThemeRepository: DarkThemeRepository) {
 
-    fun execute(): Boolean = darkThemeRepository.getTheme()
+    operator fun invoke(): Boolean = darkThemeRepository.getTheme()
 }
