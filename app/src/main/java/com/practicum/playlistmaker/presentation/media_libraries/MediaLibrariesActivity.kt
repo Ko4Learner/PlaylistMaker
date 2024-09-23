@@ -1,12 +1,11 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation.media_libraries
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityMediaLibrariesBinding
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 
 class MediaLibrariesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMediaLibrariesBinding

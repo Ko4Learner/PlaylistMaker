@@ -9,4 +9,6 @@
     <color name="artistTextColor">@color/yp_white</color>
     <color name="UpdateSearchButtonColor">@color/yp_white</color>
     <color name="UpdateSearchButtonTextColor">@color/yp_black</color>
+    <color name="trackTint">@color/yp_light_blue</color>
+    <color name="thumbTint">@color/yp_blue</color>
 </resources>

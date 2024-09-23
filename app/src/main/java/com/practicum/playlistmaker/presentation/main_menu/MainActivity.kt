@@ -1,13 +1,14 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation.main_menu
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
-import com.practicum.playlistmaker.databinding.ActivityMediaLibrariesBinding
+import com.practicum.playlistmaker.presentation.media_libraries.MediaLibrariesActivity
+import com.practicum.playlistmaker.presentation.search.SearchActivity
+import com.practicum.playlistmaker.presentation.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 

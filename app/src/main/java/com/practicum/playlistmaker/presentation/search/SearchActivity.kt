@@ -1,31 +1,27 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation.search
 
-import android.annotation.SuppressLint
+
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.iTunesApi.TracksResponse
-import com.practicum.playlistmaker.iTunesApi.iTunesApi
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.practicum.playlistmaker.domain.consumer.Consumer
+import com.practicum.playlistmaker.domain.consumer.ConsumerData
+import com.practicum.playlistmaker.presentation.player.AudioPlayer
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -37,18 +33,16 @@ class SearchActivity : AppCompatActivity() {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
+    private val readTracksSearchHistoryUseCase =
+        Creator.provideReadTracksSearchHistoryUseCase()
+    private val clearTracksSearchHistoryUseCase =
+        Creator.provideClearTracksSearchHistoryUseCase()
+    private val addNewTrackSearchHistoryUseCase =
+        Creator.provideAddNewTrackSearchHistoryUseCase()
+    private val tracksSearchUseCase = Creator.provideTracksSearchUseCase()
+
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var sharedPrefs: SharedPreferences
     private lateinit var trackAdapter: TrackAdapter
-
-    private var searchRequest: String = SEARCH_REQUEST
-
-    private val iTunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val iTunesService = retrofit.create(iTunesApi::class.java)
 
     private var tracks: MutableList<Track> = mutableListOf()
 
@@ -56,6 +50,8 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { search() }
 
+
+    private var searchRequest: String = SEARCH_REQUEST
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -67,14 +63,11 @@ class SearchActivity : AppCompatActivity() {
         searchRequest = savedInstanceState.getString(SEARCH_BAR, SEARCH_REQUEST)
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @SuppressLint("MissingInflatedId")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
-
-        sharedPrefs = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 
         binding.recycleViewTrack.layoutManager = LinearLayoutManager(this)
         trackAdapter = TrackAdapter(tracks)
@@ -125,8 +118,8 @@ class SearchActivity : AppCompatActivity() {
         binding.inputEditText.setText(searchRequest)
 
         trackAdapter.onItemClick = { track ->
-            SearchHistory(sharedPrefs).addNewTrack(track)
             if (clickDebounce()) {
+                addNewTrackSearchHistoryUseCase(track)
                 val audioPlayerIntent = Intent(this, AudioPlayer::class.java).apply {
                     putExtra(TRACK, Gson().toJson(track))
                 }
@@ -135,12 +128,16 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.searchHistoryButton.setOnClickListener {
-            SearchHistory(sharedPrefs).clearHistory()
+            clearTracksSearchHistoryUseCase()
             showHistory()
         }
 
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
+    }
 
 
     private fun clearSearchBarVisibility(s: CharSequence?): Int {
@@ -152,7 +149,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showHistory() {
-        if (SearchHistory(sharedPrefs).read().isNotEmpty()) {
+        if (readTracksSearchHistoryUseCase() != emptyList<Track>()) {
             binding.searchHistoryTextView.visibility = View.VISIBLE
             binding.searchHistoryButton.visibility = View.VISIBLE
         } else {
@@ -160,49 +157,33 @@ class SearchActivity : AppCompatActivity() {
             binding.searchHistoryButton.visibility = View.GONE
         }
         tracks.clear()
-        tracks.addAll(SearchHistory(sharedPrefs).read())
+        tracks.addAll(readTracksSearchHistoryUseCase())
         trackAdapter.updateItems(tracks)
     }
 
 
     private fun search() {
         binding.progressBar.visibility = View.VISIBLE
+        tracksSearchUseCase(
+            binding.inputEditText.text.toString(),
+            object : Consumer<List<Track>> {
+                override fun consume(data: ConsumerData<List<Track>>) {
+                    when (data) {
 
-        iTunesService.search(binding.inputEditText.text.toString())
-            .enqueue(object : Callback<TracksResponse> {
-                override fun onResponse(
-                    call: Call<TracksResponse>,
-                    response: Response<TracksResponse>,
-                ) {
-                    binding.progressBar.visibility = View.GONE
-                    when (response.code()) {
-                        200 -> {
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                binding.errorSearchLayout.visibility = View.GONE
-                                tracks.clear()
-                                tracks.addAll(response.body()?.results!!)
-                                trackAdapter.updateItems(tracks)
-                            } else {
-                                tracks.clear()
-                                trackAdapter.updateItems(tracks)
-                                with(binding) {
-                                    errorSearchText.setText(R.string.emptySearchTextView)
-                                    errorSearchImage.setImageResource(R.drawable.emptysearch)
-                                    updateSearchButton.visibility = View.GONE
-                                    errorSearchLayout.visibility = View.VISIBLE
+                        is ConsumerData.Error ->
+                            handler.post {
+                                showErrorInternetLayout()
+                            }
+
+                        is ConsumerData.Data ->
+                            handler.post {
+                                if (data.value != emptyList<Track>()) {
+                                    showTracksSearchResults(data.value)
+                                } else {
+                                    showErrorEmptyList()
                                 }
                             }
-                        }
-
-                        else -> {
-                            showErrorInternetLayout()
-                        }
                     }
-                }
-
-                override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                    binding.progressBar.visibility = View.GONE
-                    showErrorInternetLayout()
                 }
             })
     }
@@ -216,6 +197,26 @@ class SearchActivity : AppCompatActivity() {
             updateSearchButton.visibility = View.VISIBLE
             errorSearchLayout.visibility = View.VISIBLE
         }
+    }
+
+    private fun showErrorEmptyList() {
+        tracks.clear()
+        trackAdapter.updateItems(tracks)
+        with(binding) {
+            progressBar.visibility = View.GONE
+            errorSearchText.setText(R.string.emptySearchTextView)
+            errorSearchImage.setImageResource(R.drawable.emptysearch)
+            updateSearchButton.visibility = View.GONE
+            errorSearchLayout.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showTracksSearchResults(trackList: List<Track>) {
+        binding.progressBar.visibility = View.GONE
+        binding.errorSearchLayout.visibility = View.GONE
+        tracks.clear()
+        tracks.addAll(trackList)
+        trackAdapter.updateItems(tracks)
     }
 
 

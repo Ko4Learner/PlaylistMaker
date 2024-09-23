@@ -1,28 +1,25 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation.settings
 
-import android.annotation.SuppressLint
+
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.widget.ImageView
-import android.widget.Switch
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.switchmaterial.SwitchMaterial
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
+import com.practicum.playlistmaker.presentation.App
 
-const val APP_PREFERENCES = "app_preferences"
-const val THEME_KEY = "theme_text"
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
 
-    @SuppressLint("MissingInflatedId", "UseSwitchCompatOrMaterialCode")
+    private val getThemeUseCase = Creator.provideGetThemeUseCase()
+    private val changeThemeUseCase = Creator.provideChangeThemeUseCase()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -33,14 +30,11 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        binding.switchDayNight.setChecked((applicationContext as App).getDarkTheme())
+        binding.switchDayNight.isChecked = getThemeUseCase()
 
         binding.switchDayNight.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
-            val sharedPrefs = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
-            sharedPrefs.edit()
-                .putBoolean(THEME_KEY, checked)
-                .apply()
+            changeThemeUseCase(checked)
         }
 
         binding.shareApplication.setOnClickListener {
@@ -78,7 +72,6 @@ class SettingsActivity : AppCompatActivity() {
 
             startActivity(openUserAgreementIntent)
         }
-
 
     }
 }

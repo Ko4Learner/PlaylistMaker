@@ -21,7 +21,7 @@
     <string name="emptySearchTextView">Ничего не нашлось</string>
     <string name="searchHistoryTextView">Вы искали</string>
     <string name="searchHistoryButton">Очистить историю</string>
-    <string name="sharingMethod">Выбирите приложение</string>
+    <string name="sharingMethod">Выберите приложение</string>
     <string name="countryField">Страна</string>
     <string name="primaryGenreNameField">Жанр</string>
     <string name="releaseDateField">Год</string>
