@@ -7,13 +7,10 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.domain.repository.TracksRepository
 import java.util.concurrent.Executors
 
+class SearchInteractorImpl(private val repository: TracksRepository) : SearchInteractor {
 
-class TracksSearchUseCase(private val repository: TracksRepository) {
-
-    private val executor = Executors.newCachedThreadPool()
-
-    operator fun invoke(expression: String, consumer: Consumer<List<Track>>) {
-
+    override fun searchTracks(expression: String, consumer: Consumer<List<Track>>) {
+        val executor = Executors.newCachedThreadPool()
         executor.execute {
 
             when (val tracksResponse = repository.searchTracks(expression)) {
@@ -25,7 +22,18 @@ class TracksSearchUseCase(private val repository: TracksRepository) {
                     consumer.consume(ConsumerData.Data(tracksResponse.data))
                 }
             }
-
         }
+    }
+
+    override fun readHistory(): MutableList<Track> {
+        return repository.readHistory()
+    }
+
+    override fun clearHistory() {
+        repository.clearHistory()
+    }
+
+    override fun addNewTrack(track: Track) {
+        repository.addNewTrack(track)
     }
 }

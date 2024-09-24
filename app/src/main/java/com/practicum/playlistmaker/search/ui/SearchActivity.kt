@@ -22,7 +22,6 @@ import com.practicum.playlistmaker.search.domain.consumer.Consumer
 import com.practicum.playlistmaker.search.domain.consumer.ConsumerData
 import com.practicum.playlistmaker.player.ui.AudioPlayer
 
-
 class SearchActivity : AppCompatActivity() {
 
     companion object {
@@ -33,13 +32,7 @@ class SearchActivity : AppCompatActivity() {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
-    private val readTracksSearchHistoryUseCase =
-        Creator.provideReadTracksSearchHistoryUseCase()
-    private val clearTracksSearchHistoryUseCase =
-        Creator.provideClearTracksSearchHistoryUseCase()
-    private val addNewTrackSearchHistoryUseCase =
-        Creator.provideAddNewTrackSearchHistoryUseCase()
-    private val tracksSearchUseCase = Creator.provideTracksSearchUseCase()
+    private val searchInteractor = Creator.provideSearchInteractor()
 
     private lateinit var binding: ActivitySearchBinding
     private lateinit var trackAdapter: TrackAdapter
@@ -49,7 +42,6 @@ class SearchActivity : AppCompatActivity() {
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { search() }
-
 
     private var searchRequest: String = SEARCH_REQUEST
 
@@ -92,9 +84,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         val simpleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearSearchBar.visibility = clearSearchBarVisibility(s)
@@ -110,16 +100,14 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {
-
-            }
+            override fun afterTextChanged(s: Editable?) {}
         }
         binding.inputEditText.addTextChangedListener(simpleTextWatcher)
         binding.inputEditText.setText(searchRequest)
 
         trackAdapter.onItemClick = { track ->
             if (clickDebounce()) {
-                addNewTrackSearchHistoryUseCase(track)
+                searchInteractor.addNewTrack(track)
                 val audioPlayerIntent = Intent(this, AudioPlayer::class.java).apply {
                     putExtra(TRACK, Gson().toJson(track))
                 }
@@ -128,10 +116,9 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.searchHistoryButton.setOnClickListener {
-            clearTracksSearchHistoryUseCase()
+            searchInteractor.clearHistory()
             showHistory()
         }
-
     }
 
     override fun onDestroy() {
@@ -149,7 +136,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showHistory() {
-        if (readTracksSearchHistoryUseCase() != emptyList<Track>()) {
+        if (searchInteractor.readHistory() != emptyList<Track>()) {
             binding.searchHistoryTextView.visibility = View.VISIBLE
             binding.searchHistoryButton.visibility = View.VISIBLE
         } else {
@@ -157,14 +144,14 @@ class SearchActivity : AppCompatActivity() {
             binding.searchHistoryButton.visibility = View.GONE
         }
         tracks.clear()
-        tracks.addAll(readTracksSearchHistoryUseCase())
+        tracks.addAll(searchInteractor.readHistory())
         trackAdapter.updateItems(tracks)
     }
 
 
     private fun search() {
         binding.progressBar.visibility = View.VISIBLE
-        tracksSearchUseCase(
+        searchInteractor.searchTracks(
             binding.inputEditText.text.toString(),
             object : Consumer<List<Track>> {
                 override fun consume(data: ConsumerData<List<Track>>) {
@@ -232,6 +219,5 @@ class SearchActivity : AppCompatActivity() {
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-
     }
 }

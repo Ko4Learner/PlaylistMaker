@@ -36,7 +36,6 @@ class TrackAdapter(private var trackList: MutableList<Track>) :
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                 return oldItems[oldItemPosition] == newItems[newItemPosition]
             }
-
         })
 
         this.trackList = newItems.toMutableList()

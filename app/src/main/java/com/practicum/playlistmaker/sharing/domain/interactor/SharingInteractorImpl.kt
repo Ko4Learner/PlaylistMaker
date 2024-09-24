@@ -1,39 +1,18 @@
 package com.practicum.playlistmaker.sharing.domain.interactor
 
-class SharingInteractorImpl : SharingInteractor {
+import com.practicum.playlistmaker.sharing.domain.repository.SharingRepository
+
+class SharingInteractorImpl(private val repository: SharingRepository) : SharingInteractor {
+
     override fun shareApp() {
-        TODO("Not yet implemented")
+        repository.shareApp()
     }
 
     override fun openTerms() {
-        TODO("Not yet implemented")
+        repository.openTerms()
     }
 
     override fun openSupport() {
-        TODO("Not yet implemented")
+        repository.openSupport()
     }
-
-    /*override fun shareApp() {
-        externalNavigator.shareLink(getShareAppLink())
-    }
-
-    override fun openTerms() {
-        externalNavigator.openLink(getTermsLink())
-    }
-
-    override fun openSupport() {
-        externalNavigator.openEmail(getSupportEmailData())
-    }
-
-    private fun getShareAppLink(): String {
-        // Нужно реализовать
-    }
-
-    private fun getSupportEmailData(): EmailData {
-        // Нужно реализовать
-    }
-
-    private fun getTermsLink(): String {
-        // Нужно реализовать
-    }*/
 }
