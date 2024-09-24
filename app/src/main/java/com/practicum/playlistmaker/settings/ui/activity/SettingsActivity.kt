@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
-import com.practicum.playlistmaker.App.App
 import com.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
 
 
@@ -33,29 +32,28 @@ class SettingsActivity : AppCompatActivity() {
         )[SettingsViewModel::class.java]
 
 
-
-
         binding.returnFromSettings.setOnClickListener {
             finish()
         }
 
-        binding.switchDayNight.isChecked = getSettingsInteractor.getTheme()
+        settingsViewModel.getThemeLiveData().observe(this) { darkTheme ->
+            binding.switchDayNight.isChecked = darkTheme
+        }
 
         binding.switchDayNight.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
-            getSettingsInteractor.changeTheme(checked)
+            settingsViewModel.changeTheme(checked)
         }
 
         binding.shareApplication.setOnClickListener {
-            getSharingInteractor.shareApp()
+            settingsViewModel.shareApp()
         }
 
         binding.sendToSupport.setOnClickListener {
-            getSharingInteractor.openSupport()
+            settingsViewModel.openSupport()
         }
 
         binding.openUserAgreement.setOnClickListener {
-            getSharingInteractor.openTerms()
+            settingsViewModel.openTerms()
         }
     }
 }

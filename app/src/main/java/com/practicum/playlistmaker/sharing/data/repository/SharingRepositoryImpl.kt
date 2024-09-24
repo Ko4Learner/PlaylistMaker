@@ -13,14 +13,12 @@ class SharingRepositoryImpl(private val context: Context) : SharingRepository {
             action = Intent.ACTION_SEND
             setType("text/plain")
             putExtra(Intent.EXTRA_TEXT, context.getString(R.string.address_AndroidDevelopment))
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-
         context.startActivity(
             Intent.createChooser(
                 shareApplicationIntent,
                 context.getString(R.string.sharingMethod)
-            )
+            ).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
         )
     }
 
