@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.search.ui.activity
 
-
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
@@ -27,25 +25,21 @@ import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 class SearchActivity : AppCompatActivity() {
 
     companion object {
+
         private const val SEARCH_BAR = "SEARCH_BAR"
         private const val SEARCH_REQUEST = ""
         private const val TRACK = "Track"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
-    private val searchInteractor = Creator.provideSearchInteractor()
-
     private lateinit var binding: ActivitySearchBinding
     private lateinit var trackAdapter: TrackAdapter
-
     private lateinit var searchViewModel: SearchViewModel
 
-    //private var tracks: MutableList<Track> = mutableListOf()
-
     private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
-
     private var searchRequest: String = SEARCH_REQUEST
+
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -57,8 +51,8 @@ class SearchActivity : AppCompatActivity() {
         searchRequest = savedInstanceState.getString(SEARCH_BAR, SEARCH_REQUEST)
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
@@ -68,14 +62,8 @@ class SearchActivity : AppCompatActivity() {
         binding.recycleViewTrack.adapter = trackAdapter
 
         searchViewModel = ViewModelProvider(
-            this,
-            SearchViewModel.factory(Creator.provideSearchInteractor())
+            this, SearchViewModel.factory(Creator.provideSearchInteractor())
         )[SearchViewModel::class.java]
-
-
-        /*searchViewModel.getTrackSearchHistoryLiveData().observe(this) { trackListHistory ->
-
-        }*/
 
         binding.returnFromSearch.setOnClickListener {
             finish()
@@ -93,11 +81,7 @@ class SearchActivity : AppCompatActivity() {
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
             binding.errorSearchLayout.visibility = View.GONE
-            searchViewModel.getTrackSearchHistoryLiveData().observe(this){
-                showHistory(it)
-            }
         }
-        //fun View.findViewTreeLifecycleOwner(): LifecycleOwner? = ViewTreeLifecycleOwner.get(this)
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -105,27 +89,19 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearSearchBar.visibility = clearSearchBarVisibility(s)
                 searchRequest = s?.toString() ?: ""
+                searchViewModel.searchDebounce(
+                    changedText = searchRequest
+                )
                 if (s?.isEmpty() == true) {
-                    /*searchViewModel.getTrackSearchHistoryLiveData().observe(this){
+                    searchViewModel.getHistoryLiveData().observe(this@SearchActivity) {
                         showHistory(it)
-                    }*/
-                    showHistory(emptyList())
-
-                } else {
-                    searchViewModel.searchDebounce(
-                        changedText = searchRequest
-                    )
-
-                    /* binding.searchHistoryTextView.visibility = View.GONE
-                    binding.searchHistoryButton.visibility = View.GONE
-                    tracks.clear()
-                    trackAdapter.updateItems(tracks)
-                    searchDebounce()*/
+                    }
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {}
         }
+
         binding.inputEditText.addTextChangedListener(simpleTextWatcher)
         binding.inputEditText.setText(searchRequest)
 
@@ -133,13 +109,9 @@ class SearchActivity : AppCompatActivity() {
             render(it)
         }
 
-        searchViewModel.getTrackSearchHistoryLiveData().observe(this){
-            showHistory(it)
-        }
-
         trackAdapter.onItemClick = { track ->
             if (clickDebounce()) {
-                searchInteractor.addNewTrack(track)
+                searchViewModel.addNewTrack(track)
                 val audioPlayerIntent = Intent(this, AudioPlayer::class.java).apply {
                     putExtra(TRACK, Gson().toJson(track))
                 }
@@ -148,7 +120,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.searchHistoryButton.setOnClickListener {
-            searchInteractor.clearHistory()
+            searchViewModel.clearHistory()
             showHistory(emptyList())
         }
     }
@@ -158,7 +130,6 @@ class SearchActivity : AppCompatActivity() {
         handler.removeCallbacksAndMessages(null)
     }
 
-
     private fun render(state: TracksState) {
         when (state) {
             is TracksState.Content -> showTracksSearchResults(state.tracks)
@@ -167,7 +138,6 @@ class SearchActivity : AppCompatActivity() {
             is TracksState.Loading -> showLoading()
         }
     }
-
 
     private fun clearSearchBarVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -188,8 +158,9 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter.updateItems(trackHistoryList)
     }
 
-
     private fun showLoading() {
+        binding.searchHistoryTextView.visibility = View.GONE
+        binding.searchHistoryButton.visibility = View.GONE
         binding.errorSearchLayout.visibility = View.GONE
         trackAdapter.updateItems(emptyList())
         binding.progressBar.visibility = View.VISIBLE
@@ -217,11 +188,12 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showTracksSearchResults(trackList: List<Track>) {
+        binding.searchHistoryTextView.visibility = View.GONE
+        binding.searchHistoryButton.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
         binding.errorSearchLayout.visibility = View.GONE
         trackAdapter.updateItems(trackList)
     }
-
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
