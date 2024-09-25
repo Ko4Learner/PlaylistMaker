@@ -12,15 +12,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.search.domain.consumer.Consumer
-import com.practicum.playlistmaker.search.domain.consumer.ConsumerData
 import com.practicum.playlistmaker.player.ui.AudioPlayer
+import com.practicum.playlistmaker.search.ui.state.TracksState
+import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -29,7 +30,6 @@ class SearchActivity : AppCompatActivity() {
         private const val SEARCH_REQUEST = ""
         private const val TRACK = "Track"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
     private val searchInteractor = Creator.provideSearchInteractor()
@@ -37,11 +37,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var trackAdapter: TrackAdapter
 
+    private lateinit var searchViewModel: SearchViewModel
+
     private var tracks: MutableList<Track> = mutableListOf()
 
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { search() }
 
     private var searchRequest: String = SEARCH_REQUEST
 
@@ -65,13 +66,24 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter = TrackAdapter(tracks)
         binding.recycleViewTrack.adapter = trackAdapter
 
+        searchViewModel = ViewModelProvider(
+            this,
+            SearchViewModel.factory(Creator.provideSearchInteractor())
+        )[SearchViewModel::class.java]
+
+
+        /*searchViewModel.getTrackSearchHistoryLiveData().observe(this) { trackListHistory ->
+
+        }*/
 
         binding.returnFromSearch.setOnClickListener {
             finish()
         }
 
         binding.updateSearchButton.setOnClickListener {
-            search()
+            searchViewModel.searchDebounce(
+                changedText = searchRequest
+            )
         }
 
         binding.clearSearchBar.setOnClickListener {
@@ -88,15 +100,19 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearSearchBar.visibility = clearSearchBarVisibility(s)
-                searchRequest = s.toString()
+                searchRequest = s?.toString() ?: ""
                 if (s?.isEmpty() == true) {
                     showHistory()
                 } else {
-                    binding.searchHistoryTextView.visibility = View.GONE
+                    searchViewModel.searchDebounce(
+                        changedText = searchRequest
+                    )
+
+                    /* binding.searchHistoryTextView.visibility = View.GONE
                     binding.searchHistoryButton.visibility = View.GONE
                     tracks.clear()
                     trackAdapter.updateItems(tracks)
-                    searchDebounce()
+                    searchDebounce()*/
                 }
             }
 
@@ -104,6 +120,10 @@ class SearchActivity : AppCompatActivity() {
         }
         binding.inputEditText.addTextChangedListener(simpleTextWatcher)
         binding.inputEditText.setText(searchRequest)
+
+        searchViewModel.observeState().observe(this) {
+            render(it)
+        }
 
         trackAdapter.onItemClick = { track ->
             if (clickDebounce()) {
@@ -124,6 +144,16 @@ class SearchActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
+    }
+
+
+    private fun render(state: TracksState) {
+        when (state) {
+            is TracksState.Content -> showTracksSearchResults(state.tracks)
+            is TracksState.Empty -> showErrorEmptyList()
+            is TracksState.Error -> showErrorInternetLayout()
+            is TracksState.Loading -> showLoading()
+        }
     }
 
 
@@ -149,35 +179,14 @@ class SearchActivity : AppCompatActivity() {
     }
 
 
-    private fun search() {
+    private fun showLoading() {
+        binding.errorSearchLayout.visibility = View.GONE
+        trackAdapter.updateItems(emptyList())
         binding.progressBar.visibility = View.VISIBLE
-        searchInteractor.searchTracks(
-            binding.inputEditText.text.toString(),
-            object : Consumer<List<Track>> {
-                override fun consume(data: ConsumerData<List<Track>>) {
-                    when (data) {
-
-                        is ConsumerData.Error ->
-                            handler.post {
-                                showErrorInternetLayout()
-                            }
-
-                        is ConsumerData.Data ->
-                            handler.post {
-                                if (data.value != emptyList<Track>()) {
-                                    showTracksSearchResults(data.value)
-                                } else {
-                                    showErrorEmptyList()
-                                }
-                            }
-                    }
-                }
-            })
     }
 
     private fun showErrorInternetLayout() {
-        tracks.clear()
-        trackAdapter.updateItems(tracks)
+        trackAdapter.updateItems(emptyList())
         with(binding) {
             errorSearchText.setText(R.string.errorSearchInternetTextView)
             errorSearchImage.setImageResource(R.drawable.errorinternet)
@@ -187,8 +196,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showErrorEmptyList() {
-        tracks.clear()
-        trackAdapter.updateItems(tracks)
+        trackAdapter.updateItems(emptyList())
         with(binding) {
             progressBar.visibility = View.GONE
             errorSearchText.setText(R.string.emptySearchTextView)
@@ -201,9 +209,7 @@ class SearchActivity : AppCompatActivity() {
     private fun showTracksSearchResults(trackList: List<Track>) {
         binding.progressBar.visibility = View.GONE
         binding.errorSearchLayout.visibility = View.GONE
-        tracks.clear()
-        tracks.addAll(trackList)
-        trackAdapter.updateItems(tracks)
+        trackAdapter.updateItems(trackList)
     }
 
 
@@ -214,10 +220,5 @@ class SearchActivity : AppCompatActivity() {
             handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
-    }
-
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 }

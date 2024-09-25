@@ -15,41 +15,6 @@ class SettingsViewModel(
     private val sharingInteractor: SharingInteractor,
 ) : ViewModel() {
 
-    private val getThemeTrigger = SingleEventLiveData<Boolean>()
-
-    init{
-        getTheme()
-    }
-
-    fun getThemeLiveData(): LiveData<Boolean> = getThemeTrigger
-
-    private fun getTheme(){
-        getThemeTrigger.value = settingsInteractor.getTheme()
-    }
-
-    fun changeTheme(darkTheme: Boolean){
-        settingsInteractor.changeTheme(darkTheme)
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkTheme) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
-    }
-
-    fun shareApp(){
-        sharingInteractor.shareApp()
-    }
-
-    fun openTerms() {
-        sharingInteractor.openTerms()
-    }
-
-    fun openSupport() {
-        sharingInteractor.openSupport()
-    }
-
     companion object {
         fun factory(
             settingsInteractor: SettingsInteractor,
@@ -61,5 +26,40 @@ class SettingsViewModel(
                 }
             }
         }
+    }
+
+    private val getThemeTrigger = SingleEventLiveData<Boolean>()
+
+    init {
+        getTheme()
+    }
+
+    fun getThemeLiveData(): LiveData<Boolean> = getThemeTrigger
+
+    private fun getTheme() {
+        getThemeTrigger.value = settingsInteractor.getTheme()
+    }
+
+    fun changeTheme(darkTheme: Boolean) {
+        settingsInteractor.changeTheme(darkTheme)
+        AppCompatDelegate.setDefaultNightMode(
+            if (darkTheme) {
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
+        )
+    }
+
+    fun shareApp() {
+        sharingInteractor.shareApp()
+    }
+
+    fun openTerms() {
+        sharingInteractor.openTerms()
+    }
+
+    fun openSupport() {
+        sharingInteractor.openSupport()
     }
 }

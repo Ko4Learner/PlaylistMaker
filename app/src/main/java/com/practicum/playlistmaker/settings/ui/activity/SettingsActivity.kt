@@ -14,9 +14,6 @@ class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
 
-    private val getSettingsInteractor = Creator.provideSettingsInteractor()
-    private val getSharingInteractor = Creator.provideSharingInteractor()
-
     private lateinit var settingsViewModel: SettingsViewModel
 
 
@@ -28,7 +25,7 @@ class SettingsActivity : AppCompatActivity() {
 
         settingsViewModel = ViewModelProvider(
             this,
-            SettingsViewModel.factory(getSettingsInteractor, getSharingInteractor)
+            SettingsViewModel.factory(Creator.provideSettingsInteractor(), Creator.provideSharingInteractor())
         )[SettingsViewModel::class.java]
 
 
