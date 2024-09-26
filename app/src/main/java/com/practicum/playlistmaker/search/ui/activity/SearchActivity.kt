@@ -18,7 +18,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.player.ui.AudioPlayer
+import com.practicum.playlistmaker.player.ui.activity.AudioPlayer
 import com.practicum.playlistmaker.search.ui.state.TracksState
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 
@@ -80,7 +80,6 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
-            binding.errorSearchLayout.visibility = View.GONE
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -92,11 +91,11 @@ class SearchActivity : AppCompatActivity() {
                 searchViewModel.searchDebounce(
                     changedText = searchRequest
                 )
-                if (s?.isEmpty() == true) {
+                /*if (s?.isEmpty() == true) {
                     searchViewModel.getHistoryLiveData().observe(this@SearchActivity) {
                         showHistory(it)
                     }
-                }
+                }*/
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -136,6 +135,7 @@ class SearchActivity : AppCompatActivity() {
             is TracksState.Empty -> showErrorEmptyList()
             is TracksState.Error -> showErrorInternetLayout()
             is TracksState.Loading -> showLoading()
+            is TracksState.History -> showHistory(state.tracks)
         }
     }
 
@@ -148,6 +148,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showHistory(trackHistoryList: List<Track>) {
+        binding.errorSearchLayout.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
         if (trackHistoryList != emptyList<Track>()) {
             binding.searchHistoryTextView.visibility = View.VISIBLE
             binding.searchHistoryButton.visibility = View.VISIBLE
@@ -169,6 +171,9 @@ class SearchActivity : AppCompatActivity() {
     private fun showErrorInternetLayout() {
         trackAdapter.updateItems(emptyList())
         with(binding) {
+            searchHistoryTextView.visibility = View.GONE
+            searchHistoryButton.visibility = View.GONE
+            progressBar.visibility = View.GONE
             errorSearchText.setText(R.string.errorSearchInternetTextView)
             errorSearchImage.setImageResource(R.drawable.errorinternet)
             updateSearchButton.visibility = View.VISIBLE
@@ -179,6 +184,8 @@ class SearchActivity : AppCompatActivity() {
     private fun showErrorEmptyList() {
         trackAdapter.updateItems(emptyList())
         with(binding) {
+            searchHistoryTextView.visibility = View.GONE
+            searchHistoryButton.visibility = View.GONE
             progressBar.visibility = View.GONE
             errorSearchText.setText(R.string.emptySearchTextView)
             errorSearchImage.setImageResource(R.drawable.emptysearch)
@@ -188,10 +195,12 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showTracksSearchResults(trackList: List<Track>) {
-        binding.searchHistoryTextView.visibility = View.GONE
-        binding.searchHistoryButton.visibility = View.GONE
-        binding.progressBar.visibility = View.GONE
-        binding.errorSearchLayout.visibility = View.GONE
+        with(binding) {
+            searchHistoryTextView.visibility = View.GONE
+            searchHistoryButton.visibility = View.GONE
+            progressBar.visibility = View.GONE
+            errorSearchLayout.visibility = View.GONE
+        }
         trackAdapter.updateItems(trackList)
     }
 

@@ -15,7 +15,6 @@ import com.practicum.playlistmaker.search.domain.consumer.ConsumerData
 import com.practicum.playlistmaker.search.domain.interactor.SearchInteractor
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.state.TracksState
-import com.practicum.playlistmaker.utils.SingleEventLiveData
 
 
 class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewModel() {
@@ -41,15 +40,16 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     private var latestSearchText: String? = null
 
 
-    private val historyLiveData = SingleEventLiveData<MutableList<Track>>()
-    fun getHistoryLiveData(): LiveData<MutableList<Track>> = historyLiveData
+    //private val historyLiveData = SingleEventLiveData<MutableList<Track>>()
+    //fun getHistoryLiveData(): LiveData<MutableList<Track>> = historyLiveData
 
     private val stateLiveData = MutableLiveData<TracksState>()
     fun observeState(): LiveData<TracksState> = stateLiveData
 
 
     init {
-        getTrackSearchHistory()
+        //getTrackSearchHistory()
+        renderState(TracksState.History(searchInteractor.readHistory()))
     }
 
     override fun onCleared() {
@@ -57,12 +57,17 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     }
 
     fun searchDebounce(changedText: String) {
-        if (latestSearchText == changedText) {
+        if (latestSearchText == changedText && stateLiveData.value != TracksState.Error) {
             return
         }
 
         this.latestSearchText = changedText
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+
+        if (changedText == "") {
+            renderState(TracksState.History(searchInteractor.readHistory()))
+            return
+        }
 
         val searchRunnable = Runnable {
             searchRequest(changedText)
@@ -86,7 +91,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
                         is ConsumerData.Error -> {
                             renderState(TracksState.Error)
-                            latestSearchText = ""
+                            //latestSearchText = ""
                         }
 
                         is ConsumerData.Data ->
@@ -107,15 +112,15 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     fun clearHistory() {
         searchInteractor.clearHistory()
-        getTrackSearchHistory()
+        //getTrackSearchHistory()
     }
 
     fun addNewTrack(track: Track) {
         searchInteractor.addNewTrack(track)
-        getTrackSearchHistory()
+        //getTrackSearchHistory()
     }
 
-    private fun getTrackSearchHistory() {
+    /*private fun getTrackSearchHistory() {
         historyLiveData.value = searchInteractor.readHistory()
-    }
+    }*/
 }

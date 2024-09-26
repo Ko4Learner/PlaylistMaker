@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.player.ui
+package com.practicum.playlistmaker.player.ui.activity
 
 import android.os.Bundle
 import android.os.Handler
@@ -7,6 +7,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
@@ -14,6 +15,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -34,12 +36,17 @@ class AudioPlayer : AppCompatActivity() {
     private lateinit var binding: ActivityAudioPlayerBinding
 
     val trackPlayerInteractor = Creator.provideTrackPlayerInteractor()
+    private lateinit var playerViewModel: PlayerViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
+
+        playerViewModel = ViewModelProvider(
+            this, PlayerViewModel.factory(Creator.provideTrackPlayerInteractor())
+        )[PlayerViewModel::class.java]
 
         mainThreadHandler = Handler(Looper.getMainLooper())
 

@@ -10,6 +10,10 @@ sealed interface TracksState {
 
     data object Empty : TracksState
 
+    data class History(
+        val tracks: List<Track>
+    ) : TracksState
+
     data class Content(
         val tracks: List<Track>
     ) : TracksState
