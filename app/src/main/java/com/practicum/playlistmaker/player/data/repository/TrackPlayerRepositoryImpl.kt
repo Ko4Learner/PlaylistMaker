@@ -7,9 +7,15 @@ import com.practicum.playlistmaker.player.domain.repository.TrackPlayerRepositor
 
 class TrackPlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : TrackPlayerRepository {
 
-    override fun preparePlayer(track: Track) {
+    override fun preparePlayer(
+        track: Track,
+        onPreparedListener: () -> Unit,
+        onCompletionListener: () -> Unit
+    ) {
         mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener { onPreparedListener() }
+        mediaPlayer.setOnCompletionListener { onCompletionListener() }
     }
 
     override fun startPlayer() {
@@ -27,7 +33,4 @@ class TrackPlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : TrackPla
     override fun getCurrentPositionMediaPlayer(): Int {
         return mediaPlayer.currentPosition
     }
-
-    override fun getMediaPlayer() = mediaPlayer
-
 }

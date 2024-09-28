@@ -1,8 +1,6 @@
 package com.practicum.playlistmaker.player.ui.activity
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +13,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.practicum.playlistmaker.player.ui.state.PlayerState
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -23,19 +22,11 @@ class AudioPlayer : AppCompatActivity() {
 
     companion object {
         private const val TRACK = "Track"
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val REFRESH_LISTENED_TIME_DELAY_MILLIS = 500L
     }
 
-    private var mainThreadHandler: Handler? = null
-    private var playerState = STATE_DEFAULT
     private lateinit var track: Track
     private lateinit var binding: ActivityAudioPlayerBinding
 
-    val trackPlayerInteractor = Creator.provideTrackPlayerInteractor()
     private lateinit var playerViewModel: PlayerViewModel
 
 
@@ -44,17 +35,15 @@ class AudioPlayer : AppCompatActivity() {
         binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-        playerViewModel = ViewModelProvider(
-            this, PlayerViewModel.factory(Creator.provideTrackPlayerInteractor())
-        )[PlayerViewModel::class.java]
+        track = Gson().fromJson(intent.getStringExtra(TRACK), Track::class.java)
 
-        mainThreadHandler = Handler(Looper.getMainLooper())
+        playerViewModel = ViewModelProvider(
+            this, PlayerViewModel.factory(track, Creator.provideTrackPlayerInteractor())
+        )[PlayerViewModel::class.java]
 
         binding.returnFromAudioPlayer.setOnClickListener {
             finish()
         }
-
-        track = Gson().fromJson(intent.getStringExtra(TRACK), Track::class.java)
 
         with(binding.trackImage) {
             Glide.with(applicationContext)
@@ -83,88 +72,44 @@ class AudioPlayer : AppCompatActivity() {
             country.text = track.country
         }
 
-        preparePlayer()
+        playerViewModel.observeState().observe(this) {
+            render(it)
+        }
 
         binding.startButton.setOnClickListener {
-            playbackControl()
-
-            mainThreadHandler?.postDelayed(
-                object : Runnable {
-                    override fun run() {
-
-                        when (playerState) {
-                            STATE_PLAYING -> {
-                                binding.listenedTime.text =
-                                    SimpleDateFormat(
-                                        "mm:ss",
-                                        Locale.getDefault()
-                                    ).format(trackPlayerInteractor.getCurrentPositionMediaPlayer())
-                                mainThreadHandler?.postDelayed(
-                                    this,
-                                    REFRESH_LISTENED_TIME_DELAY_MILLIS
-                                )
-                            }
-
-                            STATE_DEFAULT, STATE_PREPARED -> {
-                                binding.listenedTime.setText(R.string.listenedTime)
-                                mainThreadHandler!!.removeCallbacksAndMessages(null)
-                            }
-
-                            STATE_PAUSED -> mainThreadHandler!!.removeCallbacksAndMessages(null)
-                        }
-                    }
-                },
-                REFRESH_LISTENED_TIME_DELAY_MILLIS
-            )
+            playerViewModel.startPlaying()
         }
     }
 
     override fun onPause() {
         super.onPause()
-        if (playerState == STATE_PLAYING) {
-            pausePlayer()
-        }
+        playerViewModel.onPauseActivity()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        trackPlayerInteractor.releasePlayer()
-        mainThreadHandler!!.removeCallbacksAndMessages(null)
+    private fun render(state: PlayerState) {
+        when (state) {
+            is PlayerState.StatePrepared -> preparePlayer()
+            is PlayerState.StatePaused -> pausePlayer()
+            is PlayerState.StatePlaying -> startPlayer(state.currentPosition)
+        }
     }
 
     private fun preparePlayer() {
-        trackPlayerInteractor.preparePlayer(track)
-        trackPlayerInteractor.getMediaPlayer().setOnPreparedListener {
-            binding.startButton.isEnabled = true
-            playerState = STATE_PREPARED
-        }
-        trackPlayerInteractor.getMediaPlayer().setOnCompletionListener {
-            binding.startButton.setImageResource(R.drawable.audioplayerstartbutton)
-            playerState = STATE_PREPARED
-        }
+        binding.startButton.isEnabled = true
+        binding.startButton.setImageResource(R.drawable.audioplayerstartbutton)
+        binding.listenedTime.setText(R.string.listenedTime)
     }
 
-    private fun startPlayer() {
-        trackPlayerInteractor.startPlayer()
+    private fun startPlayer(currentPositionMediaPlayer: Int) {
         binding.startButton.setImageResource(R.drawable.audioplayerpausebutton)
-        playerState = STATE_PLAYING
+        binding.listenedTime.text =
+            SimpleDateFormat(
+                "mm:ss",
+                Locale.getDefault()
+            ).format(currentPositionMediaPlayer)
     }
 
     private fun pausePlayer() {
-        trackPlayerInteractor.pausePlayer()
         binding.startButton.setImageResource(R.drawable.audioplayerstartbutton)
-        playerState = STATE_PAUSED
-    }
-
-    private fun playbackControl() {
-        when (playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
-        }
     }
 }

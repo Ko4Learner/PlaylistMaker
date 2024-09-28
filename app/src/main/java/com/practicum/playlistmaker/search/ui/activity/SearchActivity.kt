@@ -91,11 +91,6 @@ class SearchActivity : AppCompatActivity() {
                 searchViewModel.searchDebounce(
                     changedText = searchRequest
                 )
-                /*if (s?.isEmpty() == true) {
-                    searchViewModel.getHistoryLiveData().observe(this@SearchActivity) {
-                        showHistory(it)
-                    }
-                }*/
             }
 
             override fun afterTextChanged(s: Editable?) {}

@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.search.ui.view_model
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -39,16 +38,10 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     private var latestSearchText: String? = null
 
-
-    //private val historyLiveData = SingleEventLiveData<MutableList<Track>>()
-    //fun getHistoryLiveData(): LiveData<MutableList<Track>> = historyLiveData
-
     private val stateLiveData = MutableLiveData<TracksState>()
     fun observeState(): LiveData<TracksState> = stateLiveData
 
-
     init {
-        //getTrackSearchHistory()
         renderState(TracksState.History(searchInteractor.readHistory()))
     }
 
@@ -71,7 +64,6 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
         val searchRunnable = Runnable {
             searchRequest(changedText)
-            Log.d("search", "search")
         }
 
         val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
@@ -91,7 +83,6 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
                         is ConsumerData.Error -> {
                             renderState(TracksState.Error)
-                            //latestSearchText = ""
                         }
 
                         is ConsumerData.Data ->
@@ -112,15 +103,9 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     fun clearHistory() {
         searchInteractor.clearHistory()
-        //getTrackSearchHistory()
     }
 
     fun addNewTrack(track: Track) {
         searchInteractor.addNewTrack(track)
-        //getTrackSearchHistory()
     }
-
-    /*private fun getTrackSearchHistory() {
-        historyLiveData.value = searchInteractor.readHistory()
-    }*/
 }

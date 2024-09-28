@@ -1,14 +1,17 @@
 package com.practicum.playlistmaker.player.domain.interactor
 
-import android.media.MediaPlayer
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.player.domain.repository.TrackPlayerRepository
 
 class TrackPlayerInteractorImpl(private val repository: TrackPlayerRepository) :
     TrackPlayerInteractor {
 
-    override fun preparePlayer(track: Track) {
-        repository.preparePlayer(track)
+    override fun preparePlayer(
+        track: Track,
+        onPreparedListener: () -> Unit,
+        onCompletionListener: () -> Unit,
+    ) {
+        repository.preparePlayer(track, { onPreparedListener() }, { onCompletionListener() })
     }
 
     override fun startPlayer() {
@@ -25,9 +28,5 @@ class TrackPlayerInteractorImpl(private val repository: TrackPlayerRepository) :
 
     override fun getCurrentPositionMediaPlayer(): Int {
         return repository.getCurrentPositionMediaPlayer()
-    }
-
-    override fun getMediaPlayer(): MediaPlayer {
-        return repository.getMediaPlayer()
     }
 }
