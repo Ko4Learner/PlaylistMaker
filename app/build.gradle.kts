@@ -40,6 +40,8 @@ android {
 
 dependencies {
 
+
+    implementation(libs.androidx.core.ktx.v190)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.androidx.core.ktx)
