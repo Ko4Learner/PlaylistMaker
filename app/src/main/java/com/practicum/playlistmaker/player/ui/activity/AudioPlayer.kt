@@ -29,6 +29,8 @@ class AudioPlayer : AppCompatActivity() {
 
     private lateinit var playerViewModel: PlayerViewModel
 
+    //private val viewModel: PlayerViewModel by viewModel()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
