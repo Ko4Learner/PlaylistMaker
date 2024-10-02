@@ -20,7 +20,7 @@ val repositoryModule = module {
         SharingRepositoryImpl(get())
     }
 
-    single<TrackPlayerRepository>{
+    factory<TrackPlayerRepository>{
         TrackPlayerRepositoryImpl(get())
     }
 

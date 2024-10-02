@@ -5,16 +5,16 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.player.ui.state.PlayerState
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -27,9 +27,9 @@ class AudioPlayer : AppCompatActivity() {
     private lateinit var track: Track
     private lateinit var binding: ActivityAudioPlayerBinding
 
-    private lateinit var playerViewModel: PlayerViewModel
-
-    //private val viewModel: PlayerViewModel by viewModel()
+    private val playerViewModel: PlayerViewModel by viewModel{
+        parametersOf(track)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,10 +38,6 @@ class AudioPlayer : AppCompatActivity() {
         setContentView(binding.root)
 
         track = Gson().fromJson(intent.getStringExtra(TRACK), Track::class.java)
-
-        playerViewModel = ViewModelProvider(
-            this, PlayerViewModel.factory(track, Creator.provideTrackPlayerInteractor())
-        )[PlayerViewModel::class.java]
 
         binding.returnFromAudioPlayer.setOnClickListener {
             finish()

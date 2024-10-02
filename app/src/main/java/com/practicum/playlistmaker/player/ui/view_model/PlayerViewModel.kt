@@ -25,17 +25,6 @@ class PlayerViewModel(
         private const val STATE_PAUSED = 3
         private const val REFRESH_LISTENED_TIME_DELAY_MILLIS = 500L
         private val PLAYER_REQUEST_TOKEN = Any()
-
-        fun factory(
-            track: Track,
-            trackPlayerInteractor: TrackPlayerInteractor,
-        ): ViewModelProvider.Factory {
-            return viewModelFactory {
-                initializer {
-                    PlayerViewModel(track, trackPlayerInteractor)
-                }
-            }
-        }
     }
 
     private var playerState = STATE_DEFAULT

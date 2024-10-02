@@ -21,7 +21,3 @@ val viewModelModule = module {
         PlayerViewModel(track,get())
     }
 }
-
-//private val repository: MusicRepository by inject()
-
-//private val viewModel: MusicViewModel by viewModel()

@@ -19,19 +19,8 @@ import com.practicum.playlistmaker.search.ui.state.TracksState
 class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewModel() {
 
     companion object {
-
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun factory(
-            searchInteractor: SearchInteractor,
-        ): ViewModelProvider.Factory {
-            return viewModelFactory {
-                initializer {
-                    SearchViewModel(searchInteractor)
-                }
-            }
-        }
     }
 
     private val handler = Handler(Looper.getMainLooper())

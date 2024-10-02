@@ -5,15 +5,6 @@ import com.practicum.playlistmaker.search.data.dto.TracksSearchRequest
 
 class RetrofitNetworkClient(private val iTunesApi: iTunesApi) : NetworkClient {
 
-    /*private val iTunesBaseUrl = "https://itunes.apple.com"
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val imdbService = retrofit.create(iTunesApi::class.java)*/
-
     override fun doRequest(dto: Any): Response {
 
         return try {

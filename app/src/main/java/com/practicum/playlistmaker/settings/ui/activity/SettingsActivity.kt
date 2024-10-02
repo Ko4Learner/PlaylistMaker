@@ -4,17 +4,15 @@ package com.practicum.playlistmaker.settings.ui.activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 import com.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
-
-    private lateinit var settingsViewModel: SettingsViewModel
+    private val settingsViewModel: SettingsViewModel by viewModel()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,12 +20,6 @@ class SettingsActivity : AppCompatActivity() {
 
         binding = ActivitySettingsBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
-
-        settingsViewModel = ViewModelProvider(
-            this,
-            SettingsViewModel.factory(Creator.provideSettingsInteractor(), Creator.provideSharingInteractor())
-        )[SettingsViewModel::class.java]
-
 
         binding.returnFromSettings.setOnClickListener {
             finish()

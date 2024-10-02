@@ -32,7 +32,7 @@ val dataModule = module {
             .getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
     }
 
-    single {
+    factory {
         MediaPlayer()
     }
 
@@ -42,10 +42,6 @@ val dataModule = module {
 
     single<TracksHistoryStorage> {
         SharedPreferencesTracksStorage(get())
-    }
-
-    single<TracksRepository> {
-        TrackRepositoryImpl(get(), get())
     }
 
     single<DarkThemeStorage> {
