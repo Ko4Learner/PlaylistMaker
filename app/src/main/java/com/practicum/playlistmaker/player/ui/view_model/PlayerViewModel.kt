@@ -5,9 +5,6 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.player.domain.interactor.TrackPlayerInteractor
 import com.practicum.playlistmaker.player.ui.state.PlayerState
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -25,17 +22,6 @@ class PlayerViewModel(
         private const val STATE_PAUSED = 3
         private const val REFRESH_LISTENED_TIME_DELAY_MILLIS = 500L
         private val PLAYER_REQUEST_TOKEN = Any()
-
-        fun factory(
-            track: Track,
-            trackPlayerInteractor: TrackPlayerInteractor,
-        ): ViewModelProvider.Factory {
-            return viewModelFactory {
-                initializer {
-                    PlayerViewModel(track, trackPlayerInteractor)
-                }
-            }
-        }
     }
 
     private var playerState = STATE_DEFAULT

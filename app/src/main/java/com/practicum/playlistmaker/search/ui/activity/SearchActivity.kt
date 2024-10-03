@@ -11,21 +11,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.player.ui.activity.AudioPlayer
 import com.practicum.playlistmaker.search.ui.state.TracksState
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
     companion object {
-
         private const val SEARCH_BAR = "SEARCH_BAR"
         private const val SEARCH_REQUEST = ""
         private const val TRACK = "Track"
@@ -34,7 +32,7 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
     private lateinit var trackAdapter: TrackAdapter
-    private lateinit var searchViewModel: SearchViewModel
+    private val searchViewModel: SearchViewModel by viewModel()
 
     private var isClickAllowed = true
     private var searchRequest: String = SEARCH_REQUEST
@@ -60,10 +58,6 @@ class SearchActivity : AppCompatActivity() {
         binding.recycleViewTrack.layoutManager = LinearLayoutManager(this)
         trackAdapter = TrackAdapter(mutableListOf())
         binding.recycleViewTrack.adapter = trackAdapter
-
-        searchViewModel = ViewModelProvider(
-            this, SearchViewModel.factory(Creator.provideSearchInteractor())
-        )[SearchViewModel::class.java]
 
         binding.returnFromSearch.setOnClickListener {
             finish()

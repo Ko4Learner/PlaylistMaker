@@ -40,7 +40,8 @@ android {
 
 dependencies {
 
-
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
     implementation(libs.androidx.core.ktx.v190)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
