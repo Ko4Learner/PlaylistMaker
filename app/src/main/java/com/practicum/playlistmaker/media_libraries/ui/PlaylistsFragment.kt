@@ -16,7 +16,6 @@ class PlaylistsFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentPlaylistsBinding
-
     private val mediaLibrariesFragmentViewModel: MediaLibrariesFragmentViewModel by viewModel()
 
     override fun onCreateView(
@@ -26,9 +25,5 @@ class PlaylistsFragment : Fragment() {
     ): View {
         binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
     }
 }

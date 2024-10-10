@@ -15,9 +15,7 @@ class FavoritesTracksFragment : Fragment() {
         fun newInstance() = FavoritesTracksFragment()
     }
 
-
     private lateinit var binding: FragmentFavoritesTracksBinding
-
     private val favoritesTracksFragmentViewModel: FavoritesTracksFragmentViewModel by viewModel()
 
     override fun onCreateView(
@@ -27,9 +25,5 @@ class FavoritesTracksFragment : Fragment() {
     ): View {
         binding = FragmentFavoritesTracksBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
     }
 }
