@@ -20,14 +20,10 @@ import java.util.Locale
 
 class AudioPlayer : AppCompatActivity() {
 
-    companion object {
-        private const val TRACK = "Track"
-    }
-
     private lateinit var track: Track
     private lateinit var binding: ActivityAudioPlayerBinding
 
-    private val playerViewModel: PlayerViewModel by viewModel{
+    private val playerViewModel: PlayerViewModel by viewModel {
         parametersOf(track)
     }
 
@@ -109,5 +105,9 @@ class AudioPlayer : AppCompatActivity() {
 
     private fun pausePlayer() {
         binding.startButton.setImageResource(R.drawable.audioplayerstartbutton)
+    }
+
+    companion object {
+        private const val TRACK = "Track"
     }
 }

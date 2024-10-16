@@ -11,11 +11,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoritesTracksFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = FavoritesTracksFragment()
-    }
 
-    private lateinit var binding: FragmentFavoritesTracksBinding
+    private var _binding: FragmentFavoritesTracksBinding? = null
+    private val binding get() = _binding!!
+
     private val favoritesTracksFragmentViewModel: FavoritesTracksFragmentViewModel by viewModel()
 
     override fun onCreateView(
@@ -23,7 +22,16 @@ class FavoritesTracksFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFavoritesTracksBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoritesTracksBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    companion object {
+        fun newInstance() = FavoritesTracksFragment()
     }
 }

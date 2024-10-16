@@ -15,15 +15,6 @@ class PlayerViewModel(
     private val trackPlayerInteractor: TrackPlayerInteractor,
 ) : ViewModel() {
 
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val REFRESH_LISTENED_TIME_DELAY_MILLIS = 500L
-        private val PLAYER_REQUEST_TOKEN = Any()
-    }
-
     private var playerState = STATE_DEFAULT
 
     private val stateLiveData = MutableLiveData<PlayerState>()
@@ -107,4 +98,14 @@ class PlayerViewModel(
         trackPlayerInteractor.releasePlayer()
         handler.removeCallbacksAndMessages(PLAYER_REQUEST_TOKEN)
     }
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val REFRESH_LISTENED_TIME_DELAY_MILLIS = 500L
+        private val PLAYER_REQUEST_TOKEN = Any()
+    }
+
 }

@@ -15,10 +15,6 @@ import org.koin.core.context.startKoin
 
 class App : Application() {
 
-    companion object {
-        lateinit var appContext: Context
-    }
-
     override fun onCreate() {
 
         super.onCreate()
@@ -42,5 +38,9 @@ class App : Application() {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
+    }
+
+    companion object {
+        lateinit var appContext: Context
     }
 }
