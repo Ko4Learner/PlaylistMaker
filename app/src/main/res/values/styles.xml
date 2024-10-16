@@ -97,4 +97,12 @@
         <item name="thumbTint">@color/thumbTint</item>
     </style>
 
+    <style name="TabLayoutMediaLibraries" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="textAllCaps">false</item>
+        <item name="tabTextColor">@color/textColor</item>
+    </style>
+
 </resources>

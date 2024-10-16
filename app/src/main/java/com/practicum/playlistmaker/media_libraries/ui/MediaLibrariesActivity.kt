@@ -2,20 +2,39 @@ package com.practicum.playlistmaker.media_libraries.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.practicum.playlistmaker.R
+import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.playlistmaker.databinding.ActivityMediaLibrariesBinding
 
 class MediaLibrariesActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityMediaLibrariesBinding
+    private lateinit var tabMediator: TabLayoutMediator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivityMediaLibrariesBinding.inflate(LayoutInflater.from(this))
+        setContentView(binding.root)
 
-        setContentView(R.layout.activity_media_libraries)
+        binding.returnFromMediaLibraries.setOnClickListener {
+            finish()
+        }
 
+        binding.viewPager.adapter =
+            MediaLibrariesViewPagerAdapter(supportFragmentManager, lifecycle)
+
+        tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            when (position) {
+                0 -> tab.text = "Избранные треки"
+                1 -> tab.text = "Плейлисты"
+            }
+        }
+        tabMediator.attach()
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tabMediator.detach()
     }
 }

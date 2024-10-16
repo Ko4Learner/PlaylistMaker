@@ -30,5 +30,8 @@
     <string name="listenedTime">00:00</string>
     <string name="trackName">Название трека</string>
     <string name="artistName">Название группы</string>
+    <string name="emptyFavoriteTracks">Ваша медиатека пуста</string>
+    <string name="emptyPlaylist">Вы не создали\nни одного плейлиста</string>
+    <string name="addNewPlaylist">Новый плейлист</string>
 
 </resources>

@@ -15,11 +15,6 @@ import com.practicum.playlistmaker.search.ui.state.TracksState
 
 class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewModel() {
 
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
-    }
-
     private val handler = Handler(Looper.getMainLooper())
 
     private var latestSearchText: String? = null
@@ -93,5 +88,10 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     fun addNewTrack(track: Track) {
         searchInteractor.addNewTrack(track)
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private val SEARCH_REQUEST_TOKEN = Any()
     }
 }

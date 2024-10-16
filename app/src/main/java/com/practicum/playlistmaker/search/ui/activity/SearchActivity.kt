@@ -23,13 +23,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
-    companion object {
-        private const val SEARCH_BAR = "SEARCH_BAR"
-        private const val SEARCH_REQUEST = ""
-        private const val TRACK = "Track"
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
-
     private lateinit var binding: ActivitySearchBinding
     private lateinit var trackAdapter: TrackAdapter
     private val searchViewModel: SearchViewModel by viewModel()
@@ -200,5 +193,12 @@ class SearchActivity : AppCompatActivity() {
             handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
+    }
+
+    companion object {
+        private const val SEARCH_BAR = "SEARCH_BAR"
+        private const val SEARCH_REQUEST = ""
+        private const val TRACK = "Track"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
