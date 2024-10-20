@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/searchFragment">
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.practicum.playlistmaker.search.ui.activity.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/fragment_search"/>
+    <fragment
+        android:id="@+id/mediaLibrariesFragment"
+        android:name="com.practicum.playlistmaker.media_libraries.ui.MediaLibrariesFragment"
+        android:label="MediaLibrariesFragment"
+        tools:layout="@layout/fragment_media_libraries"/>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.practicum.playlistmaker.settings.ui.activity.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_audioPlayer"
+            app:destination="@id/audioPlayer" />
+    </fragment>
+    <activity
+        android:id="@+id/audioPlayer"
+        android:name="com.practicum.playlistmaker.player.ui.activity.AudioPlayer"
+        android:label="activity_audio_player"
+        tools:layout="@layout/activity_audio_player" />
+</navigation>

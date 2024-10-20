@@ -40,6 +40,9 @@ android {
 
 dependencies {
 
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.androidx.core.ktx.v190)

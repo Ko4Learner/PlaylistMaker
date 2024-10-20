@@ -1,38 +1,37 @@
 package com.practicum.playlistmaker.main.ui
 
-import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
-import com.practicum.playlistmaker.media_libraries.ui.MediaLibrariesActivity
-import com.practicum.playlistmaker.search.ui.activity.SearchActivity
-import com.practicum.playlistmaker.settings.ui.activity.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 
-    @SuppressLint("MissingInflatedId", "ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-        binding.openSearch.setOnClickListener {
-            val searchIntent = Intent(this, SearchActivity::class.java)
-            startActivity(searchIntent)
-        }
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
+        val navController = navHostFragment.navController
 
-        binding.openMedia.setOnClickListener {
-            val mediaLibrariesIntent = Intent(this, MediaLibrariesActivity::class.java)
-            startActivity(mediaLibrariesIntent)
-        }
+        binding.bottomNavigationView.setupWithNavController(navController)
 
-        binding.openSettings.setOnClickListener {
-            val settingsIntent = Intent(this, SettingsActivity::class.java)
-            startActivity(settingsIntent)
-        }
+        /*navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.speciesFragment -> {
+                    binding.bottomNavigationView.visibility = View.GONE
+                }
+
+                else -> {
+                    binding.bottomNavigationView.visibility = View.VISIBLE
+                }
+            }
+        }*/
     }
 }
 

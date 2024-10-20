@@ -9,21 +9,24 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
+import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.player.ui.activity.AudioPlayer
 import com.practicum.playlistmaker.search.ui.state.TracksState
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
-    private lateinit var binding: ActivitySearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var trackAdapter: TrackAdapter
     private val searchViewModel: SearchViewModel by viewModel()
 
@@ -32,7 +35,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    override fun onSaveInstanceState(outState: Bundle) {
+    /*override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_BAR, searchRequest)
     }
@@ -40,21 +43,22 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         searchRequest = savedInstanceState.getString(SEARCH_BAR, SEARCH_REQUEST)
+    }*/
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(LayoutInflater.from(this))
-        setContentView(binding.root)
-
-        binding.recycleViewTrack.layoutManager = LinearLayoutManager(this)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.recycleViewTrack.layoutManager = LinearLayoutManager(requireContext())
         trackAdapter = TrackAdapter(mutableListOf())
         binding.recycleViewTrack.adapter = trackAdapter
-
-        binding.returnFromSearch.setOnClickListener {
-            finish()
-        }
 
         binding.updateSearchButton.setOnClickListener {
             searchViewModel.searchDebounce(
@@ -65,7 +69,7 @@ class SearchActivity : AppCompatActivity() {
         binding.clearSearchBar.setOnClickListener {
             binding.inputEditText.setText("")
             val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
         }
 
@@ -86,14 +90,14 @@ class SearchActivity : AppCompatActivity() {
         binding.inputEditText.addTextChangedListener(simpleTextWatcher)
         binding.inputEditText.setText(searchRequest)
 
-        searchViewModel.observeState().observe(this) {
+        searchViewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
         trackAdapter.onItemClick = { track ->
             if (clickDebounce()) {
                 searchViewModel.addNewTrack(track)
-                val audioPlayerIntent = Intent(this, AudioPlayer::class.java).apply {
+                val audioPlayerIntent = Intent(requireContext(), AudioPlayer::class.java).apply {
                     putExtra(TRACK, Gson().toJson(track))
                 }
                 startActivity(audioPlayerIntent)
@@ -104,10 +108,12 @@ class SearchActivity : AppCompatActivity() {
             searchViewModel.clearHistory()
             showHistory(emptyList())
         }
+
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+
+    override fun onDestroyView() {
+        super.onDestroyView()
         handler.removeCallbacksAndMessages(null)
     }
 
@@ -196,7 +202,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val SEARCH_BAR = "SEARCH_BAR"
+        //private const val SEARCH_BAR = "SEARCH_BAR"
         private const val SEARCH_REQUEST = ""
         private const val TRACK = "Track"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
