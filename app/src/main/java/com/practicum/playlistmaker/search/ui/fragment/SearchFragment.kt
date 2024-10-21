@@ -27,23 +27,17 @@ class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var trackAdapter: TrackAdapter
+
     private val searchViewModel: SearchViewModel by viewModel()
+    private val trackAdapter = TrackAdapter()
 
     private var isClickAllowed = true
     private var searchRequest: String = SEARCH_REQUEST
 
+    private lateinit var textWatcher: TextWatcher
+
     private val handler = Handler(Looper.getMainLooper())
 
-    /*override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_BAR, searchRequest)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        searchRequest = savedInstanceState.getString(SEARCH_BAR, SEARCH_REQUEST)
-    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,7 +51,6 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recycleViewTrack.layoutManager = LinearLayoutManager(requireContext())
-        trackAdapter = TrackAdapter(mutableListOf())
         binding.recycleViewTrack.adapter = trackAdapter
 
         binding.updateSearchButton.setOnClickListener {
@@ -73,22 +66,21 @@ class SearchFragment : Fragment() {
             inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
         }
 
-        val simpleTextWatcher = object : TextWatcher {
+        textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearSearchBar.visibility = clearSearchBarVisibility(s)
                 searchRequest = s?.toString() ?: ""
                 searchViewModel.searchDebounce(
-                    changedText = searchRequest
+                    changedText = s?.toString() ?: ""
                 )
             }
 
             override fun afterTextChanged(s: Editable?) {}
         }
 
-        binding.inputEditText.addTextChangedListener(simpleTextWatcher)
-        binding.inputEditText.setText(searchRequest)
+        binding.inputEditText.addTextChangedListener(textWatcher)
 
         searchViewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
@@ -115,6 +107,7 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         handler.removeCallbacksAndMessages(null)
+        binding.inputEditText.removeTextChangedListener(textWatcher)
     }
 
     private fun render(state: TracksState) {
@@ -202,7 +195,6 @@ class SearchFragment : Fragment() {
     }
 
     companion object {
-        //private const val SEARCH_BAR = "SEARCH_BAR"
         private const val SEARCH_REQUEST = ""
         private const val TRACK = "Track"
         private const val CLICK_DEBOUNCE_DELAY = 1000L

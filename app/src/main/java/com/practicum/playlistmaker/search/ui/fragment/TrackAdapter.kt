@@ -13,10 +13,12 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
 
-class TrackAdapter(private var trackList: MutableList<Track>) :
+class TrackAdapter :
     RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
 
-    fun updateItems(items: List<Track>) {
+        private var trackList = mutableListOf<Track>()
+
+        fun updateItems(items: List<Track>) {
 
         val oldItems = this.trackList
         val newItems = items.toMutableList()

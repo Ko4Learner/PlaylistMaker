@@ -7,4 +7,5 @@
     <dimen name="iconPadding">8dp</dimen>
     <dimen name="settings_paddingHorizontal">16dp</dimen>
     <dimen name="settings_layoutHeight">64dp</dimen>
+    <dimen name="bottom_nav_height">56dp</dimen>
 </resources>

@@ -23,22 +23,14 @@
         android:id="@+id/bottomNavigationView"
         style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
         android:layout_width="match_parent"
-
-        android:layout_height="64dp"
-
+        android:layout_height="@dimen/bottom_nav_height"
         android:background="@android:color/transparent"
-
         app:elevation="0dp"
-
-        app:itemActiveIndicatorStyle="@color/yp_blue"
-
-        app:itemIconTint="@color/iconColor"
-
-        app:itemTextAppearanceActive="@style/TextAppearance.AppCompat"
-        app:itemTextAppearanceInactive="@style/TextAppearance.AppCompat"
-
-        app:itemTextColor="@color/textColor"
-
+        app:itemActiveIndicatorStyle="@android:color/transparent"
+        app:itemIconTint="@color/bottom_nav_color_selector"
+        app:itemTextAppearanceActive="@style/BottomNavText"
+        app:itemTextAppearanceInactive="@style/BottomNavText"
+        app:itemTextColor="@color/bottom_nav_color_selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

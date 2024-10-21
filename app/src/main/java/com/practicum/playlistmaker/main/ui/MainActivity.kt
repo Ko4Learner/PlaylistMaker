@@ -21,17 +21,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        /*navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.speciesFragment -> {
-                    binding.bottomNavigationView.visibility = View.GONE
-                }
-
-                else -> {
-                    binding.bottomNavigationView.visibility = View.VISIBLE
-                }
-            }
-        }*/
     }
 }
 
