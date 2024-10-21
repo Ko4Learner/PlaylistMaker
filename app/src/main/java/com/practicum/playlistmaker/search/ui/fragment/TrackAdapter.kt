@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.search.ui.activity
+package com.practicum.playlistmaker.search.ui.fragment
 
 import android.util.TypedValue
 import android.view.LayoutInflater

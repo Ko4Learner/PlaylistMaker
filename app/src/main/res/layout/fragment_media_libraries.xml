@@ -18,7 +18,7 @@
         <TextView
             android:id="@+id/returnFromMediaLibraries"
             style="@style/toolbarTextView"
-            android:text="@string/main_button_media" />
+            android:text="@string/media" />
 
     </LinearLayout>
 

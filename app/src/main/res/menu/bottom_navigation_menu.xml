@@ -2,13 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/searchFragment"
-        android:title="Search" />
+        android:icon="@drawable/magnifier"
+        android:title="@string/search" />
 
     <item
         android:id="@+id/mediaLibrariesFragment"
-        android:title="MediaLibraries" />
+        android:icon="@drawable/media"
+        android:title="@string/media" />
 
     <item
         android:id="@+id/settingsFragment"
-        android:title="Settings" />
+        android:icon="@drawable/gear"
+        android:title="@string/settings" />
 </menu>

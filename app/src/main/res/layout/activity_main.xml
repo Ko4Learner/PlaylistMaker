@@ -21,8 +21,24 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
+        android:layout_width="match_parent"
+
+        android:layout_height="64dp"
+
+        android:background="@android:color/transparent"
+
+        app:elevation="0dp"
+
+        app:itemActiveIndicatorStyle="@color/yp_blue"
+
+        app:itemIconTint="@color/iconColor"
+
+        app:itemTextAppearanceActive="@style/TextAppearance.AppCompat"
+        app:itemTextAppearanceInactive="@style/TextAppearance.AppCompat"
+
+        app:itemTextColor="@color/textColor"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -17,6 +17,7 @@ constraintlayout = "2.1.4"
 navigationFragmentKtx = "2.8.3"
 navigationUiKtx = "2.8.3"
 retrofit = "2.11.0"
+navigationFragment = "2.8.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,6 +39,7 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

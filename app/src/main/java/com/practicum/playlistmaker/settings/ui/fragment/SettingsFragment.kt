@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.settings.ui.activity
+package com.practicum.playlistmaker.settings.ui.fragment
 
 
 import android.os.Bundle
