@@ -51,6 +51,4 @@ class SettingsFragment : Fragment() {
             settingsViewModel.openTerms()
         }
     }
-
-
 }
