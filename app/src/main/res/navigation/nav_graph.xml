@@ -13,24 +13,24 @@
         <action
             android:id="@+id/action_searchFragment_to_audioPlayer"
             app:destination="@id/audioPlayer" />
-        <argument
-            android:name="track"
-            app:argType="string"/>
     </fragment>
     <fragment
         android:id="@+id/mediaLibrariesFragment"
         android:name="com.practicum.playlistmaker.media_libraries.ui.MediaLibrariesFragment"
         android:label="MediaLibrariesFragment"
-        tools:layout="@layout/fragment_media_libraries"/>
+        tools:layout="@layout/fragment_media_libraries" />
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.practicum.playlistmaker.settings.ui.fragment.SettingsFragment"
         android:label="SettingsFragment"
-        tools:layout="@layout/fragment_settings">
-    </fragment>
+        tools:layout="@layout/fragment_settings" />
     <activity
         android:id="@+id/audioPlayer"
         android:name="com.practicum.playlistmaker.player.ui.activity.AudioPlayer"
         android:label="activity_audio_player"
-        tools:layout="@layout/activity_audio_player" />
+        tools:layout="@layout/activity_audio_player">
+        <argument
+            android:name="track"
+            app:argType="string" />
+    </activity>
 </navigation>
