@@ -1,7 +1,6 @@
-package com.practicum.playlistmaker.search.ui.activity
+package com.practicum.playlistmaker.search.ui.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,52 +8,49 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.player.ui.activity.AudioPlayer
+import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.search.ui.state.TracksState
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
-    private lateinit var binding: ActivitySearchBinding
-    private lateinit var trackAdapter: TrackAdapter
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
+
     private val searchViewModel: SearchViewModel by viewModel()
+    private val trackAdapter = TrackAdapter()
 
     private var isClickAllowed = true
     private var searchRequest: String = SEARCH_REQUEST
 
+    private lateinit var textWatcher: TextWatcher
+    private val gson = Gson()
+
     private val handler = Handler(Looper.getMainLooper())
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_BAR, searchRequest)
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        searchRequest = savedInstanceState.getString(SEARCH_BAR, SEARCH_REQUEST)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(LayoutInflater.from(this))
-        setContentView(binding.root)
-
-        binding.recycleViewTrack.layoutManager = LinearLayoutManager(this)
-        trackAdapter = TrackAdapter(mutableListOf())
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.recycleViewTrack.layoutManager = LinearLayoutManager(requireContext())
         binding.recycleViewTrack.adapter = trackAdapter
-
-        binding.returnFromSearch.setOnClickListener {
-            finish()
-        }
 
         binding.updateSearchButton.setOnClickListener {
             searchViewModel.searchDebounce(
@@ -65,38 +61,36 @@ class SearchActivity : AppCompatActivity() {
         binding.clearSearchBar.setOnClickListener {
             binding.inputEditText.setText("")
             val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
         }
 
-        val simpleTextWatcher = object : TextWatcher {
+        textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearSearchBar.visibility = clearSearchBarVisibility(s)
                 searchRequest = s?.toString() ?: ""
                 searchViewModel.searchDebounce(
-                    changedText = searchRequest
+                    changedText = s?.toString() ?: ""
                 )
             }
 
             override fun afterTextChanged(s: Editable?) {}
         }
 
-        binding.inputEditText.addTextChangedListener(simpleTextWatcher)
-        binding.inputEditText.setText(searchRequest)
+        binding.inputEditText.addTextChangedListener(textWatcher)
 
-        searchViewModel.observeState().observe(this) {
+        searchViewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
         trackAdapter.onItemClick = { track ->
             if (clickDebounce()) {
                 searchViewModel.addNewTrack(track)
-                val audioPlayerIntent = Intent(this, AudioPlayer::class.java).apply {
-                    putExtra(TRACK, Gson().toJson(track))
-                }
-                startActivity(audioPlayerIntent)
+                val direction =
+                    SearchFragmentDirections.actionSearchFragmentToAudioPlayer(gson.toJson(track))
+                findNavController().navigate(direction)
             }
         }
 
@@ -104,11 +98,15 @@ class SearchActivity : AppCompatActivity() {
             searchViewModel.clearHistory()
             showHistory(emptyList())
         }
+
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+
+    override fun onDestroyView() {
+        super.onDestroyView()
         handler.removeCallbacksAndMessages(null)
+        binding.inputEditText.removeTextChangedListener(textWatcher)
+        _binding = null
     }
 
     private fun render(state: TracksState) {
@@ -196,9 +194,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val SEARCH_BAR = "SEARCH_BAR"
         private const val SEARCH_REQUEST = ""
-        private const val TRACK = "Track"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

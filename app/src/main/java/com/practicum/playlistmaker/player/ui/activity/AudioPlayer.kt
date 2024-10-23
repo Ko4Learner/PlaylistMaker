@@ -5,6 +5,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
@@ -23,6 +24,8 @@ class AudioPlayer : AppCompatActivity() {
     private lateinit var track: Track
     private lateinit var binding: ActivityAudioPlayerBinding
 
+    private val args: AudioPlayerArgs by navArgs()
+
     private val playerViewModel: PlayerViewModel by viewModel {
         parametersOf(track)
     }
@@ -33,7 +36,7 @@ class AudioPlayer : AppCompatActivity() {
         binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-        track = Gson().fromJson(intent.getStringExtra(TRACK), Track::class.java)
+        track = Gson().fromJson(args.track, Track::class.java)
 
         binding.returnFromAudioPlayer.setOnClickListener {
             finish()
@@ -105,9 +108,5 @@ class AudioPlayer : AppCompatActivity() {
 
     private fun pausePlayer() {
         binding.startButton.setImageResource(R.drawable.audioplayerstartbutton)
-    }
-
-    companion object {
-        private const val TRACK = "Track"
     }
 }

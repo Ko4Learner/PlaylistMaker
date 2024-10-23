@@ -84,6 +84,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     fun clearHistory() {
         searchInteractor.clearHistory()
+        renderState(TracksState.History(searchInteractor.readHistory()))
     }
 
     fun addNewTrack(track: Track) {
