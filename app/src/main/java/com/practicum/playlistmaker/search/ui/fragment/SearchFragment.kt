@@ -33,6 +33,7 @@ class SearchFragment : Fragment() {
     private var searchRequest: String = SEARCH_REQUEST
 
     private lateinit var textWatcher: TextWatcher
+    private val gson = Gson()
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -88,7 +89,7 @@ class SearchFragment : Fragment() {
             if (clickDebounce()) {
                 searchViewModel.addNewTrack(track)
                 val direction =
-                    SearchFragmentDirections.actionSearchFragmentToAudioPlayer(Gson().toJson(track))
+                    SearchFragmentDirections.actionSearchFragmentToAudioPlayer(gson.toJson(track))
                 findNavController().navigate(direction)
             }
         }
@@ -105,6 +106,7 @@ class SearchFragment : Fragment() {
         super.onDestroyView()
         handler.removeCallbacksAndMessages(null)
         binding.inputEditText.removeTextChangedListener(textWatcher)
+        _binding = null
     }
 
     private fun render(state: TracksState) {
