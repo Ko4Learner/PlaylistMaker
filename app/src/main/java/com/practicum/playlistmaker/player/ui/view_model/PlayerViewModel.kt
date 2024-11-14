@@ -31,7 +31,6 @@ class PlayerViewModel(
 
     fun startPlaying() {
         playbackControl()
-        startTimer()
     }
 
     private fun preparePlayer() {
@@ -48,13 +47,14 @@ class PlayerViewModel(
     private fun startPlayer() {
         playerState = STATE_PLAYING
         trackPlayerInteractor.startPlayer()
+        startTimer()
     }
 
     private fun pausePlayer() {
         playerState = STATE_PAUSED
+        trackPlayerInteractor.pausePlayer()
         timerJob?.cancel()
         renderState(PlayerState.StatePaused)
-        trackPlayerInteractor.pausePlayer()
     }
 
     private fun playbackControl() {
@@ -77,13 +77,14 @@ class PlayerViewModel(
     private fun startTimer() {
         timerJob = viewModelScope.launch {
             while (playerState == STATE_PLAYING) {
-                delay(REFRESH_LISTENED_TIME_DELAY_MILLIS)
                 renderState(PlayerState.StatePlaying(trackPlayerInteractor.getCurrentPositionMediaPlayer()))
+                delay(REFRESH_LISTENED_TIME_DELAY_MILLIS)
             }
         }
     }
 
     override fun onCleared() {
+        super.onCleared()
         trackPlayerInteractor.releasePlayer()
     }
 
