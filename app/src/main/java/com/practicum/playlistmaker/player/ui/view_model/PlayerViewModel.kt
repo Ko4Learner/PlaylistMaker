@@ -1,13 +1,16 @@
 package com.practicum.playlistmaker.player.ui.view_model
 
-import android.os.Handler
-import android.os.Looper
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.player.domain.interactor.TrackPlayerInteractor
 import com.practicum.playlistmaker.player.ui.state.PlayerState
 import com.practicum.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class PlayerViewModel(
@@ -20,39 +23,14 @@ class PlayerViewModel(
     private val stateLiveData = MutableLiveData<PlayerState>()
     fun observeState(): LiveData<PlayerState> = stateLiveData
 
+    private var timerJob: Job? = null
+
     init {
         preparePlayer()
     }
 
-    private val handler = Handler(Looper.getMainLooper())
-
     fun startPlaying() {
-
         playbackControl()
-
-        handler.postDelayed(
-            object : Runnable {
-                override fun run() {
-
-                    when (playerState) {
-                        STATE_PLAYING -> {
-                            renderState(PlayerState.StatePlaying(trackPlayerInteractor.getCurrentPositionMediaPlayer()))
-                            handler.postDelayed(
-                                this, REFRESH_LISTENED_TIME_DELAY_MILLIS
-                            )
-                        }
-
-                        STATE_DEFAULT, STATE_PREPARED -> {
-                            handler.removeCallbacksAndMessages(PLAYER_REQUEST_TOKEN)
-                        }
-
-                        STATE_PAUSED -> handler.removeCallbacksAndMessages(
-                            PLAYER_REQUEST_TOKEN
-                        )
-                    }
-                }
-            }, REFRESH_LISTENED_TIME_DELAY_MILLIS
-        )
     }
 
     private fun preparePlayer() {
@@ -69,12 +47,14 @@ class PlayerViewModel(
     private fun startPlayer() {
         playerState = STATE_PLAYING
         trackPlayerInteractor.startPlayer()
+        startTimer()
     }
 
     private fun pausePlayer() {
         playerState = STATE_PAUSED
-        renderState(PlayerState.StatePaused)
         trackPlayerInteractor.pausePlayer()
+        timerJob?.cancel()
+        renderState(PlayerState.StatePaused)
     }
 
     private fun playbackControl() {
@@ -94,9 +74,18 @@ class PlayerViewModel(
         }
     }
 
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (playerState == STATE_PLAYING) {
+                renderState(PlayerState.StatePlaying(trackPlayerInteractor.getCurrentPositionMediaPlayer()))
+                delay(REFRESH_LISTENED_TIME_DELAY_MILLIS)
+            }
+        }
+    }
+
     override fun onCleared() {
+        super.onCleared()
         trackPlayerInteractor.releasePlayer()
-        handler.removeCallbacksAndMessages(PLAYER_REQUEST_TOKEN)
     }
 
     companion object {
@@ -104,8 +93,6 @@ class PlayerViewModel(
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
-        private const val REFRESH_LISTENED_TIME_DELAY_MILLIS = 500L
-        private val PLAYER_REQUEST_TOKEN = Any()
+        private const val REFRESH_LISTENED_TIME_DELAY_MILLIS = 300L
     }
-
 }

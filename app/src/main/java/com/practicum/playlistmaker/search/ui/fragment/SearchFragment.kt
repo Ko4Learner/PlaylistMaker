@@ -2,8 +2,6 @@ package com.practicum.playlistmaker.search.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -11,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
@@ -19,6 +18,7 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.search.ui.state.TracksState
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
+import debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -29,13 +29,12 @@ class SearchFragment : Fragment() {
     private val searchViewModel: SearchViewModel by viewModel()
     private val trackAdapter = TrackAdapter()
 
-    private var isClickAllowed = true
     private var searchRequest: String = SEARCH_REQUEST
 
     private lateinit var textWatcher: TextWatcher
     private val gson = Gson()
 
-    private val handler = Handler(Looper.getMainLooper())
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
 
 
     override fun onCreateView(
@@ -51,6 +50,17 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.recycleViewTrack.layoutManager = LinearLayoutManager(requireContext())
         binding.recycleViewTrack.adapter = trackAdapter
+
+        onTrackClickDebounce = debounce<Track>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track ->
+            searchViewModel.addNewTrack(track)
+            val direction =
+                SearchFragmentDirections.actionSearchFragmentToAudioPlayer(gson.toJson(track))
+            findNavController().navigate(direction)
+        }
 
         binding.updateSearchButton.setOnClickListener {
             searchViewModel.searchDebounce(
@@ -86,12 +96,7 @@ class SearchFragment : Fragment() {
         }
 
         trackAdapter.onItemClick = { track ->
-            if (clickDebounce()) {
-                searchViewModel.addNewTrack(track)
-                val direction =
-                    SearchFragmentDirections.actionSearchFragmentToAudioPlayer(gson.toJson(track))
-                findNavController().navigate(direction)
-            }
+            onTrackClickDebounce(track)
         }
 
         binding.searchHistoryButton.setOnClickListener {
@@ -104,7 +109,6 @@ class SearchFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        handler.removeCallbacksAndMessages(null)
         binding.inputEditText.removeTextChangedListener(textWatcher)
         _binding = null
     }
@@ -182,15 +186,6 @@ class SearchFragment : Fragment() {
             errorSearchLayout.visibility = View.GONE
         }
         trackAdapter.updateItems(trackList)
-    }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
     }
 
     companion object {

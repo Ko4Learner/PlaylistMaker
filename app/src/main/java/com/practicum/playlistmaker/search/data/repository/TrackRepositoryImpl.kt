@@ -9,6 +9,8 @@ import com.practicum.playlistmaker.search.data.storage_tracks.TracksHistoryStora
 import com.practicum.playlistmaker.search.domain.model.Resource
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.domain.repository.TracksRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 
 class TrackRepositoryImpl(
@@ -16,13 +18,13 @@ class TrackRepositoryImpl(
     private val tracksHistoryStorage: TracksHistoryStorage,
 ) : TracksRepository {
 
-    override fun searchTracks(expression: String): Resource<List<Track>> {
+    override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
 
-        return if (response is TracksResponse) {
-            Resource.Success(TracksMapper.mapTrackResponse(response))
+        if (response is TracksResponse) {
+            emit(Resource.Success(TracksMapper.mapTrackResponse(response)))
         } else {
-            Resource.Error("Произошла сетевая ошибка")
+            emit(Resource.Error("Произошла сетевая ошибка"))
         }
     }
 
