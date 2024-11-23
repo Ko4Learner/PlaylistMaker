@@ -111,9 +111,10 @@
             <Button
                 android:id="@+id/searchHistoryButton"
                 style="@style/SearchButtons"
-                android:layout_width="160dp"
+                android:layout_width="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="@string/searchHistoryButton"
+                android:maxLines="1"
                 android:visibility="gone" />
         </LinearLayout>
 
@@ -147,8 +148,9 @@
             <Button
                 android:id="@+id/updateSearchButton"
                 style="@style/SearchButtons"
-                android:layout_width="104dp"
+                android:layout_width="wrap_content"
                 android:layout_marginTop="8dp"
+                android:maxLines="1"
                 android:text="@string/updateSearchButton" />
 
         </LinearLayout>
