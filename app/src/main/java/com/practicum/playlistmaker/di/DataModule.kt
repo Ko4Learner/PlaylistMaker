@@ -2,6 +2,8 @@ package com.practicum.playlistmaker.di
 
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.room.Room
+import com.practicum.playlistmaker.media_libraries.data.db.FavoriteTracksDatabase
 import com.practicum.playlistmaker.search.data.network.NetworkClient
 import com.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.search.data.network.ITunesApi
@@ -44,5 +46,14 @@ val dataModule = module {
 
     single<DarkThemeStorage> {
         SharedPreferencesThemeStorage(get())
+    }
+
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            FavoriteTracksDatabase::class.java,
+            "favorite_tracks_database.db"
+        )
+            .build()
     }
 }

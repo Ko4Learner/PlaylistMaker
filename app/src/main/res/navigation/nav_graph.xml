@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/mediaLibrariesFragment"
-        android:name="com.practicum.playlistmaker.media_libraries.ui.MediaLibrariesFragment"
+        android:name="com.practicum.playlistmaker.media_libraries.ui.fragment.MediaLibrariesFragment"
         android:label="MediaLibrariesFragment"
         tools:layout="@layout/fragment_media_libraries" />
     <fragment

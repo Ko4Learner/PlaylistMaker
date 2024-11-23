@@ -7,7 +7,7 @@
     android:background="@color/background"
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
-    tools:context=".media_libraries.ui.MediaLibrariesFragment">
+    tools:context=".media_libraries.ui.fragment.MediaLibrariesFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
