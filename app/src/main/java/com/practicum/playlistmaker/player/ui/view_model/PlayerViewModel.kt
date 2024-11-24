@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.media_libraries.domain.interactor.FavoriteTracksInteractor
 import com.practicum.playlistmaker.player.domain.interactor.TrackPlayerInteractor
 import com.practicum.playlistmaker.player.ui.state.PlayerState
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -12,10 +13,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
 class PlayerViewModel(
     private val track: Track,
     private val trackPlayerInteractor: TrackPlayerInteractor,
+    private val favoriteTracksInteractor: FavoriteTracksInteractor
 ) : ViewModel() {
 
     private var playerState = STATE_DEFAULT
@@ -23,10 +24,14 @@ class PlayerViewModel(
     private val stateLiveData = MutableLiveData<PlayerState>()
     fun observeState(): LiveData<PlayerState> = stateLiveData
 
+    private val isFavoriteLiveData = MutableLiveData<Boolean>()
+    fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
+
     private var timerJob: Job? = null
 
     init {
         preparePlayer()
+        isFavoriteLiveData.postValue(track.isFavorite)
     }
 
     fun startPlaying() {
@@ -72,6 +77,20 @@ class PlayerViewModel(
         if (playerState == STATE_PLAYING) {
             pausePlayer()
         }
+    }
+
+    fun onFavoriteClicked() {
+        viewModelScope.launch {
+            if (!track.isFavorite) {
+                favoriteTracksInteractor.insertFavoriteTrack(track)
+                track.isFavorite = true
+            } else {
+                favoriteTracksInteractor.deleteFavoriteTrack(track)
+                track.isFavorite = false
+            }
+            isFavoriteLiveData.postValue(track.isFavorite)
+        }
+
     }
 
     private fun startTimer() {

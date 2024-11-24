@@ -3,9 +3,9 @@ package com.practicum.playlistmaker.media_libraries.data.db.mapper
 import com.practicum.playlistmaker.media_libraries.data.db.entity.TrackEntity
 import com.practicum.playlistmaker.search.domain.model.Track
 
-class TrackDbMapper {
+object TrackDbMapper {
 
-    fun map(track: Track): TrackEntity {
+    fun map(track: Track, time: String): TrackEntity {
         return TrackEntity(
             track.trackId,
             track.trackName,
@@ -16,7 +16,8 @@ class TrackDbMapper {
             track.collectionName,
             track.releaseDate,
             track.primaryGenreName,
-            track.country
+            track.country,
+            time
         )
     }
 

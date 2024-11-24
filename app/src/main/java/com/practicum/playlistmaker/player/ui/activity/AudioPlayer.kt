@@ -73,6 +73,18 @@ class AudioPlayer : AppCompatActivity() {
             render(it)
         }
 
+        playerViewModel.observeIsFavorite().observe(this) {
+            if (it) {
+                binding.addToFavorites.setImageResource(R.drawable.addtofavoritesactive)
+            } else {
+                binding.addToFavorites.setImageResource(R.drawable.addtofavoritesinactive)
+            }
+        }
+
+        binding.addToFavorites.setOnClickListener {
+            playerViewModel.onFavoriteClicked()
+        }
+
         binding.startButton.setOnClickListener {
             playerViewModel.startPlaying()
         }

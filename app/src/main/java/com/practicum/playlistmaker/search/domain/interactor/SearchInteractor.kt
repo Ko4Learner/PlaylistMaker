@@ -7,7 +7,7 @@ interface SearchInteractor {
 
     fun searchTracks(expression: String): Flow<Pair<List<Track>?, String?>>
 
-    fun readHistory(): MutableList<Track>
+    suspend fun readHistory(): MutableList<Track>
 
     fun clearHistory()
 

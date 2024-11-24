@@ -19,15 +19,15 @@ val viewModelModule = module {
         SettingsViewModel(get(), get())
     }
 
-    viewModel{ (track: Track) ->
-        PlayerViewModel(track,get())
+    viewModel { (track: Track) ->
+        PlayerViewModel(track, get(), get())
     }
 
-    viewModel{
-        FavoritesTracksFragmentViewModel()
+    viewModel {
+        FavoritesTracksFragmentViewModel(get())
     }
 
-    viewModel{
+    viewModel {
         MediaLibrariesFragmentViewModel()
     }
 }
