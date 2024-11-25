@@ -93,6 +93,11 @@ class FavoritesTracksFragment : Fragment() {
         trackAdapter.updateItems(trackList)
     }
 
+    override fun onResume() {
+        super.onResume()
+        favoritesTracksFragmentViewModel.getFavoriteTracks()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

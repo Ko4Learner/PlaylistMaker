@@ -21,7 +21,7 @@ class FavoritesTracksFragmentViewModel(private val favoriteTracksInteractor: Fav
         getFavoriteTracks()
     }
 
-    private fun getFavoriteTracks() {
+    fun getFavoriteTracks() {
         viewModelScope.launch {
             favoriteTracksInteractor
                 .getFavoriteTracks()
