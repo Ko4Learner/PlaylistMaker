@@ -113,6 +113,13 @@ class SearchFragment : Fragment() {
         _binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (binding.inputEditText.text.toString() == "") {
+            searchViewModel.readHistory()
+        }
+    }
+
     private fun render(state: TracksState) {
         when (state) {
             is TracksState.Content -> showTracksSearchResults(state.tracks)

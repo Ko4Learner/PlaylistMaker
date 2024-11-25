@@ -33,7 +33,7 @@ class FavoriteTracksRepositoryImpl(
     }
 
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
-        return tracks.sortedBy { LocalDate.parse(it.addTime, formatter) }
-            .map { track -> TrackDbMapper.map(track) }
+        val sortedTracks = tracks.sortedWith(compareBy { it.addTime }).reversed()
+        return sortedTracks.map { track -> TrackDbMapper.map(track) }
     }
 }
