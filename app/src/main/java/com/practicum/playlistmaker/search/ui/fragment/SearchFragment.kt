@@ -119,7 +119,7 @@ class SearchFragment : Fragment() {
         if (binding.inputEditText.text.isNullOrEmpty()) {
             searchViewModel.readHistory()
         } else {
-            searchViewModel.searchDebounce(
+            searchViewModel.searchRequest(
                 binding.inputEditText.text.toString()
             )
         }
@@ -134,14 +134,6 @@ class SearchFragment : Fragment() {
             is TracksState.History -> showHistory(state.tracks)
         }
     }
-
-//    private fun clearSearchBarVisibility(s: CharSequence?): Int {
-//        return if (s.isNullOrEmpty()) {
-//            View.GONE
-//        } else {
-//            View.VISIBLE
-//        }
-//    }
 
     private fun showHistory(trackHistoryList: List<Track>) {
         binding.errorSearchLayout.isVisible = false

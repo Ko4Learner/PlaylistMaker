@@ -37,7 +37,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
         trackSearchDebounce(changedText)
     }
 
-    private fun searchRequest(newSearchText: String) {
+     fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
             renderState(TracksState.Loading)
 

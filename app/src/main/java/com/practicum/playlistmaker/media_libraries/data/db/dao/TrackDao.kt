@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.media_libraries.data.db.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -13,7 +12,7 @@ interface TrackDao {
     @Insert(entity = TrackEntity::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavoriteTrack(track: TrackEntity)
 
-    @Delete(entity = TrackEntity::class)
+    @Query("DELETE FROM favorite_tracks WHERE trackId = :trackId")
     suspend fun deleteFavoriteTrack(trackId: Int)
 
     @Query("SELECT * FROM favorite_tracks")
