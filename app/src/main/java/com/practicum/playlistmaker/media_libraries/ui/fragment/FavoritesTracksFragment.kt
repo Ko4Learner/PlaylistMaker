@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -76,19 +77,20 @@ class FavoritesTracksFragment : Fragment() {
         }
     }
 
+
     private fun showErrorEmptyList() {
         with(binding) {
-            imageViewEmptyFavoriteTracks.visibility = View.VISIBLE
-            textViewEmptyFavoriteTracks.visibility = View.VISIBLE
-            recycleViewTrack.visibility = View.GONE
+            imageViewEmptyFavoriteTracks.isVisible = true
+            textViewEmptyFavoriteTracks.isVisible = true
+            recycleViewTrack.isVisible = false
         }
     }
 
     private fun showTracksSearchResults(trackList: List<Track>) {
         with(binding) {
-            imageViewEmptyFavoriteTracks.visibility = View.GONE
-            textViewEmptyFavoriteTracks.visibility = View.GONE
-            recycleViewTrack.visibility = View.VISIBLE
+            imageViewEmptyFavoriteTracks.isVisible = false
+            textViewEmptyFavoriteTracks.isVisible = false
+            recycleViewTrack.isVisible = true
         }
         trackAdapter.updateItems(trackList)
     }

@@ -17,14 +17,15 @@ import kotlinx.coroutines.flow.flow
 class TrackRepositoryImpl(
     private val networkClient: NetworkClient,
     private val tracksHistoryStorage: TracksHistoryStorage,
-    private val favoriteTracksDatabase: FavoriteTracksDatabase
+    private val favoriteTracksDatabase: FavoriteTracksDatabase,
+    private val tracksMapper: TracksMapper
 ) : TracksRepository {
 
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
         if (response is TracksResponse) {
             val favoriteTracksId = favoriteTracksDatabase.trackDao().getFavoriteTracksId()
-            val tracks = TracksMapper.mapTrackResponse(response)
+            val tracks = tracksMapper.mapTrackResponse(response)
             tracks.map { track ->
                 if (favoriteTracksId.contains(track.trackId)) {
                     track.isFavorite = true
@@ -36,9 +37,9 @@ class TrackRepositoryImpl(
         }
     }
 
-    override suspend fun readHistory(): MutableList<Track> {
+    override suspend fun readHistory(): List<Track> {
         val favoriteTracksId = favoriteTracksDatabase.trackDao().getFavoriteTracksId()
-        val tracks = TracksMapper.mapTrackStorage(tracksHistoryStorage.read())
+        val tracks = tracksMapper.mapTrackStorage(tracksHistoryStorage.read())
         tracks.map { track ->
             if (favoriteTracksId.contains(track.trackId)) {
                 track.isFavorite = true
@@ -52,7 +53,7 @@ class TrackRepositoryImpl(
     }
 
     override fun addNewTrack(track: Track) {
-        tracksHistoryStorage.addNewTrack(TracksMapper.trackToTrackStorageDto(track))
+        tracksHistoryStorage.addNewTrack(tracksMapper.trackToTrackStorageDto(track))
 
     }
 }

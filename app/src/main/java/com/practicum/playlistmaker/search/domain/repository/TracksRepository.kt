@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface TracksRepository {
     fun searchTracks(expression: String): Flow<Resource<List<Track>>>
 
-    suspend fun readHistory(): MutableList<Track>
+    suspend fun readHistory(): List<Track>
 
     fun clearHistory()
 

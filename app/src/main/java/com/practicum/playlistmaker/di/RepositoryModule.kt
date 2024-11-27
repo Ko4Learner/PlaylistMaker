@@ -28,10 +28,10 @@ val repositoryModule = module {
 
 
     single<TracksRepository> {
-        TrackRepositoryImpl(get(), get(), get())
+        TrackRepositoryImpl(get(), get(), get(), get())
     }
 
     single<FavoriteTracksRepository> {
-        FavoriteTracksRepositoryImpl(get())
+        FavoriteTracksRepositoryImpl(get(), get())
     }
 }

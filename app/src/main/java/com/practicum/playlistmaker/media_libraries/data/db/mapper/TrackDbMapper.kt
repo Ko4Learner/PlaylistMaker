@@ -2,10 +2,15 @@ package com.practicum.playlistmaker.media_libraries.data.db.mapper
 
 import com.practicum.playlistmaker.media_libraries.data.db.entity.TrackEntity
 import com.practicum.playlistmaker.search.domain.model.Track
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-object TrackDbMapper {
+class TrackDbMapper {
 
-    fun map(track: Track, time: String): TrackEntity {
+    private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm:ss")
+
+    fun map(track: Track): TrackEntity {
+        val current = LocalDateTime.now()
         return TrackEntity(
             track.trackId,
             track.trackName,
@@ -17,7 +22,7 @@ object TrackDbMapper {
             track.releaseDate,
             track.primaryGenreName,
             track.country,
-            time
+            current.format(formatter)
         )
     }
 

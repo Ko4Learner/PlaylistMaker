@@ -6,7 +6,7 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-object TracksMapper {
+class TracksMapper {
     fun mapTrackResponse(response: TracksResponse): List<Track> {
         return response.results.map {
             Track(

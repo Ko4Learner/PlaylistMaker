@@ -22,7 +22,7 @@ class SearchInteractorImpl(private val repository: TracksRepository) : SearchInt
         }
     }
 
-    override suspend fun readHistory(): MutableList<Track> {
+    override suspend fun readHistory(): List<Track> {
         return repository.readHistory()
     }
 

@@ -7,24 +7,19 @@ import com.practicum.playlistmaker.media_libraries.domain.repository.FavoriteTra
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class FavoriteTracksRepositoryImpl(
-    private val favoriteTracksDatabase: FavoriteTracksDatabase
+    private val favoriteTracksDatabase: FavoriteTracksDatabase,
+    private val trackDbMapper: TrackDbMapper
 ) : FavoriteTracksRepository {
 
-    private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm:ss")
-
     override suspend fun insertFavoriteTrack(track: Track) {
-        val current = LocalDateTime.now()
         favoriteTracksDatabase.trackDao()
-            .insertFavoriteTrack(TrackDbMapper.map(track, current.format(formatter)))
+            .insertFavoriteTrack(trackDbMapper.map(track))
     }
 
-    override suspend fun deleteFavoriteTrack(track: Track) {
-        favoriteTracksDatabase.trackDao().deleteFavoriteTrack(TrackDbMapper.map(track, ""))
+    override suspend fun deleteFavoriteTrack(trackId: Int) {
+        favoriteTracksDatabase.trackDao().deleteFavoriteTrack(trackId)
     }
 
     override fun getFavoriteTracks(): Flow<List<Track>> = flow {
@@ -34,6 +29,6 @@ class FavoriteTracksRepositoryImpl(
 
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
         val sortedTracks = tracks.sortedWith(compareBy { it.addTime }).reversed()
-        return sortedTracks.map { track -> TrackDbMapper.map(track) }
+        return sortedTracks.map { track -> trackDbMapper.map(track) }
     }
 }

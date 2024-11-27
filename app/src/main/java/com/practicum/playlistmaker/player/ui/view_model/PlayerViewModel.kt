@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.player.ui.view_model
 
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -85,7 +84,7 @@ class PlayerViewModel(
                 favoriteTracksInteractor.insertFavoriteTrack(track)
                 track.isFavorite = true
             } else {
-                favoriteTracksInteractor.deleteFavoriteTrack(track)
+                favoriteTracksInteractor.deleteFavoriteTrack(track.trackId)
                 track.isFavorite = false
             }
             isFavoriteLiveData.postValue(track.isFavorite)

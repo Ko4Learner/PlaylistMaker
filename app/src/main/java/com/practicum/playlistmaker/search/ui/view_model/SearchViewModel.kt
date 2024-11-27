@@ -29,7 +29,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
         this.latestSearchText = changedText
 
-        if (changedText == "") {
+        if (changedText.isEmpty()) {
             readHistory()
             return
         }
@@ -38,7 +38,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     }
 
     private fun searchRequest(newSearchText: String) {
-        if (newSearchText != "") {
+        if (newSearchText.isNotEmpty()) {
             renderState(TracksState.Loading)
 
             viewModelScope.launch {

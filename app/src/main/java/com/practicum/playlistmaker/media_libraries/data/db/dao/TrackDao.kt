@@ -14,7 +14,7 @@ interface TrackDao {
     suspend fun insertFavoriteTrack(track: TrackEntity)
 
     @Delete(entity = TrackEntity::class)
-    suspend fun deleteFavoriteTrack(track: TrackEntity)
+    suspend fun deleteFavoriteTrack(trackId: Int)
 
     @Query("SELECT * FROM favorite_tracks")
     suspend fun getFavoriteTracks(): List<TrackEntity>
