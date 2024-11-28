@@ -3,8 +3,8 @@ package com.practicum.playlistmaker.player.ui.activity
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.navigation.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -62,7 +62,7 @@ class AudioPlayer : AppCompatActivity() {
             trackName.text = track.trackName
             artistName.text = track.artistName
             trackTime.text = track.trackTime
-            if (track.collectionName == "") collectionName.visibility = View.GONE
+            if (track.collectionName == "") collectionName.isVisible = false
             else collectionName.text = track.collectionName
             releaseDate.text = track.releaseDate.replaceAfter('-', "").replace("-", "")
             primaryGenreName.text = track.primaryGenreName
@@ -71,6 +71,18 @@ class AudioPlayer : AppCompatActivity() {
 
         playerViewModel.observeState().observe(this) {
             render(it)
+        }
+
+        playerViewModel.observeIsFavorite().observe(this) {
+            if (it) {
+                binding.addToFavorites.setImageResource(R.drawable.addtofavoritesactive)
+            } else {
+                binding.addToFavorites.setImageResource(R.drawable.addtofavoritesinactive)
+            }
+        }
+
+        binding.addToFavorites.setOnClickListener {
+            playerViewModel.onFavoriteClicked()
         }
 
         binding.startButton.setOnClickListener {

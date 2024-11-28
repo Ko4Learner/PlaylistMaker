@@ -16,9 +16,13 @@
     </fragment>
     <fragment
         android:id="@+id/mediaLibrariesFragment"
-        android:name="com.practicum.playlistmaker.media_libraries.ui.MediaLibrariesFragment"
+        android:name="com.practicum.playlistmaker.media_libraries.ui.fragment.MediaLibrariesFragment"
         android:label="MediaLibrariesFragment"
-        tools:layout="@layout/fragment_media_libraries" />
+        tools:layout="@layout/fragment_media_libraries" >
+        <action
+            android:id="@+id/action_mediaLibrariesFragment_to_audioPlayer"
+            app:destination="@id/audioPlayer" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.practicum.playlistmaker.settings.ui.fragment.SettingsFragment"

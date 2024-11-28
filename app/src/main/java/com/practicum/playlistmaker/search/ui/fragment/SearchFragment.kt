@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -79,7 +80,7 @@ class SearchFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.clearSearchBar.visibility = clearSearchBarVisibility(s)
+                binding.clearSearchBar.isVisible = !s.isNullOrEmpty()
                 searchRequest = s?.toString() ?: ""
                 searchViewModel.searchDebounce(
                     changedText = s?.toString() ?: ""
@@ -113,6 +114,17 @@ class SearchFragment : Fragment() {
         _binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (binding.inputEditText.text.isNullOrEmpty()) {
+            searchViewModel.readHistory()
+        } else {
+            searchViewModel.searchRequest(
+                binding.inputEditText.text.toString()
+            )
+        }
+    }
+
     private fun render(state: TracksState) {
         when (state) {
             is TracksState.Content -> showTracksSearchResults(state.tracks)
@@ -123,67 +135,59 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private fun clearSearchBarVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-    }
-
     private fun showHistory(trackHistoryList: List<Track>) {
-        binding.errorSearchLayout.visibility = View.GONE
-        binding.progressBar.visibility = View.GONE
+        binding.errorSearchLayout.isVisible = false
+        binding.progressBar.isVisible = false
         if (trackHistoryList != emptyList<Track>()) {
-            binding.searchHistoryTextView.visibility = View.VISIBLE
-            binding.searchHistoryButton.visibility = View.VISIBLE
+            binding.searchHistoryTextView.isVisible = true
+            binding.searchHistoryButton.isVisible = true
         } else {
-            binding.searchHistoryTextView.visibility = View.GONE
-            binding.searchHistoryButton.visibility = View.GONE
+            binding.searchHistoryTextView.isVisible = false
+            binding.searchHistoryButton.isVisible = false
         }
         trackAdapter.updateItems(trackHistoryList)
     }
 
     private fun showLoading() {
-        binding.searchHistoryTextView.visibility = View.GONE
-        binding.searchHistoryButton.visibility = View.GONE
-        binding.errorSearchLayout.visibility = View.GONE
+        binding.searchHistoryTextView.isVisible = false
+        binding.searchHistoryButton.isVisible = false
+        binding.errorSearchLayout.isVisible = false
         trackAdapter.updateItems(emptyList())
-        binding.progressBar.visibility = View.VISIBLE
+        binding.progressBar.isVisible = true
     }
 
     private fun showErrorInternetLayout() {
         trackAdapter.updateItems(emptyList())
         with(binding) {
-            searchHistoryTextView.visibility = View.GONE
-            searchHistoryButton.visibility = View.GONE
-            progressBar.visibility = View.GONE
+            searchHistoryTextView.isVisible = false
+            searchHistoryButton.isVisible = false
+            progressBar.isVisible = false
             errorSearchText.setText(R.string.errorSearchInternetTextView)
             errorSearchImage.setImageResource(R.drawable.errorinternet)
-            updateSearchButton.visibility = View.VISIBLE
-            errorSearchLayout.visibility = View.VISIBLE
+            updateSearchButton.isVisible = true
+            errorSearchLayout.isVisible = true
         }
     }
 
     private fun showErrorEmptyList() {
         trackAdapter.updateItems(emptyList())
         with(binding) {
-            searchHistoryTextView.visibility = View.GONE
-            searchHistoryButton.visibility = View.GONE
-            progressBar.visibility = View.GONE
+            searchHistoryTextView.isVisible = false
+            searchHistoryButton.isVisible = false
+            progressBar.isVisible = false
             errorSearchText.setText(R.string.emptySearchTextView)
             errorSearchImage.setImageResource(R.drawable.emptysearch)
-            updateSearchButton.visibility = View.GONE
-            errorSearchLayout.visibility = View.VISIBLE
+            updateSearchButton.isVisible = false
+            errorSearchLayout.isVisible = true
         }
     }
 
     private fun showTracksSearchResults(trackList: List<Track>) {
         with(binding) {
-            searchHistoryTextView.visibility = View.GONE
-            searchHistoryButton.visibility = View.GONE
-            progressBar.visibility = View.GONE
-            errorSearchLayout.visibility = View.GONE
+            searchHistoryTextView.isVisible = false
+            searchHistoryButton.isVisible = false
+            progressBar.isVisible = false
+            errorSearchLayout.isVisible = false
         }
         trackAdapter.updateItems(trackList)
     }

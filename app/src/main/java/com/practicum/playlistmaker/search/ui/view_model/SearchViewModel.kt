@@ -17,10 +17,6 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     private val stateLiveData = MutableLiveData<TracksState>()
     fun observeState(): LiveData<TracksState> = stateLiveData
 
-    init {
-        renderState(TracksState.History(searchInteractor.readHistory()))
-    }
-
     private val trackSearchDebounce = debounce<String>(SEARCH_DEBOUNCE_DELAY, viewModelScope, true)
     { changedText ->
         searchRequest(changedText)
@@ -33,16 +29,16 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
         this.latestSearchText = changedText
 
-        if (changedText == "") {
-            renderState(TracksState.History(searchInteractor.readHistory()))
+        if (changedText.isEmpty()) {
+            readHistory()
             return
         }
 
         trackSearchDebounce(changedText)
     }
 
-    private fun searchRequest(newSearchText: String) {
-        if (newSearchText != "") {
+     fun searchRequest(newSearchText: String) {
+        if (newSearchText.isNotEmpty()) {
             renderState(TracksState.Loading)
 
             viewModelScope.launch {
@@ -82,11 +78,17 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     fun clearHistory() {
         searchInteractor.clearHistory()
-        renderState(TracksState.History(searchInteractor.readHistory()))
+        readHistory()
     }
 
     fun addNewTrack(track: Track) {
         searchInteractor.addNewTrack(track)
+    }
+
+    fun readHistory(){
+         viewModelScope.launch {
+             renderState(TracksState.History(searchInteractor.readHistory()))
+         }
     }
 
     companion object {
