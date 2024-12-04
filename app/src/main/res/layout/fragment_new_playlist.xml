@@ -7,7 +7,7 @@
     android:background="@color/background"
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
-    tools:context=".media_libraries.ui.fragment.NewPlaylistFragment">
+    tools:context=".media_libraries.ui.fragment.playlists.NewPlaylistFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/returnFromSearch"
+            android:id="@+id/returnFromAddNewPlaylist"
             style="@style/toolbarTextView"
             android:text="@string/addNewPlaylist"
             app:drawableLeftCompat="@drawable/arrowback" />
@@ -44,7 +44,8 @@
     <Button
         android:id="@+id/buttonNewPlaylist"
         android:layout_width="match_parent"
-        android:layout_height="44dp" />
+        android:layout_height="44dp"
+        android:background="@drawable/selector_button"/>
 
 
 </LinearLayout>

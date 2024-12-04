@@ -12,4 +12,7 @@ data class PlaylistEntity(
     val imagePath: String,
     val trackIdList: String,
     val tracksCount: Int
-)
+) {
+
+
+}
