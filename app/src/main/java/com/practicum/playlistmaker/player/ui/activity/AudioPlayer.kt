@@ -8,10 +8,12 @@ import androidx.core.view.isVisible
 import androidx.navigation.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.practicum.playlistmaker.media_libraries.ui.state.PlaylistsState
 import com.practicum.playlistmaker.player.ui.state.PlayerState
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -81,6 +83,10 @@ class AudioPlayer : AppCompatActivity() {
             }
         }
 
+        playerViewModel.observePlaylistState().observe(this){
+
+        }
+
         binding.addToFavorites.setOnClickListener {
             playerViewModel.onFavoriteClicked()
         }
@@ -88,6 +94,16 @@ class AudioPlayer : AppCompatActivity() {
         binding.startButton.setOnClickListener {
             playerViewModel.startPlaying()
         }
+
+        val bottomSheetContainer = binding.playlistsBottomSheet
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+        binding.addToPlaylist.setOnClickListener {
+            playerViewModel.getPlaylists()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
     }
 
     override fun onPause() {
@@ -102,6 +118,7 @@ class AudioPlayer : AppCompatActivity() {
             is PlayerState.StatePlaying -> startPlayer(state.currentPosition)
         }
     }
+
 
     private fun preparePlayer() {
         binding.startButton.isEnabled = true

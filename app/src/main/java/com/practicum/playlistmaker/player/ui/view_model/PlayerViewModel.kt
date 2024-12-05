@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.media_libraries.domain.interactor.FavoriteTracksInteractor
+import com.practicum.playlistmaker.media_libraries.domain.interactor.PlaylistInteractor
+import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
+import com.practicum.playlistmaker.media_libraries.ui.state.PlaylistsState
 import com.practicum.playlistmaker.player.domain.interactor.TrackPlayerInteractor
 import com.practicum.playlistmaker.player.ui.state.PlayerState
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -15,13 +18,17 @@ import kotlinx.coroutines.launch
 class PlayerViewModel(
     private val track: Track,
     private val trackPlayerInteractor: TrackPlayerInteractor,
-    private val favoriteTracksInteractor: FavoriteTracksInteractor
+    private val favoriteTracksInteractor: FavoriteTracksInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private var playerState = STATE_DEFAULT
 
     private val stateLiveData = MutableLiveData<PlayerState>()
     fun observeState(): LiveData<PlayerState> = stateLiveData
+
+    private val statePlaylistLiveData = MutableLiveData<PlaylistsState>()
+    fun observePlaylistState(): LiveData<PlaylistsState> = statePlaylistLiveData
 
     private val isFavoriteLiveData = MutableLiveData<Boolean>()
     fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
@@ -31,6 +38,7 @@ class PlayerViewModel(
     init {
         preparePlayer()
         isFavoriteLiveData.postValue(track.isFavorite)
+        getPlaylists()
     }
 
     fun startPlaying() {
@@ -99,6 +107,16 @@ class PlayerViewModel(
                 delay(REFRESH_LISTENED_TIME_DELAY_MILLIS)
             }
         }
+    }
+
+    fun getPlaylists() {
+        val playlists = mutableListOf<Playlist>()
+        viewModelScope.launch {
+            playlistInteractor.getPlaylist()
+                .collect { playlist ->
+                    playlists.addAll(playlist)
+                }
+        }.invokeOnCompletion { statePlaylistLiveData.postValue(PlaylistsState.Content(playlists)) }
     }
 
     override fun onCleared() {

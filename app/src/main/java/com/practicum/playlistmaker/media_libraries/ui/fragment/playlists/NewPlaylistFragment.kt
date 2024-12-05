@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.practicum.playlistmaker.media_libraries.ui.view_model.NewPlaylistFragmentViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -68,8 +69,6 @@ class NewPlaylistFragment : Fragment() {
 
         binding.nameNewPlaylist.addTextChangedListener(textWatcher)
 
-
-        //Убедитесь, что у приложения есть все необходимые разрешения.
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
@@ -79,7 +78,12 @@ class NewPlaylistFragment : Fragment() {
             }
 
         binding.returnFromAddNewPlaylist.setOnClickListener {
-            confirmDialog.show()
+            if (binding.nameNewPlaylist.text.toString().isNotEmpty()
+                || binding.descriptionNewPlaylist.text.toString().isNotEmpty()
+                || binding.imageNewPlaylist.id != R.drawable.placeholder
+            ) {
+                confirmDialog.show()
+            } else findNavController().navigateUp()
         }
 
         binding.imageNewPlaylist.setOnClickListener {
@@ -110,7 +114,12 @@ class NewPlaylistFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                confirmDialog.show()
+                if (binding.nameNewPlaylist.text.toString().isNotEmpty()
+                    || binding.descriptionNewPlaylist.text.toString().isNotEmpty()
+                    || binding.imageNewPlaylist.id != R.drawable.placeholder
+                ) {
+                    confirmDialog.show()
+                } else findNavController().navigateUp()
             }
         })
     }
