@@ -8,7 +8,7 @@
     android:paddingVertical="8dp">
 
     <ImageView
-        android:id="@+id/trackImage"
+        android:id="@+id/playlistImage"
         android:layout_width="48dp"
         android:layout_height="48dp"
         tools:src="@drawable/placeholder" />
@@ -22,7 +22,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/trackName"
+            android:id="@+id/playlistName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -35,7 +35,7 @@
 
 
         <TextView
-            android:id="@+id/trackArtist"
+            android:id="@+id/playlistCountTracks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
