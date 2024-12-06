@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 import androidx.room.Room
 import com.practicum.playlistmaker.media_libraries.data.db.FavoriteTracksDatabase
 import com.practicum.playlistmaker.media_libraries.data.db.PlaylistDatabase
+import com.practicum.playlistmaker.media_libraries.data.db.PlaylistTracksDatabase
 import com.practicum.playlistmaker.media_libraries.data.db.mapper.PlaylistDbMapper
 import com.practicum.playlistmaker.media_libraries.data.db.mapper.TrackDbMapper
 import com.practicum.playlistmaker.search.data.mapper.TracksMapper
@@ -66,6 +67,15 @@ val dataModule = module {
             androidContext(),
             PlaylistDatabase::class.java,
             "playlist_database.db"
+        )
+            .build()
+    }
+
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            PlaylistTracksDatabase::class.java,
+            "playlist_tracks_database.db"
         )
             .build()
     }

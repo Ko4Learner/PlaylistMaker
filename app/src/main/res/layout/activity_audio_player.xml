@@ -275,4 +275,10 @@
             tools:listitem="@layout/playlist_player_item" />
 
     </LinearLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/player_container_view"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

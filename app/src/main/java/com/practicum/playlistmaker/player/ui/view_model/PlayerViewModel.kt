@@ -33,6 +33,9 @@ class PlayerViewModel(
     private val isFavoriteLiveData = MutableLiveData<Boolean>()
     fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
 
+    private val playlistContainTrack = MutableLiveData<Boolean>()
+    fun observePlaylistContainTrack(): LiveData<Boolean> = playlistContainTrack
+
     private var timerJob: Job? = null
 
     init {
@@ -117,6 +120,17 @@ class PlayerViewModel(
                     playlists.addAll(playlist)
                 }
         }.invokeOnCompletion { statePlaylistLiveData.postValue(PlaylistsState.Content(playlists)) }
+    }
+
+    fun addTrackToPlaylist(playlist: Playlist) {
+        if (playlist.trackIdList.contains(track.trackId)) {
+            playlistContainTrack.postValue(true)
+        } else {
+            //проверить
+            playlist.trackIdList = playlist.trackIdList.toMutableList().apply { add(track.trackId) }
+            playlist.tracksCount++
+            viewModelScope.launch { playlistInteractor.updatePlaylist(playlist, track) }
+        }
     }
 
     override fun onCleared() {

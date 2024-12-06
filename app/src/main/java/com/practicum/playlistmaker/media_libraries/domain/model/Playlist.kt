@@ -5,6 +5,6 @@ data class Playlist(
     val name: String,
     val description: String,
     val imagePath: String,
-    val trackIdList: List<Int> = emptyList(),
-    val tracksCount: Int = 0
+    var trackIdList: List<Int> = emptyList(),
+    var tracksCount: Int = 0
 )

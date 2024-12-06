@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.media_libraries.domain.interactor
 
 import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 import com.practicum.playlistmaker.media_libraries.domain.repository.PlaylistRepository
+import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository) :
@@ -19,7 +20,7 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
         return playlistRepository.getPlaylist()
     }
 
-    override suspend fun updatePlaylist(playlist: Playlist) {
-        playlistRepository.updatePlaylist(playlist)
+    override suspend fun updatePlaylist(playlist: Playlist, track: Track) {
+        playlistRepository.updatePlaylist(playlist, track)
     }
 }

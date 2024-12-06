@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +18,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
+import com.practicum.playlistmaker.media_libraries.ui.fragment.playlists.NewPlaylistFragment
 import com.practicum.playlistmaker.media_libraries.ui.state.PlaylistsState
 import com.practicum.playlistmaker.player.ui.state.PlayerState
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
@@ -53,20 +55,103 @@ class AudioPlayer : AppCompatActivity() {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        onPlaylistClickDebounce = debounce(CLICK_DEBOUNCE_DELAY,
+        onPlaylistClickDebounce = debounce(
+            CLICK_DEBOUNCE_DELAY,
             lifecycleScope,
-            false) {
-            playlist ->
+            false
+        ) { playlist ->
+            playerViewModel.addTrackToPlaylist(playlist)
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            TODO()
+
         }
 
         track = Gson().fromJson(args.track, Track::class.java)
+
+        prepareActivity()
 
         binding.returnFromAudioPlayer.setOnClickListener {
             finish()
         }
 
+        playerViewModel.observeState().observe(this) {
+            render(it)
+        }
+
+        playerViewModel.observeIsFavorite().observe(this) {
+            if (it) {
+                binding.addToFavorites.setImageResource(R.drawable.addtofavoritesactive)
+            } else {
+                binding.addToFavorites.setImageResource(R.drawable.addtofavoritesinactive)
+            }
+        }
+
+        playerViewModel.observePlaylistState().observe(this) {
+            playlistAdapter.updateItems((it as PlaylistsState.Content).playlists)
+        }
+
+        playerViewModel.observePlaylistContainTrack().observe(this) {
+            if (it) {
+                Toast.makeText(this, "Трек уже добавлен в плейлист []", Toast.LENGTH_LONG).show()
+            } else {
+                TODO()
+            }
+        }
+
+        binding.addToFavorites.setOnClickListener {
+            playerViewModel.onFavoriteClicked()
+        }
+
+        binding.startButton.setOnClickListener {
+            playerViewModel.startPlaying()
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.visibility = View.GONE
+                    }
+
+                    else -> {
+                        binding.overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                binding.overlay.alpha = (slideOffset + 1f) / 2
+            }
+        })
+
+        binding.addToPlaylist.setOnClickListener {
+            playerViewModel.getPlaylists()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.addNewPlaylist.setOnClickListener {
+            supportFragmentManager.beginTransaction()
+                .add(R.id.player_container_view, NewPlaylistFragment()).addToBackStack("player")
+                .commit()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        playerViewModel.onPauseActivity()
+    }
+
+    private fun render(state: PlayerState) {
+        when (state) {
+            is PlayerState.StatePrepared -> preparePlayer()
+            is PlayerState.StatePaused -> pausePlayer()
+            is PlayerState.StatePlaying -> startPlayer(state.currentPosition)
+        }
+    }
+
+    private fun prepareActivity() {
         with(binding.trackImage) {
             Glide.with(applicationContext)
                 .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
@@ -93,68 +178,7 @@ class AudioPlayer : AppCompatActivity() {
             primaryGenreName.text = track.primaryGenreName
             country.text = track.country
         }
-
-        playerViewModel.observeState().observe(this) {
-            render(it)
-        }
-
-        playerViewModel.observeIsFavorite().observe(this) {
-            if (it) {
-                binding.addToFavorites.setImageResource(R.drawable.addtofavoritesactive)
-            } else {
-                binding.addToFavorites.setImageResource(R.drawable.addtofavoritesinactive)
-            }
-        }
-
-        playerViewModel.observePlaylistState().observe(this) {
-            playlistAdapter.updateItems((it as PlaylistsState.Content).playlists)
-        }
-
-        binding.addToFavorites.setOnClickListener {
-            playerViewModel.onFavoriteClicked()
-        }
-
-        binding.startButton.setOnClickListener {
-            playerViewModel.startPlaying()
-        }
-
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding.overlay.visibility = View.GONE
-                    }
-                    else -> {
-                        binding.overlay.visibility = View.VISIBLE
-                    }
-                }
-            }
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                binding.overlay.alpha = (slideOffset + 1f)/2
-            }
-        })
-
-        binding.addToPlaylist.setOnClickListener {
-            playerViewModel.getPlaylists()
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        }
     }
-
-    override fun onPause() {
-        super.onPause()
-        playerViewModel.onPauseActivity()
-    }
-
-    private fun render(state: PlayerState) {
-        when (state) {
-            is PlayerState.StatePrepared -> preparePlayer()
-            is PlayerState.StatePaused -> pausePlayer()
-            is PlayerState.StatePlaying -> startPlayer(state.currentPosition)
-        }
-    }
-
 
     private fun preparePlayer() {
         binding.startButton.isEnabled = true
@@ -174,7 +198,6 @@ class AudioPlayer : AppCompatActivity() {
     private fun pausePlayer() {
         binding.startButton.setImageResource(R.drawable.audioplayerstartbutton)
     }
-
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
