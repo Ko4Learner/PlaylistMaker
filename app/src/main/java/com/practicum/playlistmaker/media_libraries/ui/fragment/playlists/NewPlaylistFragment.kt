@@ -54,7 +54,7 @@ class NewPlaylistFragment : Fragment() {
             .setNegativeButton("Отмена") { _, _ ->
 
             }.setPositiveButton("Завершить") { _, _ ->
-                findNavController().navigateUp()
+                requireActivity().supportFragmentManager.popBackStack()
             }
 
         textWatcher = object : TextWatcher {
@@ -80,10 +80,10 @@ class NewPlaylistFragment : Fragment() {
         binding.returnFromAddNewPlaylist.setOnClickListener {
             if (binding.nameNewPlaylist.text.toString().isNotEmpty()
                 || binding.descriptionNewPlaylist.text.toString().isNotEmpty()
-                || binding.imageNewPlaylist.id != R.drawable.placeholder
+//                || binding.imageNewPlaylist.id != R.drawable.placeholder
             ) {
                 confirmDialog.show()
-            } else findNavController().navigateUp()
+            } else requireActivity().supportFragmentManager.popBackStack()
         }
 
         binding.imageNewPlaylist.setOnClickListener {
@@ -106,20 +106,20 @@ class NewPlaylistFragment : Fragment() {
             )
             Toast.makeText(
                 requireContext(),
-                "Плейлист ${binding.nameNewPlaylist.text.toString()} создан",
+                "Плейлист ${binding.nameNewPlaylist.text} создан",
                 Toast.LENGTH_LONG
             ).show()
-            findNavController().navigateUp()
+            requireActivity().supportFragmentManager.popBackStack()
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.nameNewPlaylist.text.toString().isNotEmpty()
                     || binding.descriptionNewPlaylist.text.toString().isNotEmpty()
-                    || binding.imageNewPlaylist.id != R.drawable.placeholder
+//                    || binding.imageNewPlaylist.id != R.drawable.placeholder
                 ) {
                     confirmDialog.show()
-                } else findNavController().navigateUp()
+                } else requireActivity().supportFragmentManager.popBackStack()
             }
         })
     }

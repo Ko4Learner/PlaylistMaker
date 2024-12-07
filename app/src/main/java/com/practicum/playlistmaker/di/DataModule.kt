@@ -59,6 +59,7 @@ val dataModule = module {
             FavoriteTracksDatabase::class.java,
             "favorite_tracks_database.db"
         )
+            .fallbackToDestructiveMigration()
             .build()
     }
 
@@ -68,6 +69,7 @@ val dataModule = module {
             PlaylistDatabase::class.java,
             "playlist_database.db"
         )
+            .fallbackToDestructiveMigration()
             .build()
     }
 
@@ -77,6 +79,7 @@ val dataModule = module {
             PlaylistTracksDatabase::class.java,
             "playlist_tracks_database.db"
         )
+            .fallbackToDestructiveMigration()
             .build()
     }
 

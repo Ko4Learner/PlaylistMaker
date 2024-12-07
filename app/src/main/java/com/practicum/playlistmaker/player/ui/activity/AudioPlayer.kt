@@ -133,7 +133,8 @@ class AudioPlayer : AppCompatActivity() {
 
         binding.addNewPlaylist.setOnClickListener {
             supportFragmentManager.beginTransaction()
-                .add(R.id.player_container_view, NewPlaylistFragment()).addToBackStack("player")
+                .add(R.id.player_container_view, NewPlaylistFragment())
+                .addToBackStack("player")
                 .commit()
         }
     }

@@ -236,9 +236,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:visibility="visible"
+        android:background="@drawable/bottom_sheet_background"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="240dp"
+        app:behavior_peekHeight="504dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
 
@@ -268,6 +269,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="12dp"
             android:layout_weight="1"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -279,6 +281,6 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/player_container_view"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="0dp"
-        android:layout_height="0dp" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
