@@ -15,8 +15,8 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
@@ -35,7 +35,6 @@ class NewPlaylistFragment : Fragment() {
 
     lateinit var confirmDialog: MaterialAlertDialogBuilder
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,7 +42,6 @@ class NewPlaylistFragment : Fragment() {
         _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -80,7 +78,7 @@ class NewPlaylistFragment : Fragment() {
         binding.returnFromAddNewPlaylist.setOnClickListener {
             if (binding.nameNewPlaylist.text.toString().isNotEmpty()
                 || binding.descriptionNewPlaylist.text.toString().isNotEmpty()
-//                || binding.imageNewPlaylist.id != R.drawable.placeholder
+                || binding.imageNewPlaylist.resources.equals(R.drawable.add_photo.toDrawable())
             ) {
                 confirmDialog.show()
             } else requireActivity().supportFragmentManager.popBackStack()
@@ -116,14 +114,13 @@ class NewPlaylistFragment : Fragment() {
             override fun handleOnBackPressed() {
                 if (binding.nameNewPlaylist.text.toString().isNotEmpty()
                     || binding.descriptionNewPlaylist.text.toString().isNotEmpty()
-//                    || binding.imageNewPlaylist.id != R.drawable.placeholder
+                    || binding.imageNewPlaylist.resources.equals(R.drawable.add_photo.toDrawable())
                 ) {
                     confirmDialog.show()
                 } else requireActivity().supportFragmentManager.popBackStack()
             }
         })
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

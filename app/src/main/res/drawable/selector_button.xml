@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true">
-        <shape>
-            <solid android:color="@color/yp_black" />
-        </shape>
-    </item>
-    <item android:state_enabled="false">
-        <shape>
-            <solid android:color="@color/yp_grey" />
-        </shape>
-    </item>
-    <item>
-        <shape>
-            <solid android:color="@color/yp_blue" />
-        </shape>
-    </item>
+    <item android:drawable="@color/yp_black" android:state_pressed="true" />
+    <item android:drawable="@color/yp_grey" android:state_focused="true" />
+    <item android:drawable="@color/yp_blue" />
 </selector>
