@@ -14,10 +14,11 @@ class PlaylistViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
     private val image: ImageView =itemView.findViewById(R.id.playlistImage)
     private val name: TextView = itemView.findViewById(R.id.playlistName)
-    private val description: TextView = itemView.findViewById(R.id.playlistDescription)
+    private val countTracks: TextView = itemView.findViewById(R.id.playlistCountTracks)
 
     fun bind(playlist: Playlist) {
 
+        //TODO проверить радиус
         with(image) {
             Glide.with(itemView)
                 .load(playlist.imagePath)
@@ -36,6 +37,7 @@ class PlaylistViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
         }
         name.text = playlist.name
-        description.text = playlist.description
+        //TODO Добавить "треков" + окончания
+        countTracks.text = playlist.tracksCount.toString()
     }
 }

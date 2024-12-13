@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <stroke
-        android:color="@color/yp_grey"
+        android:color="@drawable/selector_edit_text"
         android:width="2dp" />
 
     <corners android:radius="8dp"/>

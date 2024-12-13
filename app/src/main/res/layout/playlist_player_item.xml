@@ -31,7 +31,7 @@
             android:textColor="@color/textColor"
             android:textFontWeight="400"
             android:textSize="@dimen/medium_textSize"
-            tools:text="@string/mockTrackName" />
+            tools:text="@string/mockAlbumName" />
 
 
         <TextView
@@ -44,7 +44,7 @@
             android:textColor="@color/artistTextColor"
             android:textFontWeight="400"
             android:textSize="@dimen/small_textSize"
-            tools:text="@string/mockArtistName" />
+            tools:text="@string/mockAlbumCountTracks" />
 
 
     </LinearLayout>

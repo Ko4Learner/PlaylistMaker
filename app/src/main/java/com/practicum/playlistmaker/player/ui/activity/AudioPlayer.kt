@@ -18,7 +18,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
-import com.practicum.playlistmaker.media_libraries.ui.fragment.playlists.NewPlaylistFragment
+import com.practicum.playlistmaker.media_libraries.ui.fragment.playlists.AddNewPlaylistFragment
 import com.practicum.playlistmaker.media_libraries.ui.state.PlaylistsState
 import com.practicum.playlistmaker.player.ui.state.PlayerState
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
@@ -91,9 +91,11 @@ class AudioPlayer : AppCompatActivity() {
 
         playerViewModel.observePlaylistContainTrack().observe(this) {
             if (it) {
+                //TODO() Название плейлиста
                 Toast.makeText(this, "Трек уже добавлен в плейлист []", Toast.LENGTH_LONG).show()
             } else {
-                TODO()
+                //TODO() Название плейлиста
+                Toast.makeText(this, "Добавлено в плейлист []", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -133,9 +135,12 @@ class AudioPlayer : AppCompatActivity() {
 
         binding.addNewPlaylist.setOnClickListener {
             supportFragmentManager.beginTransaction()
-                .add(R.id.player_container_view, NewPlaylistFragment())
+                .add(R.id.player_container_view, AddNewPlaylistFragment())
                 .addToBackStack("player")
                 .commit()
+        }
+        playlistAdapter.onItemClick = { playlist ->
+            onPlaylistClickDebounce(playlist)
         }
     }
 

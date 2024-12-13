@@ -38,5 +38,9 @@
     <string name="nameNewPlaylist">Название*</string>
     <string name="descriptionNewPlaylist">Описание</string>
     <string name="addToPlaylist">Добавить в плейлист</string>
-    <string name="CreateNewPlaylist">Создать</string>
+    <string name="create">Создать</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="mockAlbumName">AlbumName</string>
+    <string name="mockAlbumCountTracks">** tracks</string>
 </resources>

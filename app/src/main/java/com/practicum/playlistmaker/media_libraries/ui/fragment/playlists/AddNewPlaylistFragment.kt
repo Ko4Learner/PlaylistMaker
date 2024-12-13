@@ -19,15 +19,16 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
+import com.practicum.playlistmaker.databinding.FragmentAddNewPlaylistBinding
 import com.practicum.playlistmaker.media_libraries.ui.view_model.NewPlaylistFragmentViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 
-class NewPlaylistFragment : Fragment() {
 
-    private var _binding: FragmentNewPlaylistBinding? = null
+class AddNewPlaylistFragment : Fragment() {
+
+    private var _binding: FragmentAddNewPlaylistBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var textWatcher: TextWatcher
@@ -39,7 +40,7 @@ class NewPlaylistFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
+        _binding = FragmentAddNewPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -59,7 +60,7 @@ class NewPlaylistFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.buttonNewPlaylist.isActivated = s.toString().isNotEmpty()
+                binding.buttonNewPlaylist.isEnabled = !s.isNullOrEmpty()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -102,6 +103,7 @@ class NewPlaylistFragment : Fragment() {
                 description = descriptionAlbum,
                 imagePath = imagePath
             )
+            //TODO() кастомный Toast
             Toast.makeText(
                 requireContext(),
                 "Плейлист ${binding.nameNewPlaylist.text} создан",
