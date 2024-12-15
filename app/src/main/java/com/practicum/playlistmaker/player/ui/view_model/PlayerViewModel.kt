@@ -10,6 +10,7 @@ import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 import com.practicum.playlistmaker.media_libraries.ui.state.PlaylistsState
 import com.practicum.playlistmaker.player.domain.interactor.TrackPlayerInteractor
 import com.practicum.playlistmaker.player.ui.state.PlayerState
+import com.practicum.playlistmaker.player.ui.state.PlaylistContainTrackState
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -33,8 +34,8 @@ class PlayerViewModel(
     private val isFavoriteLiveData = MutableLiveData<Boolean>()
     fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
 
-    private val playlistContainTrack = MutableLiveData<Boolean>()
-    fun observePlaylistContainTrack(): LiveData<Boolean> = playlistContainTrack
+    private val playlistContainTrack = MutableLiveData<PlaylistContainTrackState>()
+    fun observePlaylistContainTrack(): LiveData<PlaylistContainTrackState> = playlistContainTrack
 
     private var timerJob: Job? = null
 
@@ -124,11 +125,11 @@ class PlayerViewModel(
 
     fun addTrackToPlaylist(playlist: Playlist) {
         if (playlist.trackIdList.contains(track.trackId)) {
-            playlistContainTrack.postValue(true)
+            playlistContainTrack.postValue(PlaylistContainTrackState.StateContain(playlist))
         } else {
             viewModelScope.launch { playlistInteractor.updatePlaylist(playlist, track) }
-                .invokeOnCompletion { /*TODO() реакция на добавление трека*/
-                    playlistContainTrack.postValue(false)
+                .invokeOnCompletion {
+                    playlistContainTrack.postValue(PlaylistContainTrackState.StateNotContain(playlist))
                 }
         }
     }

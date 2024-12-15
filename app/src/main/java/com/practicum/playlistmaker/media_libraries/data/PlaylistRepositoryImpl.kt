@@ -34,7 +34,7 @@ class PlaylistRepositoryImpl(
     }
 
     override suspend fun updatePlaylist(playlist: Playlist, track: Track) {
-        //TODO обработать обновление плейлиста и вернуть информацию во вьюмодель
+
         playlistDatabase.playlistDao()
             .updatePlaylist(playlistDbMapper.insertTrackMap(playlist,track))
         playlistTracksDatabase.playlistTracksDao().insertPlaylistTrack(trackDbMapper.map(track))

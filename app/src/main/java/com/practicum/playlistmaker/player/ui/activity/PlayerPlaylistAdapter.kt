@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.player.ui.activity
 
+import android.annotation.SuppressLint
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -54,6 +55,7 @@ class PlayerPlaylistAdapter :
         private val playlistCountTracks: TextView = itemView.findViewById(R.id.playlistCountTracks)
 
 
+        @SuppressLint("SetTextI18n")
         fun bind(model: Playlist) {
 
             itemView.setOnClickListener { onItemClick?.let { it1 -> it1(model) } }
@@ -78,8 +80,19 @@ class PlayerPlaylistAdapter :
 
             playlistName.text = model.name
 
-            //TODO Добавить "треков" + окончания
-            playlistCountTracks.text = model.tracksCount.toString()
+            playlistCountTracks.text =
+                model.tracksCount.toString() + endWordTrack(model.tracksCount)
+        }
+
+        private fun endWordTrack(tracksCount: Int): String {
+            return if (((tracksCount % 100) >= 10 && (tracksCount % 100) <= 20)
+                || ((tracksCount % 10) == 0)
+                || ((tracksCount % 10) >= 5)
+            ) {
+                " треков"
+            } else if ((tracksCount % 10) == 1) {
+                " трек"
+            } else " трека"
         }
     }
 

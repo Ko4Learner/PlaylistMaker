@@ -21,6 +21,7 @@ import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 import com.practicum.playlistmaker.media_libraries.ui.fragment.playlists.AddNewPlaylistFragment
 import com.practicum.playlistmaker.media_libraries.ui.state.PlaylistsState
 import com.practicum.playlistmaker.player.ui.state.PlayerState
+import com.practicum.playlistmaker.player.ui.state.PlaylistContainTrackState
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -90,13 +91,7 @@ class AudioPlayer : AppCompatActivity() {
         }
 
         playerViewModel.observePlaylistContainTrack().observe(this) {
-            if (it) {
-                //TODO() Название плейлиста
-                Toast.makeText(this, "Трек уже добавлен в плейлист []", Toast.LENGTH_LONG).show()
-            } else {
-                //TODO() Название плейлиста
-                Toast.makeText(this, "Добавлено в плейлист []", Toast.LENGTH_LONG).show()
-            }
+            renderPlaylistToast(it)
         }
 
         binding.addToFavorites.setOnClickListener {
@@ -138,6 +133,7 @@ class AudioPlayer : AppCompatActivity() {
                 .add(R.id.player_container_view, AddNewPlaylistFragment())
                 .addToBackStack("player")
                 .commit()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
         playlistAdapter.onItemClick = { playlist ->
             onPlaylistClickDebounce(playlist)
@@ -149,11 +145,29 @@ class AudioPlayer : AppCompatActivity() {
         playerViewModel.onPauseActivity()
     }
 
+
     private fun render(state: PlayerState) {
         when (state) {
             is PlayerState.StatePrepared -> preparePlayer()
             is PlayerState.StatePaused -> pausePlayer()
             is PlayerState.StatePlaying -> startPlayer(state.currentPosition)
+        }
+    }
+
+    private fun renderPlaylistToast(state: PlaylistContainTrackState) {
+        when (state) {
+
+            is PlaylistContainTrackState.StateContain -> Toast.makeText(
+                this,
+                "Трек уже добавлен в плейлист ${state.playlist.name}",
+                Toast.LENGTH_LONG
+            ).show()
+
+            is PlaylistContainTrackState.StateNotContain -> Toast.makeText(
+                this,
+                "Добавлено в плейлист ${state.playlist.name}",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 

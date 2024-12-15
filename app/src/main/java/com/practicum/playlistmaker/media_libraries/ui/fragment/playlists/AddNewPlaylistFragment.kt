@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.media_libraries.ui.fragment.playlists
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -7,16 +8,17 @@ import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.net.toUri
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentAddNewPlaylistBinding
@@ -24,6 +26,7 @@ import com.practicum.playlistmaker.media_libraries.ui.view_model.NewPlaylistFrag
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
+import java.util.Calendar
 
 
 class AddNewPlaylistFragment : Fragment() {
@@ -35,6 +38,9 @@ class AddNewPlaylistFragment : Fragment() {
     private val newPlaylistViewModel: NewPlaylistFragmentViewModel by viewModel()
 
     lateinit var confirmDialog: MaterialAlertDialogBuilder
+
+    private var imagePath = ""
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,9 +75,24 @@ class AddNewPlaylistFragment : Fragment() {
         binding.nameNewPlaylist.addTextChangedListener(textWatcher)
 
         val pickMedia =
-            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
                 if (uri != null) {
-                    binding.imageNewPlaylist.setImageURI(uri)
+                    with(binding.imageNewPlaylist) {
+                        Glide.with(binding.root)
+                            .load(uri)
+                            .placeholder(R.drawable.placeholder)
+                            .centerCrop()
+                            .transform(
+                                RoundedCorners(
+                                    TypedValue.applyDimension(
+                                        TypedValue.COMPLEX_UNIT_DIP,
+                                        2F,
+                                        context.resources.displayMetrics
+                                    ).toInt()
+                                )
+                            )
+                            .into(binding.imageNewPlaylist)
+                    }
                     saveImageToPrivateStorage(uri)
                 }
             }
@@ -86,16 +107,10 @@ class AddNewPlaylistFragment : Fragment() {
         }
 
         binding.imageNewPlaylist.setOnClickListener {
-            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            pickMedia.launch(arrayOf("image/*"))
         }
 
         binding.buttonNewPlaylist.setOnClickListener {
-            val imagePath = File(
-                File(
-                    requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                    "my_Album"
-                ), binding.nameNewPlaylist.text.toString()
-            ).toUri().toString()
             val nameAlbum = binding.nameNewPlaylist.text.toString()
             val descriptionAlbum = binding.descriptionNewPlaylist.text.toString()
             newPlaylistViewModel.insertNewPlaylist(
@@ -103,7 +118,6 @@ class AddNewPlaylistFragment : Fragment() {
                 description = descriptionAlbum,
                 imagePath = imagePath
             )
-            //TODO() кастомный Toast
             Toast.makeText(
                 requireContext(),
                 "Плейлист ${binding.nameNewPlaylist.text} создан",
@@ -132,16 +146,31 @@ class AddNewPlaylistFragment : Fragment() {
 
     private fun saveImageToPrivateStorage(uri: Uri) {
 
+        val contentResolver = requireActivity().applicationContext.contentResolver
+
         val filePath =
-            File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "my_Album")
+            File(
+                requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                getString(R.string.DirectoryImagePlaylist)
+            )
         if (!filePath.exists()) {
             filePath.mkdirs()
         }
-        val file = File(filePath, binding.nameNewPlaylist.text.toString())
+
+        val file = File(
+            filePath,
+            binding.nameNewPlaylist.text.toString() + Calendar.getInstance().time + getString(R.string.jpg)
+        )
+
+        val takeFlags: Int = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        contentResolver.takePersistableUriPermission(uri, takeFlags)
+
         val inputStream = requireActivity().applicationContext.contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+
+        imagePath = file.path
     }
 }
