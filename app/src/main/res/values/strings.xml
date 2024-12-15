@@ -35,5 +35,12 @@
     <string name="addNewPlaylist">Новый плейлист</string>
     <string name="favoritesTracks">Избранные треки</string>
     <string name="playlists">Плейлисты</string>
-
+    <string name="nameNewPlaylist">Название*</string>
+    <string name="descriptionNewPlaylist">Описание</string>
+    <string name="addToPlaylist">Добавить в плейлист</string>
+    <string name="create">Создать</string>
+    <string name="mockAlbumName">AlbumName</string>
+    <string name="mockAlbumCountTracks">** tracks</string>
+    <string name="DirectoryImagePlaylist">my_Album</string>
+    <string name="jpg">.jpg</string>
 </resources>

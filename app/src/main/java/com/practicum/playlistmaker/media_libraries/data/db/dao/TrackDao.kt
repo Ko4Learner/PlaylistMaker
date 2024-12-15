@@ -12,12 +12,12 @@ interface TrackDao {
     @Insert(entity = TrackEntity::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavoriteTrack(track: TrackEntity)
 
-    @Query("DELETE FROM favorite_tracks WHERE trackId = :trackId")
+    @Query("DELETE FROM tracks WHERE trackId = :trackId")
     suspend fun deleteFavoriteTrack(trackId: Int)
 
-    @Query("SELECT * FROM favorite_tracks")
+    @Query("SELECT * FROM tracks")
     suspend fun getFavoriteTracks(): List<TrackEntity>
 
-    @Query("SELECT trackId FROM favorite_tracks")
+    @Query("SELECT trackId FROM tracks")
     suspend fun getFavoriteTracksId(): List<Int>
 }

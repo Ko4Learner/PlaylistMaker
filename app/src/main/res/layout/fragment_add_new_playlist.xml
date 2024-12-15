@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    tools:context=".media_libraries.ui.fragment.playlists.AddNewPlaylistFragment">
+
+    <LinearLayout
+        android:id="@+id/returnFromAddNewPlaylistLayout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/returnFromAddNewPlaylist"
+            style="@style/toolbarTextView"
+            android:text="@string/addNewPlaylist"
+            app:drawableLeftCompat="@drawable/arrowback" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageNewPlaylist"
+        android:layout_width="match_parent"
+        android:layout_height="312dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/dash_stroke_rectangle"
+        android:scaleType="center"
+        android:src="@drawable/add_photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/returnFromAddNewPlaylistLayout" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/nameNewPlaylist"
+        style="@style/EditTextNewPlaylist"
+        android:layout_marginTop="32dp"
+        android:hint="@string/nameNewPlaylist"
+        app:boxStrokeColor="@drawable/selector_edit_text"
+        app:layout_constraintDimensionRatio="w,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageNewPlaylist" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/descriptionNewPlaylist"
+        style="@style/EditTextNewPlaylist"
+        android:layout_marginTop="16dp"
+        android:hint="@string/descriptionNewPlaylist"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nameNewPlaylist" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonNewPlaylist"
+        style="@style/create_new_playlist_button"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginBottom="32dp"
+        android:enabled="false"
+        android:text="@string/create"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
