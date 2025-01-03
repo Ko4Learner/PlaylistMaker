@@ -3,7 +3,11 @@ package com.practicum.playlistmaker.di
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.room.Room
+import com.google.gson.Gson
 import com.practicum.playlistmaker.media_libraries.data.db.FavoriteTracksDatabase
+import com.practicum.playlistmaker.media_libraries.data.db.PlaylistDatabase
+import com.practicum.playlistmaker.media_libraries.data.db.PlaylistTracksDatabase
+import com.practicum.playlistmaker.media_libraries.data.db.mapper.PlaylistDbMapper
 import com.practicum.playlistmaker.media_libraries.data.db.mapper.TrackDbMapper
 import com.practicum.playlistmaker.search.data.mapper.TracksMapper
 import com.practicum.playlistmaker.search.data.network.NetworkClient
@@ -38,6 +42,8 @@ val dataModule = module {
         MediaPlayer()
     }
 
+    factory { Gson() }
+
     single<NetworkClient> {
         RetrofitNetworkClient(get())
     }
@@ -56,14 +62,39 @@ val dataModule = module {
             FavoriteTracksDatabase::class.java,
             "favorite_tracks_database.db"
         )
+            .fallbackToDestructiveMigration()
             .build()
     }
 
-    single<TrackDbMapper>{
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            PlaylistDatabase::class.java,
+            "playlist_database.db"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            PlaylistTracksDatabase::class.java,
+            "playlist_tracks_database.db"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    single<TrackDbMapper> {
         TrackDbMapper()
     }
 
-    single<TracksMapper>{
+    single<TracksMapper> {
         TracksMapper()
+    }
+
+    single<PlaylistDbMapper> {
+        PlaylistDbMapper(get())
     }
 }

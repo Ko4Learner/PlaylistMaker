@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.media_libraries.ui.fragment
+package com.practicum.playlistmaker.media_libraries.ui.fragment.favorites_tracks
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.practicum.playlistmaker.databinding.FragmentFavoritesTracksBinding
+import com.practicum.playlistmaker.media_libraries.ui.fragment.MediaLibrariesFragmentDirections
 import com.practicum.playlistmaker.media_libraries.ui.state.FavoriteTracksState
 import com.practicum.playlistmaker.media_libraries.ui.view_model.FavoritesTracksFragmentViewModel
 import com.practicum.playlistmaker.search.domain.model.Track

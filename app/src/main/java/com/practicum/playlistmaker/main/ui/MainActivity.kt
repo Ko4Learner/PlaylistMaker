@@ -2,7 +2,9 @@ package com.practicum.playlistmaker.main.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.practicum.playlistmaker.R
@@ -21,6 +23,13 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.setupWithNavController(navController)
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+
+            binding.bottomNavigationView.isVisible = when (destination.id) {
+                R.id.addNewPlaylistFragment -> false
+                else -> true
+            }
+        }
     }
 }
 

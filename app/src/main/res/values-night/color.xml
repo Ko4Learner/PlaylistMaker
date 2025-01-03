@@ -11,4 +11,5 @@
     <color name="UpdateSearchButtonTextColor">@color/yp_black</color>
     <color name="trackTint">@color/yp_light_blue</color>
     <color name="thumbTint">@color/yp_blue</color>
+    <color name="iconLightGrey_White">@color/yp_white</color>
 </resources>
