@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.di
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.room.Room
+import com.google.gson.Gson
 import com.practicum.playlistmaker.media_libraries.data.db.FavoriteTracksDatabase
 import com.practicum.playlistmaker.media_libraries.data.db.PlaylistDatabase
 import com.practicum.playlistmaker.media_libraries.data.db.PlaylistTracksDatabase
@@ -40,6 +41,8 @@ val dataModule = module {
     factory {
         MediaPlayer()
     }
+
+    factory { Gson() }
 
     single<NetworkClient> {
         RetrofitNetworkClient(get())
@@ -92,6 +95,6 @@ val dataModule = module {
     }
 
     single<PlaylistDbMapper> {
-        PlaylistDbMapper()
+        PlaylistDbMapper(get())
     }
 }

@@ -11,7 +11,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 
-class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class PlaylistViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
     private val image: ImageView = itemView.findViewById(R.id.playlistImage)
     private val name: TextView = itemView.findViewById(R.id.playlistName)
@@ -38,19 +38,7 @@ class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         }
         name.text = playlist.name
-
-        countTracks.text = playlist.tracksCount.toString() + endWordTrack(playlist.tracksCount)
-    }
-
-    private fun endWordTrack(tracksCount: Int): String {
-        return if (((tracksCount % 100) >= 10 && (tracksCount % 100) <= 20)
-            || ((tracksCount % 10) == 0)
-            || ((tracksCount % 10) >= 5)
-        ) {
-            " треков"
-        } else if ((tracksCount % 10) == 1) {
-            " трек"
-        } else " трека"
+        countTracks.text = view.resources.getQuantityString(R.plurals.track, playlist.tracksCount, playlist.tracksCount)
     }
 }
 

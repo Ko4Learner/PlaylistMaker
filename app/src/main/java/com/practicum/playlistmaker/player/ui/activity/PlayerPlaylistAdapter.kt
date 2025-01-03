@@ -48,7 +48,8 @@ class PlayerPlaylistAdapter :
 
     var onItemClick: ((Playlist) -> Unit)? = null
 
-    inner class PlayerPlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class PlayerPlaylistViewHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
 
         private val playlistImage: ImageView = itemView.findViewById(R.id.playlistImage)
         private val playlistName: TextView = itemView.findViewById(R.id.playlistName)
@@ -81,18 +82,7 @@ class PlayerPlaylistAdapter :
             playlistName.text = model.name
 
             playlistCountTracks.text =
-                model.tracksCount.toString() + endWordTrack(model.tracksCount)
-        }
-
-        private fun endWordTrack(tracksCount: Int): String {
-            return if (((tracksCount % 100) >= 10 && (tracksCount % 100) <= 20)
-                || ((tracksCount % 10) == 0)
-                || ((tracksCount % 10) >= 5)
-            ) {
-                " треков"
-            } else if ((tracksCount % 10) == 1) {
-                " трек"
-            } else " трека"
+                itemView.resources.getQuantityString(R.plurals.track, model.tracksCount,model.tracksCount)
         }
     }
 

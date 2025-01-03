@@ -6,9 +6,8 @@ import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 
 
-class PlaylistDbMapper {
+class PlaylistDbMapper(private val gson: Gson) {
 
-    private val gson = Gson()
 
     fun map(playlist: Playlist): PlaylistEntity {
         return PlaylistEntity(

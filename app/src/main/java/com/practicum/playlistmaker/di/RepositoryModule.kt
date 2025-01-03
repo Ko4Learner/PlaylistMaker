@@ -12,6 +12,7 @@ import com.practicum.playlistmaker.settings.data.repository.SettingsRepositoryIm
 import com.practicum.playlistmaker.settings.domain.repository.SettingsRepository
 import com.practicum.playlistmaker.sharing.data.repository.SharingRepositoryImpl
 import com.practicum.playlistmaker.sharing.domain.repository.SharingRepository
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
 val repositoryModule = module {
@@ -38,6 +39,6 @@ val repositoryModule = module {
     }
 
     single<PlaylistRepository> {
-        PlaylistRepositoryImpl(get(), get(), get(), get())
+        PlaylistRepositoryImpl(get(), get(), get(), get(),get())
     }
 }

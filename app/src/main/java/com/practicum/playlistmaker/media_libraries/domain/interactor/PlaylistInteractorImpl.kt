@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.media_libraries.domain.interactor
 
+import android.net.Uri
 import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 import com.practicum.playlistmaker.media_libraries.domain.repository.PlaylistRepository
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -22,5 +23,9 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
 
     override suspend fun updatePlaylist(playlist: Playlist, track: Track) {
         playlistRepository.updatePlaylist(playlist, track)
+    }
+
+    override suspend fun saveImageToPrivateStorage(uri: Uri, playlistName: String): String {
+        return playlistRepository.saveImageToPrivateStorage(uri, playlistName)
     }
 }
