@@ -17,7 +17,7 @@ class PlaylistsFragmentViewModel(private val playlistInteractor: PlaylistInterac
 
     fun getPlaylists() {
         viewModelScope.launch {
-            playlistInteractor.getPlaylist()
+            playlistInteractor.getPlaylists()
                 .collect { playlist ->
                     val playlists = mutableListOf<Playlist>()
                     playlists.addAll(playlist)

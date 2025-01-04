@@ -42,20 +42,22 @@ class PlaylistRepositoryImpl(
             .deletePlaylist(playlistId)
     }
 
-    override fun getPlaylist(): Flow<List<Playlist>> = flow {
-        val playlists = playlistDatabase.playlistDao().getPlaylist()
+    override fun getPlaylists(): Flow<List<Playlist>> = flow {
+        val playlists = playlistDatabase.playlistDao().getPlaylists()
         emit(convertFromPlaylistEntity(playlists))
     }
 
-    override suspend fun updatePlaylist(playlist: Playlist, track: Track) {
+    override suspend fun getPlaylist(playlistId: Int): Playlist {
+        return playlistDbMapper.map(playlistDatabase.playlistDao().getPlaylist(playlistId))
+    }
 
+    override suspend fun updatePlaylist(playlist: Playlist, track: Track) {
         playlistDatabase.playlistDao()
             .updatePlaylist(playlistDbMapper.insertTrackMap(playlist,track))
         playlistTracksDatabase.playlistTracksDao().insertPlaylistTrack(trackDbMapper.map(track))
     }
 
     override suspend fun saveImageToPrivateStorage(uri: Uri, playlistName: String): String {
-
         val contentResolver = application.applicationContext.contentResolver
 
         val filePath =

@@ -43,9 +43,9 @@ class PlaylistsFragment : Fragment() {
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false
-        ) { _ ->
+        ) { playlist ->
             val direction =
-                MediaLibrariesFragmentDirections.actionMediaLibrariesFragmentToPlaylistFragment()
+                MediaLibrariesFragmentDirections.actionMediaLibrariesFragmentToPlaylistFragment(playlist.playlistId)
             findNavController().navigate(direction)
 
         }
