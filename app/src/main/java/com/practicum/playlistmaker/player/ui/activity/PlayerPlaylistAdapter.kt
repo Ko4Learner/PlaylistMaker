@@ -56,7 +56,6 @@ class PlayerPlaylistAdapter :
         private val playlistCountTracks: TextView = itemView.findViewById(R.id.playlistCountTracks)
 
 
-        @SuppressLint("SetTextI18n")
         fun bind(model: Playlist) {
 
             itemView.setOnClickListener { onItemClick?.let { it1 -> it1(model) } }
