@@ -21,7 +21,7 @@ class PlaylistsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val playlistsFragmentViewModel: PlaylistsFragmentViewModel by viewModel()
-    private val playlistAdapter = PlaylistAdapter()
+    private val playlistAdapter = PlaylistsAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,

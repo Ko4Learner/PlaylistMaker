@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="mainButtonRadius">16dp</dimen>
+    <dimen name="_24sp_textSize">24sp</dimen>
     <dimen name="large_textSize">22sp</dimen>
     <dimen name="medium_textSize">16sp</dimen>
     <dimen name="small_textSize">12sp</dimen>
@@ -8,4 +9,6 @@
     <dimen name="settings_paddingHorizontal">16dp</dimen>
     <dimen name="settings_layoutHeight">64dp</dimen>
     <dimen name="bottom_nav_height">56dp</dimen>
+    <dimen name="padding_bottom_nav">64dp</dimen>
+    <dimen name="_18sp_TextSize">18sp</dimen>
 </resources>

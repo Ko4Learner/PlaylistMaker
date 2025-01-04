@@ -11,7 +11,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 
-class PlaylistViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+class PlaylistsViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
     private val image: ImageView = itemView.findViewById(R.id.playlistImage)
     private val name: TextView = itemView.findViewById(R.id.playlistName)

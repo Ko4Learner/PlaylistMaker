@@ -57,4 +57,9 @@
         <item quantity="many">%1$d треков</item>
         <item quantity="other">%1$d треков</item>
     </plurals>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="mockAlbumDescription">AlbumDescription</string>
+    <string name="mockTracksTime">300 минут</string>
+    <string name="mockTracksCount">100 треков</string>
 </resources>
