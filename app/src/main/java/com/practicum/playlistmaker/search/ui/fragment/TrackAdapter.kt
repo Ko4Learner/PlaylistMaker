@@ -16,9 +16,9 @@ import com.practicum.playlistmaker.search.domain.model.Track
 class TrackAdapter :
     RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
 
-        private var trackList = mutableListOf<Track>()
+    private var trackList = mutableListOf<Track>()
 
-        fun updateItems(items: List<Track>) {
+    fun updateItems(items: List<Track>) {
 
         val oldItems = this.trackList
         val newItems = items.toMutableList()
@@ -47,6 +47,8 @@ class TrackAdapter :
 
     var onItemClick: ((Track) -> Unit)? = null
 
+    var onLongItemClick: ((Track) -> Unit)? = null
+
     inner class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val trackImage: ImageView = itemView.findViewById(R.id.trackImage)
@@ -57,6 +59,11 @@ class TrackAdapter :
         fun bind(model: Track) {
 
             itemView.setOnClickListener { onItemClick?.let { it1 -> it1(model) } }
+
+            itemView.setOnLongClickListener {
+                onLongItemClick?.let { it1 -> it1(model) }
+                true
+            }
 
             with(trackImage) {
                 Glide.with(itemView)

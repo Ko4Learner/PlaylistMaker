@@ -56,5 +56,8 @@
         <argument
             android:name="playlistId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_playlistFragment_to_audioPlayer"
+            app:destination="@id/audioPlayer" />
     </fragment>
 </navigation>

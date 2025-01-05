@@ -1,22 +1,29 @@
 package com.practicum.playlistmaker.media_libraries.ui.fragment.playlist
 
+import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistBinding
 import com.practicum.playlistmaker.media_libraries.ui.state.PlaylistState
 import com.practicum.playlistmaker.media_libraries.ui.view_model.PlaylistFragmentViewModel
+import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.search.ui.fragment.TrackAdapter
+import debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-
 
 class PlaylistFragment : Fragment() {
 
@@ -25,9 +32,15 @@ class PlaylistFragment : Fragment() {
 
     private val args: PlaylistFragmentArgs by navArgs()
 
+    private val tracksAdapter = TrackAdapter()
+
     private val playlistViewModel: PlaylistFragmentViewModel by viewModel {
         parametersOf(args.playlistId)
     }
+
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
+
+    private val gson = Gson()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,8 +53,43 @@ class PlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.recycleViewPlaylist.layoutManager = LinearLayoutManager(requireContext())
+        binding.recycleViewPlaylist.adapter = tracksAdapter
+
+        BottomSheetBehavior.from(binding.playlistsBottomSheet).apply {
+            binding.menu.post {
+                val height =
+                    Resources.getSystem().displayMetrics.heightPixels - binding.menu.bottom - 65
+                if (peekHeight > height) {
+                    peekHeight = height
+                }
+            }
+        }
+
+        onTrackClickDebounce = debounce(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track ->
+            val direction =
+                PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayer(gson.toJson(track))
+            findNavController().navigate(direction)
+        }
+
+        binding.returnFromPlaylist.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         playlistViewModel.observePlaylistState().observe(viewLifecycleOwner) {
             render(it)
+        }
+
+        tracksAdapter.onItemClick = { track ->
+            onTrackClickDebounce(track)
+        }
+
+        tracksAdapter.onLongItemClick = { track ->
+            playlistViewModel.deleteTrackFromPlaylist(track.trackId)
         }
     }
 
@@ -78,6 +126,8 @@ class PlaylistFragment : Fragment() {
                 state.playlist.tracksCount
             )
         }
+
+        tracksAdapter.updateItems(state.trackList)
     }
 
     override fun onDestroyView() {
@@ -86,6 +136,6 @@ class PlaylistFragment : Fragment() {
     }
 
     companion object {
-
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

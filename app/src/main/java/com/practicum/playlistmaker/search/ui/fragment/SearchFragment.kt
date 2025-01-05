@@ -52,7 +52,7 @@ class SearchFragment : Fragment() {
         binding.recycleViewTrack.layoutManager = LinearLayoutManager(requireContext())
         binding.recycleViewTrack.adapter = trackAdapter
 
-        onTrackClickDebounce = debounce<Track>(
+        onTrackClickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false

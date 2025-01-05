@@ -52,4 +52,8 @@ class PlaylistFragmentViewModel(
                 }
             }
     }
+
+    fun deleteTrackFromPlaylist (trackId: Int) {
+
+    }
 }
