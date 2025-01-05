@@ -11,6 +11,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.media_libraries.data.db.PlaylistDatabase
 import com.practicum.playlistmaker.media_libraries.data.db.PlaylistTracksDatabase
 import com.practicum.playlistmaker.media_libraries.data.db.entity.PlaylistEntity
+import com.practicum.playlistmaker.media_libraries.data.db.entity.TrackEntity
 import com.practicum.playlistmaker.media_libraries.data.db.mapper.PlaylistDbMapper
 import com.practicum.playlistmaker.media_libraries.data.db.mapper.TrackDbMapper
 import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
@@ -45,6 +46,10 @@ class PlaylistRepositoryImpl(
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
         val playlists = playlistDatabase.playlistDao().getPlaylists()
         emit(convertFromPlaylistEntity(playlists))
+    }
+
+    override fun getPlaylistTracks(tracksIdList: List<Int>): Flow<List<Track>> = flow {
+        emit(convertFromTrackEntity(playlistTracksDatabase.playlistTracksDao().getAllPlaylistsTracks()).filter { track -> tracksIdList.contains(track.trackId) })
     }
 
     override suspend fun getPlaylist(playlistId: Int): Playlist {
@@ -91,5 +96,9 @@ class PlaylistRepositoryImpl(
 
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {
         return playlists.map { playlist -> playlistDbMapper.map(playlist) }
+    }
+
+    private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
+        return tracks.map { track -> trackDbMapper.map(track) }
     }
 }
