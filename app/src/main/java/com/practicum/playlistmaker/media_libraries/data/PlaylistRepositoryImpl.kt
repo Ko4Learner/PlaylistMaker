@@ -43,13 +43,30 @@ class PlaylistRepositoryImpl(
             .deletePlaylist(playlistId)
     }
 
+    override suspend fun deleteTrack(playlist: Playlist, trackId: Int) {
+        var containTrack = false
+        playlistDatabase.playlistDao()
+            .updatePlaylist(playlistDbMapper.deleteTrackMap(playlist, trackId))
+        for (item in playlistDatabase.playlistDao().getPlaylists()) {
+            if (playlistDbMapper.stringToList(item.trackIdList).contains(trackId)) {
+                containTrack = true
+            }
+        }
+        if (!containTrack) {
+            playlistTracksDatabase.playlistTracksDao().deleteTrack(trackId)
+        }
+    }
+
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
         val playlists = playlistDatabase.playlistDao().getPlaylists()
         emit(convertFromPlaylistEntity(playlists))
     }
 
     override fun getPlaylistTracks(tracksIdList: List<Int>): Flow<List<Track>> = flow {
-        emit(convertFromTrackEntity(playlistTracksDatabase.playlistTracksDao().getAllPlaylistsTracks()).filter { track -> tracksIdList.contains(track.trackId) })
+        emit(
+            convertFromTrackEntity(
+                playlistTracksDatabase.playlistTracksDao().getAllPlaylistsTracks()
+            ).filter { track -> tracksIdList.contains(track.trackId) })
     }
 
     override suspend fun getPlaylist(playlistId: Int): Playlist {
@@ -58,7 +75,7 @@ class PlaylistRepositoryImpl(
 
     override suspend fun updatePlaylist(playlist: Playlist, track: Track) {
         playlistDatabase.playlistDao()
-            .updatePlaylist(playlistDbMapper.insertTrackMap(playlist,track))
+            .updatePlaylist(playlistDbMapper.insertTrackMap(playlist, track))
         playlistTracksDatabase.playlistTracksDao().insertPlaylistTrack(trackDbMapper.map(track))
     }
 
@@ -68,7 +85,7 @@ class PlaylistRepositoryImpl(
         val filePath =
             File(
                 application.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                getString(application.applicationContext,R.string.DirectoryImagePlaylist)
+                getString(application.applicationContext, R.string.DirectoryImagePlaylist)
             )
         if (!filePath.exists()) {
             filePath.mkdirs()
@@ -76,7 +93,10 @@ class PlaylistRepositoryImpl(
 
         val file = File(
             filePath,
-            playlistName + Calendar.getInstance().time + getString(application.applicationContext,R.string.jpg)
+            playlistName + Calendar.getInstance().time + getString(
+                application.applicationContext,
+                R.string.jpg
+            )
         )
 
         val takeFlags: Int = Intent.FLAG_GRANT_WRITE_URI_PERMISSION

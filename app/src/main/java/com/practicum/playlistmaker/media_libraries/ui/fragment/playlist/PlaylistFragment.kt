@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistBinding
@@ -42,6 +44,8 @@ class PlaylistFragment : Fragment() {
 
     private val gson = Gson()
 
+    private var trackList: List<Track> = listOf()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -66,6 +70,16 @@ class PlaylistFragment : Fragment() {
             }
         }
 
+        var deleteTrackId = 0
+        val confirmDialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.DeleteTrack))
+
+            .setNegativeButton(getString(R.string.NO)) { _, _ -> }
+            .setPositiveButton(getString(R.string.YES)) { _, _ ->
+                playlistViewModel.deleteTrackFromPlaylist(deleteTrackId)
+            }
+
+
         onTrackClickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
@@ -82,6 +96,7 @@ class PlaylistFragment : Fragment() {
 
         playlistViewModel.observePlaylistState().observe(viewLifecycleOwner) {
             render(it)
+            trackList = it.trackList
         }
 
         tracksAdapter.onItemClick = { track ->
@@ -89,7 +104,20 @@ class PlaylistFragment : Fragment() {
         }
 
         tracksAdapter.onLongItemClick = { track ->
-            playlistViewModel.deleteTrackFromPlaylist(track.trackId)
+            deleteTrackId = track.trackId
+            confirmDialog.show()
+        }
+
+        binding.share.setOnClickListener {
+            if (trackList.isEmpty()) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.shareEmptyTrackList),
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+
+            }
         }
     }
 

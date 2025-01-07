@@ -8,7 +8,6 @@ import com.practicum.playlistmaker.search.domain.model.Track
 
 class PlaylistDbMapper(private val gson: Gson) {
 
-
     fun map(playlist: Playlist): PlaylistEntity {
         return PlaylistEntity(
             playlist.playlistId,
@@ -31,9 +30,27 @@ class PlaylistDbMapper(private val gson: Gson) {
         )
     }
 
+    fun stringToList(stringList: String): List<Int> {
+        return gson.fromJson(stringList, Array<Int>::class.java).asList()
+    }
+
     fun insertTrackMap(playlist: Playlist, track: Track): PlaylistEntity {
         val trackCount = playlist.tracksCount + 1
-        val trackIdList: List<Int> = playlist.trackIdList.toMutableList().apply { add(track.trackId) }
+        val trackIdList: List<Int> =
+            playlist.trackIdList.toMutableList().apply { add(track.trackId) }
+        return PlaylistEntity(
+            playlist.playlistId,
+            playlist.name,
+            playlist.description,
+            playlist.imagePath,
+            gson.toJson(trackIdList),
+            trackCount
+        )
+    }
+
+    fun deleteTrackMap(playlist: Playlist, trackId: Int): PlaylistEntity {
+        val trackCount = playlist.tracksCount - 1
+        val trackIdList: List<Int> = playlist.trackIdList.toMutableList().apply { remove(trackId) }
         return PlaylistEntity(
             playlist.playlistId,
             playlist.name,

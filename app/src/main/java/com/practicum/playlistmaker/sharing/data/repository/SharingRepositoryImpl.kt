@@ -4,9 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.media_libraries.data.db.PlaylistTracksDatabase
+import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 import com.practicum.playlistmaker.sharing.domain.repository.SharingRepository
 
-class SharingRepositoryImpl(private val context: Context) : SharingRepository {
+class SharingRepositoryImpl(
+    private val context: Context,
+    private val playlistTracksDatabase: PlaylistTracksDatabase
+) : SharingRepository {
 
     override fun shareApp() {
         val shareApplicationIntent = Intent().apply {
@@ -46,5 +51,9 @@ class SharingRepositoryImpl(private val context: Context) : SharingRepository {
         }
 
         context.startActivity(sendToSupportIntent)
+    }
+
+    override suspend fun sharePlaylist(playlist: Playlist) {
+        TODO("Not yet implemented")
     }
 }

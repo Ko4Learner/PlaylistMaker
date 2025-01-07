@@ -71,4 +71,8 @@
     <string name="mockAlbumDescription">AlbumDescription</string>
     <string name="mockTracksTime">300 минут</string>
     <string name="mockTracksCount">100 треков</string>
+    <string name="DeleteTrack">Хотите удалить трек?</string>
+    <string name="NO">НЕТ</string>
+    <string name="YES">ДА</string>
+    <string name="shareEmptyTrackList">В этом плейлисте нет списка треков, которым можно поделиться</string>
 </resources>
