@@ -28,17 +28,13 @@ class PlaylistFragmentViewModel(
     private val playlistStateLiveData = MutableLiveData<PlaylistState>()
     fun observePlaylistState(): LiveData<PlaylistState> = playlistStateLiveData
 
-    init {
-        loadInfo()
-    }
-
     fun deleteTrackFromPlaylist(trackId: Int) {
         viewModelScope.launch(Dispatchers.IO) { playlistInteractor.deleteTrack(playlist, trackId) }
             .invokeOnCompletion { loadInfo() }
 
     }
 
-    private fun loadInfo() {
+    fun loadInfo() {
         tracks = mutableListOf()
         tracksTime = 0
         viewModelScope.launch(Dispatchers.IO) {
@@ -65,5 +61,13 @@ class PlaylistFragmentViewModel(
                     )
                 }
             }
+    }
+
+    fun sharingPlaylist() {
+        viewModelScope.launch { sharingInteractor.sharePlaylist(playlist) }
+    }
+
+    fun deletePlaylist() {
+        viewModelScope.launch(Dispatchers.IO) { playlistInteractor.deletePlaylist(playlist) }
     }
 }

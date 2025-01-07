@@ -139,8 +139,7 @@
         android:visibility="visible"
         app:behavior_hideable="false"
         app:behavior_peekHeight="272dp"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:layout_constraintTop_toBottomOf="@+id/menu">
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycleViewPlaylist"
@@ -155,5 +154,117 @@
             tools:listitem="@layout/track_view" />
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/playlistsBottomSheetMenu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bottom_sheet_background_audio_player"
+        android:orientation="vertical"
+        android:visibility="visible"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="276dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingVertical="8dp">
+
+            <ImageView
+                android:id="@+id/playlistImageBottomSheet"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                tools:src="@drawable/placeholder" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/playlistNameBottomSheet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/ys_display_regular"
+                    android:maxLines="1"
+                    android:textColor="@color/textColor"
+                    android:textFontWeight="400"
+                    android:textSize="@dimen/medium_textSize" />
+
+                <TextView
+                    android:id="@+id/playlistTracksCountBottomSheet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/ys_display_regular"
+                    android:maxLines="1"
+                    android:textColor="@color/artistTextColor"
+                    android:textFontWeight="400"
+                    android:textSize="@dimen/small_textSize" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/shareBottomSheetTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="22dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/ys_display_regular"
+            android:maxLines="1"
+            android:text="@string/share"
+            android:textColor="@color/textColor"
+            android:textFontWeight="400"
+            android:textSize="@dimen/medium_textSize" />
+
+        <TextView
+            android:id="@+id/editInformationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="22dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/ys_display_regular"
+            android:maxLines="1"
+            android:text="@string/editInformation"
+            android:textColor="@color/textColor"
+            android:textFontWeight="400"
+            android:textSize="@dimen/medium_textSize" />
+
+        <TextView
+            android:id="@+id/deletePlaylistTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="22dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/ys_display_regular"
+            android:maxLines="1"
+            android:text="@string/deletePlaylist"
+            android:textColor="@color/textColor"
+            android:textFontWeight="400"
+            android:textSize="@dimen/medium_textSize" />
+
+
+    </LinearLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

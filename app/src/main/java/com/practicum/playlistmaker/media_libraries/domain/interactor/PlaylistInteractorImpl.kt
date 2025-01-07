@@ -13,8 +13,8 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
         playlistRepository.insertPlaylist(playlist)
     }
 
-    override suspend fun deletePlaylist(playlistId: Int) {
-        playlistRepository.deletePlaylist(playlistId)
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        playlistRepository.deletePlaylist(playlist)
     }
 
     override suspend fun deleteTrack(playlist: Playlist, trackId: Int) {
@@ -35,6 +35,11 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
 
     override suspend fun updatePlaylist(playlist: Playlist, track: Track) {
         playlistRepository.updatePlaylist(playlist, track)
+    }
+
+
+    override suspend fun editPlaylist(playlist: Playlist) {
+        playlistRepository.editPlaylist(playlist)
     }
 
     override suspend fun saveImageToPrivateStorage(uri: Uri, playlistName: String): String {

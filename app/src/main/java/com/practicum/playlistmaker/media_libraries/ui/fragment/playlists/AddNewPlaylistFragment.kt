@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.media_libraries.ui.fragment.playlists
 
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,25 +12,27 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.widget.addTextChangedListener
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentAddNewPlaylistBinding
 import com.practicum.playlistmaker.media_libraries.ui.view_model.NewPlaylistFragmentViewModel
+import com.practicum.playlistmaker.player.ui.activity.AudioPlayer
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class AddNewPlaylistFragment : Fragment() {
+open class AddNewPlaylistFragment : Fragment() {
 
     private var _binding: FragmentAddNewPlaylistBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
-    private val newPlaylistViewModel: NewPlaylistFragmentViewModel by viewModel()
+    open val playlistViewModel: NewPlaylistFragmentViewModel by viewModel()
 
     lateinit var confirmDialog: MaterialAlertDialogBuilder
 
-    private var imagePath = ""
+    var imagePath = ""
 
 
     override fun onCreateView(
@@ -43,7 +46,7 @@ class AddNewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        newPlaylistViewModel.observeImagePath().observe(viewLifecycleOwner) {
+        playlistViewModel.observeImagePath().observe(viewLifecycleOwner) {
             imagePath = it
         }
 
@@ -82,30 +85,48 @@ class AddNewPlaylistFragment : Fragment() {
                             )
                             .into(binding.imageNewPlaylist)
                     }
-                    newPlaylistViewModel.saveImageToPrivateStorage(
+                    playlistViewModel.saveImageToPrivateStorage(
                         uri,
                         binding.nameNewPlaylist.text.toString()
                     )
                 }
             }
 
+        listenerReturnButton()
+
+        binding.imageNewPlaylist.setOnClickListener {
+            pickMedia.launch(arrayOf(getString(R.string.imageType)))
+        }
+
+        listenerSavePlaylistButton()
+
+        addCallback()
+    }
+
+    open fun listenerReturnButton() {
         binding.returnFromAddNewPlaylist.setOnClickListener {
             if (binding.nameNewPlaylist.text.toString().isNotEmpty()
                 || binding.descriptionNewPlaylist.text.toString().isNotEmpty()
                 || binding.imageNewPlaylist.resources.equals(R.drawable.add_photo.toDrawable())
             ) {
                 confirmDialog.show()
-            } else requireActivity().supportFragmentManager.popBackStack()
+            } else {
+                if (requireActivity() is AudioPlayer) {
+                    Log.d("myTag", "audio")
+                    requireActivity().supportFragmentManager.popBackStack()
+                } else {
+                    Log.d("myTag", "main")
+                    findNavController().popBackStack()
+                }
+            }
         }
+    }
 
-        binding.imageNewPlaylist.setOnClickListener {
-            pickMedia.launch(arrayOf(getString(R.string.imageType)))
-        }
-
+    open fun listenerSavePlaylistButton() {
         binding.buttonNewPlaylist.setOnClickListener {
             val nameAlbum = binding.nameNewPlaylist.text.toString()
             val descriptionAlbum = binding.descriptionNewPlaylist.text.toString()
-            newPlaylistViewModel.insertNewPlaylist(
+            playlistViewModel.insertNewPlaylist(
                 name = nameAlbum,
                 description = descriptionAlbum,
                 imagePath = imagePath
@@ -115,9 +136,15 @@ class AddNewPlaylistFragment : Fragment() {
                 "Плейлист ${binding.nameNewPlaylist.text} создан",
                 Toast.LENGTH_LONG
             ).show()
-            requireActivity().supportFragmentManager.popBackStack()
+            if (requireActivity() is AudioPlayer) {
+                requireActivity().supportFragmentManager.popBackStack()
+            } else {
+                findNavController().popBackStack()
+            }
         }
+    }
 
+    open fun addCallback() {
         requireActivity().onBackPressedDispatcher.addCallback(object :
             OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -126,7 +153,13 @@ class AddNewPlaylistFragment : Fragment() {
                     || binding.imageNewPlaylist.resources.equals(R.drawable.add_photo.toDrawable())
                 ) {
                     confirmDialog.show()
-                } else requireActivity().supportFragmentManager.popBackStack()
+                } else {
+                    if (requireActivity() is AudioPlayer) {
+                        requireActivity().supportFragmentManager.popBackStack()
+                    } else {
+                        findNavController().popBackStack()
+                    }
+                }
             }
         })
     }

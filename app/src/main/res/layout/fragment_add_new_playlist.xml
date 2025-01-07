@@ -44,6 +44,7 @@
         style="@style/EditTextNewPlaylist"
         android:layout_marginTop="32dp"
         android:hint="@string/nameNewPlaylist"
+        android:editable="true"
         app:boxStrokeColor="@drawable/selector_edit_text"
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="parent"

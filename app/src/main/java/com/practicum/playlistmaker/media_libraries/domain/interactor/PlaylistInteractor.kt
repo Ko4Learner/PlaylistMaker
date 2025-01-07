@@ -9,7 +9,7 @@ interface PlaylistInteractor {
 
     suspend fun insertPlaylist(playlist: Playlist)
 
-    suspend fun deletePlaylist(playlistId: Int)
+    suspend fun deletePlaylist(playlist: Playlist)
 
     suspend fun deleteTrack(playlist: Playlist, trackId: Int)
 
@@ -20,6 +20,8 @@ interface PlaylistInteractor {
     suspend fun getPlaylist(playlistId: Int): Playlist
 
     suspend fun updatePlaylist(playlist: Playlist, track: Track)
+
+    suspend fun editPlaylist(playlist: Playlist)
 
     suspend fun saveImageToPrivateStorage (uri: Uri, playlistName: String) : String
 }

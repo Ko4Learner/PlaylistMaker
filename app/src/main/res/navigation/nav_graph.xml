@@ -59,5 +59,17 @@
         <action
             android:id="@+id/action_playlistFragment_to_audioPlayer"
             app:destination="@id/audioPlayer" />
+        <action
+            android:id="@+id/action_playlistFragment_to_editPlaylistFragment"
+            app:destination="@id/editPlaylistFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.practicum.playlistmaker.media_libraries.ui.fragment.playlists.EditPlaylistFragment"
+        android:label="EditPlaylistFragment"
+        tools:layout="@layout/fragment_add_new_playlist">
+        <argument
+            android:name="playlistId"
+            app:argType="integer" />
     </fragment>
 </navigation>

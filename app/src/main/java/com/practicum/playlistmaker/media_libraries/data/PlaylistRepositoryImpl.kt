@@ -38,9 +38,21 @@ class PlaylistRepositoryImpl(
             .insertPlaylist(playlistDbMapper.map(playlist))
     }
 
-    override suspend fun deletePlaylist(playlistId: Int) {
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        var containTrack = false
         playlistDatabase.playlistDao()
-            .deletePlaylist(playlistId)
+            .deletePlaylist(playlist.playlistId)
+        val playlists = playlistDatabase.playlistDao().getPlaylists()
+        for (trackId in playlist.trackIdList) {
+            for (item in playlists) {
+                if (playlistDbMapper.stringToList(item.trackIdList).contains(trackId)) {
+                    containTrack = true
+                }
+            }
+            if (!containTrack) {
+                playlistTracksDatabase.playlistTracksDao().deleteTrack(trackId)
+            }
+        }
     }
 
     override suspend fun deleteTrack(playlist: Playlist, trackId: Int) {
@@ -77,6 +89,10 @@ class PlaylistRepositoryImpl(
         playlistDatabase.playlistDao()
             .updatePlaylist(playlistDbMapper.insertTrackMap(playlist, track))
         playlistTracksDatabase.playlistTracksDao().insertPlaylistTrack(trackDbMapper.map(track))
+    }
+
+    override suspend fun editPlaylist(playlist: Playlist) {
+        playlistDatabase.playlistDao().updatePlaylist(playlistDbMapper.map(playlist))
     }
 
     override suspend fun saveImageToPrivateStorage(uri: Uri, playlistName: String): String {

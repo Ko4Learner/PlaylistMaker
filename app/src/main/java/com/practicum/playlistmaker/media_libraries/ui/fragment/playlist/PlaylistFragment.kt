@@ -42,9 +42,12 @@ class PlaylistFragment : Fragment() {
 
     private lateinit var onTrackClickDebounce: (Track) -> Unit
 
+    private lateinit var confirmDialogDeletePlaylist: MaterialAlertDialogBuilder
+
     private val gson = Gson()
 
     private var trackList: List<Track> = listOf()
+    private var playlistId = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,15 +73,39 @@ class PlaylistFragment : Fragment() {
             }
         }
 
+        val bottomSheetBehaviorPlaylist =
+            BottomSheetBehavior.from(binding.playlistsBottomSheetMenu).apply {
+                state = BottomSheetBehavior.STATE_HIDDEN
+            }
+
+        bottomSheetBehaviorPlaylist.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.visibility = View.GONE
+                    }
+
+                    else -> {
+                        binding.overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                binding.overlay.alpha = (slideOffset + 1f) / 2
+            }
+        })
+
         var deleteTrackId = 0
-        val confirmDialog = MaterialAlertDialogBuilder(requireContext())
+        val confirmDialogDeleteTrack = MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.DeleteTrack))
 
             .setNegativeButton(getString(R.string.NO)) { _, _ -> }
             .setPositiveButton(getString(R.string.YES)) { _, _ ->
                 playlistViewModel.deleteTrackFromPlaylist(deleteTrackId)
             }
-
 
         onTrackClickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
@@ -96,7 +123,16 @@ class PlaylistFragment : Fragment() {
 
         playlistViewModel.observePlaylistState().observe(viewLifecycleOwner) {
             render(it)
+            playlistId = it.playlist.playlistId
             trackList = it.trackList
+            confirmDialogDeletePlaylist = MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.dialogdeletePlaylist) + "<${it.playlist.name}>?")
+
+                .setNegativeButton(getString(R.string.NO)) { _, _ -> }
+                .setPositiveButton(getString(R.string.YES)) { _, _ ->
+                    playlistViewModel.deletePlaylist()
+                    findNavController().popBackStack()
+                }
         }
 
         tracksAdapter.onItemClick = { track ->
@@ -105,19 +141,43 @@ class PlaylistFragment : Fragment() {
 
         tracksAdapter.onLongItemClick = { track ->
             deleteTrackId = track.trackId
-            confirmDialog.show()
+            confirmDialogDeleteTrack.show()
         }
 
         binding.share.setOnClickListener {
-            if (trackList.isEmpty()) {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.shareEmptyTrackList),
-                    Toast.LENGTH_LONG
-                ).show()
-            } else {
+            sharePlaylist()
+        }
 
-            }
+        binding.shareBottomSheetTextView.setOnClickListener {
+            sharePlaylist()
+        }
+
+        binding.menu.setOnClickListener {
+            bottomSheetBehaviorPlaylist.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.deletePlaylistTextView.setOnClickListener {
+            bottomSheetBehaviorPlaylist.state = BottomSheetBehavior.STATE_HIDDEN
+            confirmDialogDeletePlaylist.show()
+        }
+        binding.editInformationTextView.setOnClickListener {
+            val direction =
+                PlaylistFragmentDirections.actionPlaylistFragmentToEditPlaylistFragment(playlistId)
+            findNavController().navigate(direction)
+        }
+    }
+
+
+    private fun sharePlaylist() {
+
+        if (trackList.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.shareEmptyTrackList),
+                Toast.LENGTH_LONG
+            ).show()
+        } else {
+            playlistViewModel.sharingPlaylist()
         }
     }
 
@@ -139,7 +199,22 @@ class PlaylistFragment : Fragment() {
                 )
                 .into(binding.playlistImage)
         }
-
+        with(binding.playlistImageBottomSheet) {
+            Glide.with(context)
+                .load(state.playlist.imagePath)
+                .placeholder(R.drawable.placeholder)
+                .centerCrop()
+                .transform(
+                    RoundedCorners(
+                        TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            2F,
+                            context.resources.displayMetrics
+                        ).toInt()
+                    )
+                )
+                .into(binding.playlistImageBottomSheet)
+        }
         with(binding) {
             playlistName.text = state.playlist.name
             playlistDescription.text = state.playlist.description
@@ -153,9 +228,14 @@ class PlaylistFragment : Fragment() {
                 state.playlist.tracksCount,
                 state.playlist.tracksCount
             )
+            playlistNameBottomSheet.text = state.playlist.name
+            playlistTracksCountBottomSheet.text = resources.getQuantityString(
+                R.plurals.track,
+                state.playlist.tracksCount,
+                state.playlist.tracksCount
+            )
+            tracksAdapter.updateItems(state.trackList)
         }
-
-        tracksAdapter.updateItems(state.trackList)
     }
 
     override fun onDestroyView() {
@@ -163,7 +243,15 @@ class PlaylistFragment : Fragment() {
         _binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        playlistViewModel.loadInfo()
+    }
+
+
+
     companion object {
+
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

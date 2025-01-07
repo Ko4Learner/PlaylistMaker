@@ -6,10 +6,10 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistRepository {
-    
+
     suspend fun insertPlaylist(playlist: Playlist)
 
-    suspend fun deletePlaylist(playlistId: Int)
+    suspend fun deletePlaylist(playlist: Playlist)
 
     suspend fun deleteTrack(playlist: Playlist, trackId: Int)
 
@@ -21,5 +21,7 @@ interface PlaylistRepository {
 
     suspend fun updatePlaylist(playlist: Playlist, track: Track)
 
-    suspend fun saveImageToPrivateStorage (uri: Uri, playlistName: String) : String
+    suspend fun editPlaylist(playlist: Playlist)
+
+    suspend fun saveImageToPrivateStorage(uri: Uri, playlistName: String): String
 }
