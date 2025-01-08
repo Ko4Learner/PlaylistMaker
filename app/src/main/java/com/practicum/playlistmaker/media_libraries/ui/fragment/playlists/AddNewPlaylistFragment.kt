@@ -11,14 +11,12 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.widget.addTextChangedListener
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentAddNewPlaylistBinding
 import com.practicum.playlistmaker.media_libraries.ui.view_model.NewPlaylistFragmentViewModel
-import com.practicum.playlistmaker.player.ui.activity.AudioPlayer
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -110,11 +108,7 @@ open class AddNewPlaylistFragment : Fragment() {
             ) {
                 confirmDialog.show()
             } else {
-                if (requireActivity() is AudioPlayer) {
-                    requireActivity().supportFragmentManager.popBackStack()
-                } else {
-                    findNavController().popBackStack()
-                }
+                requireActivity().supportFragmentManager.popBackStack()
             }
         }
     }
@@ -133,16 +127,12 @@ open class AddNewPlaylistFragment : Fragment() {
                 "Плейлист ${binding.nameNewPlaylist.text} создан",
                 Toast.LENGTH_LONG
             ).show()
-            if (requireActivity() is AudioPlayer) {
-                requireActivity().supportFragmentManager.popBackStack()
-            } else {
-                findNavController().popBackStack()
-            }
+            requireActivity().supportFragmentManager.popBackStack()
         }
     }
 
     open fun addCallback() {
-        requireActivity().onBackPressedDispatcher.addCallback(object :
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object :
             OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.nameNewPlaylist.text.toString().isNotEmpty()
@@ -151,11 +141,7 @@ open class AddNewPlaylistFragment : Fragment() {
                 ) {
                     confirmDialog.show()
                 } else {
-                    if (requireActivity() is AudioPlayer) {
-                        requireActivity().supportFragmentManager.popBackStack()
-                    } else {
-                        findNavController().popBackStack()
-                    }
+                    requireActivity().supportFragmentManager.popBackStack()
                 }
             }
         })
