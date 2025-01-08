@@ -3,8 +3,6 @@ package com.practicum.playlistmaker.media_libraries.ui.fragment.playlists
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
-import androidx.activity.OnBackPressedCallback
-import androidx.core.graphics.drawable.toDrawable
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -22,30 +20,9 @@ class EditPlaylistFragment : AddNewPlaylistFragment() {
         parametersOf(args.playlistId)
     }
 
-    override fun addCallback() {
-    }
-
-    override fun listenerSavePlaylistButton() {
-        binding.buttonNewPlaylist.setOnClickListener {
-            val nameAlbum = binding.nameNewPlaylist.text.toString()
-            val descriptionAlbum = binding.descriptionNewPlaylist.text.toString()
-            playlistViewModel.editPlaylist(
-                name = nameAlbum,
-                description = descriptionAlbum,
-                imagePath = imagePath
-            )
-            findNavController().popBackStack()
-        }
-    }
-
-    override fun listenerReturnButton() {
-        binding.returnFromAddNewPlaylist.setOnClickListener {
-            findNavController().popBackStack()
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         with(binding) {
             buttonNewPlaylist.text = getString(R.string.save)
             returnFromAddNewPlaylist.text = getString(R.string.edit)
@@ -73,7 +50,6 @@ class EditPlaylistFragment : AddNewPlaylistFragment() {
             }
         }
 
-
         binding.buttonNewPlaylist.setOnClickListener {
             val nameAlbum = binding.nameNewPlaylist.text.toString()
             val descriptionAlbum = binding.descriptionNewPlaylist.text.toString()
@@ -84,7 +60,27 @@ class EditPlaylistFragment : AddNewPlaylistFragment() {
             )
             findNavController().popBackStack()
         }
-
     }
 
+    override fun addCallback() {
+    }
+
+    override fun listenerSavePlaylistButton() {
+        binding.buttonNewPlaylist.setOnClickListener {
+            val nameAlbum = binding.nameNewPlaylist.text.toString()
+            val descriptionAlbum = binding.descriptionNewPlaylist.text.toString()
+            playlistViewModel.editPlaylist(
+                name = nameAlbum,
+                description = descriptionAlbum,
+                imagePath = imagePath
+            )
+            findNavController().popBackStack()
+        }
+    }
+
+    override fun listenerReturnButton() {
+        binding.returnFromAddNewPlaylist.setOnClickListener {
+            findNavController().popBackStack()
+        }
+    }
 }

@@ -80,4 +80,5 @@
     <string name="dialogdeletePlaylist">"Хотите удалить плейлист "</string>
     <string name="save">Сохранить</string>
     <string name="edit">Редактировать</string>
+    <string name="emptyTrackList">В плейлисте нет треков</string>
 </resources>

@@ -117,10 +117,6 @@ class PlaylistFragment : Fragment() {
             findNavController().navigate(direction)
         }
 
-        binding.returnFromPlaylist.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
         playlistViewModel.observePlaylistState().observe(viewLifecycleOwner) {
             render(it)
             playlistId = it.playlist.playlistId
@@ -135,27 +131,25 @@ class PlaylistFragment : Fragment() {
                 }
         }
 
+        binding.returnFromPlaylist.setOnClickListener {
+            findNavController().popBackStack()
+        }
         tracksAdapter.onItemClick = { track ->
             onTrackClickDebounce(track)
         }
-
         tracksAdapter.onLongItemClick = { track ->
             deleteTrackId = track.trackId
             confirmDialogDeleteTrack.show()
         }
-
         binding.share.setOnClickListener {
             sharePlaylist()
         }
-
         binding.shareBottomSheetTextView.setOnClickListener {
             sharePlaylist()
         }
-
         binding.menu.setOnClickListener {
             bottomSheetBehaviorPlaylist.state = BottomSheetBehavior.STATE_COLLAPSED
         }
-
         binding.deletePlaylistTextView.setOnClickListener {
             bottomSheetBehaviorPlaylist.state = BottomSheetBehavior.STATE_HIDDEN
             confirmDialogDeletePlaylist.show()
@@ -167,9 +161,7 @@ class PlaylistFragment : Fragment() {
         }
     }
 
-
     private fun sharePlaylist() {
-
         if (trackList.isEmpty()) {
             Toast.makeText(
                 requireContext(),
@@ -234,6 +226,10 @@ class PlaylistFragment : Fragment() {
                 state.playlist.tracksCount,
                 state.playlist.tracksCount
             )
+            if (state.trackList.isEmpty()) {
+                Toast.makeText(context, getString(R.string.emptyTrackList), Toast.LENGTH_LONG)
+                    .show()
+            }
             tracksAdapter.updateItems(state.trackList)
         }
     }
@@ -248,10 +244,7 @@ class PlaylistFragment : Fragment() {
         playlistViewModel.loadInfo()
     }
 
-
-
     companion object {
-
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

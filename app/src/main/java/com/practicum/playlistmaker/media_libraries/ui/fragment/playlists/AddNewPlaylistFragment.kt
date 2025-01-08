@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.media_libraries.ui.fragment.playlists
 
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -112,10 +111,8 @@ open class AddNewPlaylistFragment : Fragment() {
                 confirmDialog.show()
             } else {
                 if (requireActivity() is AudioPlayer) {
-                    Log.d("myTag", "audio")
                     requireActivity().supportFragmentManager.popBackStack()
                 } else {
-                    Log.d("myTag", "main")
                     findNavController().popBackStack()
                 }
             }
