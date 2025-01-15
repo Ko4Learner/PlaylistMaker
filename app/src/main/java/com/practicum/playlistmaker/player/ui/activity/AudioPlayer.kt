@@ -24,6 +24,7 @@ import com.practicum.playlistmaker.player.ui.state.PlayerState
 import com.practicum.playlistmaker.player.ui.state.PlaylistContainTrackState
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import debounce
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
@@ -43,6 +44,7 @@ class AudioPlayer : AppCompatActivity() {
 
     private lateinit var onPlaylistClickDebounce: (Playlist) -> Unit
 
+    private val gson by inject<Gson>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +68,7 @@ class AudioPlayer : AppCompatActivity() {
 
         }
 
-        track = Gson().fromJson(args.track, Track::class.java)
+        track = gson.fromJson(args.track, Track::class.java)
 
         prepareActivity()
 
@@ -131,7 +133,7 @@ class AudioPlayer : AppCompatActivity() {
         binding.addNewPlaylist.setOnClickListener {
             supportFragmentManager.beginTransaction()
                 .add(R.id.player_container_view, AddNewPlaylistFragment())
-                .addToBackStack("player")
+                .addToBackStack(getString(R.string.player))
                 .commit()
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
@@ -159,13 +161,13 @@ class AudioPlayer : AppCompatActivity() {
 
             is PlaylistContainTrackState.StateContain -> Toast.makeText(
                 this,
-                "Трек уже добавлен в плейлист ${state.playlist.name}",
+                getString(R.string.trackAlreadyAddedInPlaylist, state.playlist.name),
                 Toast.LENGTH_LONG
             ).show()
 
             is PlaylistContainTrackState.StateNotContain -> Toast.makeText(
                 this,
-                "Добавлено в плейлист ${state.playlist.name}",
+                getString(R.string.addedInPlaylist, state.playlist.name),
                 Toast.LENGTH_LONG
             ).show()
         }

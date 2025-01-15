@@ -81,4 +81,7 @@
     <string name="save">Сохранить</string>
     <string name="edit">Редактировать</string>
     <string name="emptyTrackList">В плейлисте нет треков</string>
+    <string name="player">player</string>
+    <string name="trackAlreadyAddedInPlaylist">Трек уже добавлен в плейлист %1$s</string>
+    <string name="addedInPlaylist">Добавлено в плейлист %1$s</string>
 </resources>

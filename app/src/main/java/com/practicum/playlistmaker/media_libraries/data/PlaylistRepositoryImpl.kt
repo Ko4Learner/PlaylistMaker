@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import androidx.core.content.ContextCompat.getString
+import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.media_libraries.data.db.PlaylistDatabase
 import com.practicum.playlistmaker.media_libraries.data.db.PlaylistTracksDatabase
@@ -14,6 +15,7 @@ import com.practicum.playlistmaker.media_libraries.data.db.entity.PlaylistEntity
 import com.practicum.playlistmaker.media_libraries.data.db.entity.TrackEntity
 import com.practicum.playlistmaker.media_libraries.data.db.mapper.PlaylistDbMapper
 import com.practicum.playlistmaker.media_libraries.data.db.mapper.TrackDbMapper
+import com.practicum.playlistmaker.media_libraries.data.db.mapper.UpdatePlaylistTrackListMapper
 import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 import com.practicum.playlistmaker.media_libraries.domain.repository.PlaylistRepository
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -28,9 +30,11 @@ import java.util.Calendar
 class PlaylistRepositoryImpl(
     private val playlistDatabase: PlaylistDatabase,
     private val playlistDbMapper: PlaylistDbMapper,
+    private val updatePlaylistTrackListMapper: UpdatePlaylistTrackListMapper,
     private val playlistTracksDatabase: PlaylistTracksDatabase,
     private val trackDbMapper: TrackDbMapper,
-    private val application: Application
+    private val application: Application,
+    private val gson: Gson
 ) : PlaylistRepository {
 
     override suspend fun insertPlaylist(playlist: Playlist) {
@@ -45,7 +49,7 @@ class PlaylistRepositoryImpl(
         val playlists = playlistDatabase.playlistDao().getPlaylists()
         for (trackId in playlist.trackIdList) {
             for (item in playlists) {
-                if (playlistDbMapper.stringToList(item.trackIdList).contains(trackId)) {
+                if (stringToList(item.trackIdList).contains(trackId)) {
                     containTrack = true
                 }
             }
@@ -58,9 +62,9 @@ class PlaylistRepositoryImpl(
     override suspend fun deleteTrack(playlist: Playlist, trackId: Int) {
         var containTrack = false
         playlistDatabase.playlistDao()
-            .updatePlaylist(playlistDbMapper.deleteTrackMap(playlist, trackId))
+            .updatePlaylist(updatePlaylistTrackListMapper.deleteTrackMap(playlist, trackId))
         for (item in playlistDatabase.playlistDao().getPlaylists()) {
-            if (playlistDbMapper.stringToList(item.trackIdList).contains(trackId)) {
+            if (stringToList(item.trackIdList).contains(trackId)) {
                 containTrack = true
             }
         }
@@ -87,7 +91,7 @@ class PlaylistRepositoryImpl(
 
     override suspend fun updatePlaylist(playlist: Playlist, track: Track) {
         playlistDatabase.playlistDao()
-            .updatePlaylist(playlistDbMapper.insertTrackMap(playlist, track))
+            .updatePlaylist(updatePlaylistTrackListMapper.insertTrackMap(playlist, track.trackId))
         playlistTracksDatabase.playlistTracksDao().insertPlaylistTrack(trackDbMapper.map(track))
     }
 
@@ -136,5 +140,9 @@ class PlaylistRepositoryImpl(
 
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
         return tracks.map { track -> trackDbMapper.map(track) }
+    }
+
+    private fun stringToList(stringList: String): List<Int> {
+        return gson.fromJson(stringList, Array<Int>::class.java).asList()
     }
 }

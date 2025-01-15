@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -24,6 +25,7 @@ import com.practicum.playlistmaker.media_libraries.ui.view_model.PlaylistFragmen
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.fragment.TrackAdapter
 import debounce
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -44,10 +46,7 @@ class PlaylistFragment : Fragment() {
 
     private lateinit var confirmDialogDeletePlaylist: MaterialAlertDialogBuilder
 
-    private val gson = Gson()
-
-    private var trackList: List<Track> = listOf()
-    private var playlistId = 0
+    private val gson by inject<Gson>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,14 +80,13 @@ class PlaylistFragment : Fragment() {
         bottomSheetBehaviorPlaylist.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding.overlay.visibility = View.GONE
+                        binding.overlay.isVisible = false
                     }
 
                     else -> {
-                        binding.overlay.visibility = View.VISIBLE
+                        binding.overlay.isVisible = true
                     }
                 }
             }
@@ -119,8 +117,6 @@ class PlaylistFragment : Fragment() {
 
         playlistViewModel.observePlaylistState().observe(viewLifecycleOwner) {
             render(it)
-            playlistId = it.playlist.playlistId
-            trackList = it.trackList
             confirmDialogDeletePlaylist = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.dialogdeletePlaylist) + "<${it.playlist.name}>?")
 
@@ -129,6 +125,16 @@ class PlaylistFragment : Fragment() {
                     playlistViewModel.deletePlaylist()
                     findNavController().popBackStack()
                 }
+        }
+
+        playlistViewModel.observeToastState().observe(viewLifecycleOwner) {
+            if (it) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.shareEmptyTrackList),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
 
         binding.returnFromPlaylist.setOnClickListener {
@@ -142,10 +148,10 @@ class PlaylistFragment : Fragment() {
             confirmDialogDeleteTrack.show()
         }
         binding.share.setOnClickListener {
-            sharePlaylist()
+            playlistViewModel.sharingPlaylist()
         }
         binding.shareBottomSheetTextView.setOnClickListener {
-            sharePlaylist()
+            playlistViewModel.sharingPlaylist()
         }
         binding.menu.setOnClickListener {
             bottomSheetBehaviorPlaylist.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -156,20 +162,8 @@ class PlaylistFragment : Fragment() {
         }
         binding.editInformationTextView.setOnClickListener {
             val direction =
-                PlaylistFragmentDirections.actionPlaylistFragmentToEditPlaylistFragment(playlistId)
+                PlaylistFragmentDirections.actionPlaylistFragmentToEditPlaylistFragment(args.playlistId)
             findNavController().navigate(direction)
-        }
-    }
-
-    private fun sharePlaylist() {
-        if (trackList.isEmpty()) {
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.shareEmptyTrackList),
-                Toast.LENGTH_LONG
-            ).show()
-        } else {
-            playlistViewModel.sharingPlaylist()
         }
     }
 

@@ -4,27 +4,26 @@ import com.google.gson.Gson
 import com.practicum.playlistmaker.media_libraries.data.db.entity.PlaylistEntity
 import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 
-class PlaylistDbMapper(private val gson: Gson) {
-
-    fun map(playlist: Playlist): PlaylistEntity {
+class UpdatePlaylistTrackListMapper(private val gson: Gson) {
+    fun insertTrackMap(playlist: Playlist, trackId: Int): PlaylistEntity {
         return PlaylistEntity(
             playlist.playlistId,
             playlist.name,
             playlist.description,
             playlist.imagePath,
-            gson.toJson(playlist.trackIdList),
-            playlist.tracksCount
+            gson.toJson(playlist.trackIdList + trackId),
+            playlist.tracksCount + 1
         )
     }
 
-    fun map(playlist: PlaylistEntity): Playlist {
-        return Playlist(
+    fun deleteTrackMap(playlist: Playlist, trackId: Int): PlaylistEntity {
+        return PlaylistEntity(
             playlist.playlistId,
             playlist.name,
             playlist.description,
             playlist.imagePath,
-            gson.fromJson(playlist.trackIdList, Array<Int>::class.java).asList(),
-            playlist.tracksCount
+            gson.toJson(playlist.trackIdList - trackId),
+            playlist.tracksCount - 1
         )
     }
 }

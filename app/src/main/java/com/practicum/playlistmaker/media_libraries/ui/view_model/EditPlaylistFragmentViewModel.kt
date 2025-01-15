@@ -15,30 +15,29 @@ class EditPlaylistFragmentViewModel(
 ) :
     NewPlaylistFragmentViewModel(playlistInteractor) {
 
-    private var playlist: Playlist? = null
-
     private val playlistLiveData = MutableLiveData<Playlist>()
     fun observePlaylist(): LiveData<Playlist> = playlistLiveData
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            playlist = playlistInteractor.getPlaylist(playlistId)
-            playlistLiveData.postValue(playlist!!)
+            playlistLiveData.postValue(playlistInteractor.getPlaylist(playlistId))
         }
     }
 
     fun editPlaylist(name: String, description: String, imagePath: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            playlistInteractor.editPlaylist(
-                Playlist(
-                    playlistId = playlist!!.playlistId,
-                    name = name,
-                    description = description,
-                    imagePath = imagePath, tracksCount = playlist!!.tracksCount,
-                    trackIdList = playlist!!.trackIdList
+            playlistLiveData.value?.let { playlist ->
+                playlistInteractor.editPlaylist(
+                    Playlist(
+                        playlistId = playlist.playlistId,
+                        name = name,
+                        description = description,
+                        imagePath = imagePath,
+                        tracksCount = playlist.tracksCount,
+                        trackIdList = playlist.trackIdList
+                    )
                 )
-            )
+            }
         }
     }
-
 }
