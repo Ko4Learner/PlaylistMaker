@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.media_libraries.ui.view_model
 
-
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,15 +10,14 @@ import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
-class NewPlaylistFragmentViewModel(private val playlistInteractor: PlaylistInteractor) :
+open class NewPlaylistFragmentViewModel(private val playlistInteractor: PlaylistInteractor) :
     ViewModel() {
 
     private val imagePathLiveData = MutableLiveData<String>()
     fun observeImagePath(): LiveData<String> = imagePathLiveData
 
     fun insertNewPlaylist(name: String, description: String, imagePath: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             playlistInteractor.insertPlaylist(
                 Playlist(
                     name = name,

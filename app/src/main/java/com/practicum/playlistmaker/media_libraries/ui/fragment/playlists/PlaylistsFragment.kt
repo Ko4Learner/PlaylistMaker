@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
@@ -13,6 +14,7 @@ import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 import com.practicum.playlistmaker.media_libraries.ui.fragment.MediaLibrariesFragmentDirections
 import com.practicum.playlistmaker.media_libraries.ui.state.PlaylistsState
 import com.practicum.playlistmaker.media_libraries.ui.view_model.PlaylistsFragmentViewModel
+import debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
@@ -21,7 +23,9 @@ class PlaylistsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val playlistsFragmentViewModel: PlaylistsFragmentViewModel by viewModel()
-    private val playlistAdapter = PlaylistAdapter()
+    private val playlistAdapter = PlaylistsAdapter()
+
+    private lateinit var onPlaylistClickDebounce: (Playlist) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +38,17 @@ class PlaylistsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        onPlaylistClickDebounce = debounce<Playlist>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { playlist ->
+            val direction =
+                MediaLibrariesFragmentDirections.actionMediaLibrariesFragmentToPlaylistFragment(playlist.playlistId)
+            findNavController().navigate(direction)
+
+        }
 
         binding.playlistRecyclerView.layoutManager = GridLayoutManager(
             requireContext(), 2
@@ -48,6 +63,9 @@ class PlaylistsFragment : Fragment() {
 
         playlistsFragmentViewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
+        }
+        playlistAdapter.onItemClick = { playlist ->
+            onPlaylistClickDebounce(playlist)
         }
     }
 
@@ -87,5 +105,6 @@ class PlaylistsFragment : Fragment() {
 
     companion object {
         fun newInstance() = PlaylistsFragment()
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

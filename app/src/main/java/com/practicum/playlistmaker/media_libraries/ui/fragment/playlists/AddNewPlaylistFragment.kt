@@ -20,16 +20,16 @@ import com.practicum.playlistmaker.media_libraries.ui.view_model.NewPlaylistFrag
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class AddNewPlaylistFragment : Fragment() {
+open class AddNewPlaylistFragment : Fragment() {
 
     private var _binding: FragmentAddNewPlaylistBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
-    private val newPlaylistViewModel: NewPlaylistFragmentViewModel by viewModel()
+    open val playlistViewModel: NewPlaylistFragmentViewModel by viewModel()
 
     lateinit var confirmDialog: MaterialAlertDialogBuilder
 
-    private var imagePath = ""
+    var imagePath = ""
 
 
     override fun onCreateView(
@@ -43,7 +43,7 @@ class AddNewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        newPlaylistViewModel.observeImagePath().observe(viewLifecycleOwner) {
+        playlistViewModel.observeImagePath().observe(viewLifecycleOwner) {
             imagePath = it
         }
 
@@ -82,30 +82,42 @@ class AddNewPlaylistFragment : Fragment() {
                             )
                             .into(binding.imageNewPlaylist)
                     }
-                    newPlaylistViewModel.saveImageToPrivateStorage(
+                    playlistViewModel.saveImageToPrivateStorage(
                         uri,
                         binding.nameNewPlaylist.text.toString()
                     )
                 }
             }
 
+        listenerReturnButton()
+
+        binding.imageNewPlaylist.setOnClickListener {
+            pickMedia.launch(arrayOf(getString(R.string.imageType)))
+        }
+
+        listenerSavePlaylistButton()
+
+        addCallback()
+    }
+
+    open fun listenerReturnButton() {
         binding.returnFromAddNewPlaylist.setOnClickListener {
             if (binding.nameNewPlaylist.text.toString().isNotEmpty()
                 || binding.descriptionNewPlaylist.text.toString().isNotEmpty()
                 || binding.imageNewPlaylist.resources.equals(R.drawable.add_photo.toDrawable())
             ) {
                 confirmDialog.show()
-            } else requireActivity().supportFragmentManager.popBackStack()
+            } else {
+                requireActivity().supportFragmentManager.popBackStack()
+            }
         }
+    }
 
-        binding.imageNewPlaylist.setOnClickListener {
-            pickMedia.launch(arrayOf(getString(R.string.imageType)))
-        }
-
+    open fun listenerSavePlaylistButton() {
         binding.buttonNewPlaylist.setOnClickListener {
             val nameAlbum = binding.nameNewPlaylist.text.toString()
             val descriptionAlbum = binding.descriptionNewPlaylist.text.toString()
-            newPlaylistViewModel.insertNewPlaylist(
+            playlistViewModel.insertNewPlaylist(
                 name = nameAlbum,
                 description = descriptionAlbum,
                 imagePath = imagePath
@@ -117,8 +129,10 @@ class AddNewPlaylistFragment : Fragment() {
             ).show()
             requireActivity().supportFragmentManager.popBackStack()
         }
+    }
 
-        requireActivity().onBackPressedDispatcher.addCallback(object :
+    open fun addCallback() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object :
             OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.nameNewPlaylist.text.toString().isNotEmpty()
@@ -126,7 +140,9 @@ class AddNewPlaylistFragment : Fragment() {
                     || binding.imageNewPlaylist.resources.equals(R.drawable.add_photo.toDrawable())
                 ) {
                     confirmDialog.show()
-                } else requireActivity().supportFragmentManager.popBackStack()
+                } else {
+                    requireActivity().supportFragmentManager.popBackStack()
+                }
             }
         })
     }

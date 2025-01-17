@@ -55,6 +55,33 @@
         <item quantity="two">%1$d трека</item>
         <item quantity="few">%1$d трека</item>
         <item quantity="many">%1$d треков</item>
-        <item quantity="other">%1$d треков</item>
+        <item quantity="other">%1$d трека</item>
     </plurals>
+    <plurals name="minutes">
+        <item quantity="zero">%1$d минут</item>
+        <item quantity="one">%1$d минута</item>
+        <item quantity="two">%1$d минуты</item>
+        <item quantity="few">%1$d минуты</item>
+        <item quantity="many">%1$d минут</item>
+        <item quantity="other">%1$d минуты</item>
+    </plurals>
+
+    <string name="mockAlbumDescription">AlbumDescription</string>
+    <string name="mockTracksTime">300 минут</string>
+    <string name="mockTracksCount">100 треков</string>
+    <string name="DeleteTrack">Хотите удалить трек?</string>
+    <string name="NO">НЕТ</string>
+    <string name="YES">ДА</string>
+    <string name="shareEmptyTrackList">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="share_apk">Share APK</string>
+    <string name="share">Поделиться</string>
+    <string name="deletePlaylist">Удалить плейлист</string>
+    <string name="editInformation">Редактировать информацию</string>
+    <string name="dialogdeletePlaylist">"Хотите удалить плейлист "</string>
+    <string name="save">Сохранить</string>
+    <string name="edit">Редактировать</string>
+    <string name="emptyTrackList">В плейлисте нет треков</string>
+    <string name="player">player</string>
+    <string name="trackAlreadyAddedInPlaylist">Трек уже добавлен в плейлист %1$s</string>
+    <string name="addedInPlaylist">Добавлено в плейлист %1$s</string>
 </resources>

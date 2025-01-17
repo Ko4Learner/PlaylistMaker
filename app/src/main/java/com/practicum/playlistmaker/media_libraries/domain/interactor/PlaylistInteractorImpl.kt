@@ -13,16 +13,33 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
         playlistRepository.insertPlaylist(playlist)
     }
 
-    override suspend fun deletePlaylist(playlistId: Int) {
-        playlistRepository.deletePlaylist(playlistId)
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        playlistRepository.deletePlaylist(playlist)
     }
 
-    override fun getPlaylist(): Flow<List<Playlist>> {
-        return playlistRepository.getPlaylist()
+    override suspend fun deleteTrack(playlist: Playlist, trackId: Int) {
+        playlistRepository.deleteTrack(playlist, trackId)
+    }
+
+    override fun getPlaylists(): Flow<List<Playlist>> {
+        return playlistRepository.getPlaylists()
+    }
+
+    override fun getPlaylistTracks(tracksIdList: List<Int>): Flow<List<Track>> {
+        return playlistRepository.getPlaylistTracks(tracksIdList)
+    }
+
+    override suspend fun getPlaylist(playlistId: Int): Playlist {
+        return playlistRepository.getPlaylist(playlistId)
     }
 
     override suspend fun updatePlaylist(playlist: Playlist, track: Track) {
         playlistRepository.updatePlaylist(playlist, track)
+    }
+
+
+    override suspend fun editPlaylist(playlist: Playlist) {
+        playlistRepository.editPlaylist(playlist)
     }
 
     override suspend fun saveImageToPrivateStorage(uri: Uri, playlistName: String): String {

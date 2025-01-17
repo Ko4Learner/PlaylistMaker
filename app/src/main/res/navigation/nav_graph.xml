@@ -18,13 +18,16 @@
         android:id="@+id/mediaLibrariesFragment"
         android:name="com.practicum.playlistmaker.media_libraries.ui.fragment.MediaLibrariesFragment"
         android:label="MediaLibrariesFragment"
-        tools:layout="@layout/fragment_media_libraries" >
+        tools:layout="@layout/fragment_media_libraries">
         <action
             android:id="@+id/action_mediaLibrariesFragment_to_audioPlayer"
             app:destination="@id/audioPlayer" />
         <action
             android:id="@+id/action_mediaLibrariesFragment_to_addNewPlaylistFragment"
             app:destination="@id/addNewPlaylistFragment" />
+        <action
+            android:id="@+id/action_mediaLibrariesFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -45,4 +48,28 @@
         android:name="com.practicum.playlistmaker.media_libraries.ui.fragment.playlists.AddNewPlaylistFragment"
         android:label="fragment_add_new_playlist"
         tools:layout="@layout/fragment_add_new_playlist" />
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.practicum.playlistmaker.media_libraries.ui.fragment.playlist.PlaylistFragment"
+        android:label="fragment_playlist"
+        tools:layout="@layout/fragment_playlist">
+        <argument
+            android:name="playlistId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_playlistFragment_to_audioPlayer"
+            app:destination="@id/audioPlayer" />
+        <action
+            android:id="@+id/action_playlistFragment_to_editPlaylistFragment"
+            app:destination="@id/editPlaylistFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.practicum.playlistmaker.media_libraries.ui.fragment.playlists.EditPlaylistFragment"
+        android:label="EditPlaylistFragment"
+        tools:layout="@layout/fragment_add_new_playlist">
+        <argument
+            android:name="playlistId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

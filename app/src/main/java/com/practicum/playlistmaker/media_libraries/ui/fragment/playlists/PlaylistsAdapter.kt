@@ -1,6 +1,5 @@
-package com.practicum.playlistmaker.player.ui.activity
+package com.practicum.playlistmaker.media_libraries.ui.fragment.playlists
 
-import android.annotation.SuppressLint
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -14,14 +13,12 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.media_libraries.domain.model.Playlist
 
-
-class PlayerPlaylistAdapter :
-    RecyclerView.Adapter<PlayerPlaylistAdapter.PlayerPlaylistViewHolder>() {
+class PlaylistsAdapter :
+    RecyclerView.Adapter<PlaylistsAdapter.PlaylistsViewHolder>() {
 
     private var playlistList = mutableListOf<Playlist>()
 
     fun updateItems(items: List<Playlist>) {
-
         val oldItems = this.playlistList
         val newItems = items.toMutableList()
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
@@ -41,28 +38,26 @@ class PlayerPlaylistAdapter :
                 return oldItems[oldItemPosition] == newItems[newItemPosition]
             }
         })
-
         this.playlistList = newItems.toMutableList()
         diffResult.dispatchUpdatesTo(this)
     }
 
     var onItemClick: ((Playlist) -> Unit)? = null
 
-    inner class PlayerPlaylistViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
+    inner class PlaylistsViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
-        private val playlistImage: ImageView = itemView.findViewById(R.id.playlistImage)
-        private val playlistName: TextView = itemView.findViewById(R.id.playlistName)
-        private val playlistCountTracks: TextView = itemView.findViewById(R.id.playlistCountTracks)
+        private val image: ImageView = itemView.findViewById(R.id.playlistImage)
+        private val name: TextView = itemView.findViewById(R.id.playlistName)
+        private val countTracks: TextView = itemView.findViewById(R.id.playlistCountTracks)
 
 
-        fun bind(model: Playlist) {
+        fun bind(playlist: Playlist) {
 
-            itemView.setOnClickListener { onItemClick?.let { it1 -> it1(model) } }
+            view.setOnClickListener { onItemClick?.let { it1 -> it1(playlist) } }
 
-            with(playlistImage) {
+            with(image) {
                 Glide.with(itemView)
-                    .load(model.imagePath)
+                    .load(playlist.imagePath)
                     .placeholder(R.drawable.placeholder)
                     .centerCrop()
                     .transform(
@@ -74,28 +69,28 @@ class PlayerPlaylistAdapter :
                             ).toInt()
                         )
                     )
-                    .into(playlistImage)
-
+                    .into(image)
             }
-
-            playlistName.text = model.name
-
-            playlistCountTracks.text =
-                itemView.resources.getQuantityString(R.plurals.track, model.tracksCount,model.tracksCount)
+            name.text = playlist.name
+            countTracks.text = view.resources.getQuantityString(
+                R.plurals.track,
+                playlist.tracksCount,
+                playlist.tracksCount
+            )
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerPlaylistViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.playlist_player_item, parent, false)
-        return PlayerPlaylistViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: PlayerPlaylistViewHolder, position: Int) {
-        holder.bind(playlistList[position])
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistsViewHolder {
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.playlist_item, parent, false)
+        return PlaylistsViewHolder(view)
     }
 
     override fun getItemCount(): Int {
         return playlistList.size
+    }
+
+    override fun onBindViewHolder(holder: PlaylistsViewHolder, position: Int) {
+        holder.bind(playlistList[position])
     }
 }

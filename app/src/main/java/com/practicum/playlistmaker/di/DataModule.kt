@@ -9,6 +9,7 @@ import com.practicum.playlistmaker.media_libraries.data.db.PlaylistDatabase
 import com.practicum.playlistmaker.media_libraries.data.db.PlaylistTracksDatabase
 import com.practicum.playlistmaker.media_libraries.data.db.mapper.PlaylistDbMapper
 import com.practicum.playlistmaker.media_libraries.data.db.mapper.TrackDbMapper
+import com.practicum.playlistmaker.media_libraries.data.db.mapper.UpdatePlaylistTrackListMapper
 import com.practicum.playlistmaker.search.data.mapper.TracksMapper
 import com.practicum.playlistmaker.search.data.network.NetworkClient
 import com.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -49,7 +50,7 @@ val dataModule = module {
     }
 
     single<TracksHistoryStorage> {
-        SharedPreferencesTracksStorage(get())
+        SharedPreferencesTracksStorage(get(), get())
     }
 
     single<DarkThemeStorage> {
@@ -96,5 +97,9 @@ val dataModule = module {
 
     single<PlaylistDbMapper> {
         PlaylistDbMapper(get())
+    }
+
+    single<UpdatePlaylistTrackListMapper> {
+        UpdatePlaylistTrackListMapper(get())
     }
 }

@@ -8,14 +8,14 @@ import com.practicum.playlistmaker.search.data.dto.TrackStorageDto
 const val TRACK_LIST = "track_list"
 const val TRACKS_SEARCH_HISTORY_SIZE = 10
 
-class SharedPreferencesTracksStorage(private val sharedPreferences: SharedPreferences) :
+class SharedPreferencesTracksStorage(private val sharedPreferences: SharedPreferences, private val gson: Gson) :
     TracksHistoryStorage {
 
 
     override fun read(): MutableList<TrackStorageDto> {
         val trackListType = object : TypeToken<MutableList<TrackStorageDto>>() {}.type
         val json = sharedPreferences.getString(TRACK_LIST, null) ?: return ArrayList()
-        return Gson().fromJson(json, trackListType)
+        return gson.fromJson(json, trackListType)
     }
 
     override fun clearHistory() {
@@ -29,6 +29,6 @@ class SharedPreferencesTracksStorage(private val sharedPreferences: SharedPrefer
         if (tracks.size >= historySize) tracks.removeAt(historySize - 1)
         tracks.add(0, track)
         clearHistory()
-        sharedPreferences.edit().putString(TRACK_LIST, Gson().toJson(tracks)).apply()
+        sharedPreferences.edit().putString(TRACK_LIST, gson.toJson(tracks)).apply()
     }
 }

@@ -1,7 +1,9 @@
 package com.practicum.playlistmaker.di
 
+import com.practicum.playlistmaker.media_libraries.ui.view_model.EditPlaylistFragmentViewModel
 import com.practicum.playlistmaker.media_libraries.ui.view_model.FavoritesTracksFragmentViewModel
 import com.practicum.playlistmaker.media_libraries.ui.view_model.NewPlaylistFragmentViewModel
+import com.practicum.playlistmaker.media_libraries.ui.view_model.PlaylistFragmentViewModel
 import com.practicum.playlistmaker.media_libraries.ui.view_model.PlaylistsFragmentViewModel
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -32,7 +34,15 @@ val viewModelModule = module {
         PlaylistsFragmentViewModel(get())
     }
 
-    viewModel{
+    viewModel {
         NewPlaylistFragmentViewModel(get())
+    }
+
+    viewModel { (playlistId: Int) ->
+        EditPlaylistFragmentViewModel(playlistId, get())
+    }
+
+    viewModel { (playlistId: Int) ->
+        PlaylistFragmentViewModel(playlistId, get(), get())
     }
 }

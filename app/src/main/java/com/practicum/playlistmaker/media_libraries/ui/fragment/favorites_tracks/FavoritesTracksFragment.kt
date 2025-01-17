@@ -17,6 +17,7 @@ import com.practicum.playlistmaker.media_libraries.ui.view_model.FavoritesTracks
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.fragment.TrackAdapter
 import debounce
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoritesTracksFragment : Fragment() {
@@ -29,7 +30,7 @@ class FavoritesTracksFragment : Fragment() {
 
     private val trackAdapter = TrackAdapter()
 
-    private val gson = Gson()
+    private val gson by inject<Gson>()
 
     private lateinit var onTrackClickDebounce: (Track) -> Unit
 

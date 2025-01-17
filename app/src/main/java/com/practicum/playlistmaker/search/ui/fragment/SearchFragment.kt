@@ -20,6 +20,7 @@ import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.search.ui.state.TracksState
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 import debounce
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -33,7 +34,7 @@ class SearchFragment : Fragment() {
     private var searchRequest: String = SEARCH_REQUEST
 
     private lateinit var textWatcher: TextWatcher
-    private val gson = Gson()
+    private val gson by inject<Gson>()
 
     private lateinit var onTrackClickDebounce: (Track) -> Unit
 
@@ -52,7 +53,7 @@ class SearchFragment : Fragment() {
         binding.recycleViewTrack.layoutManager = LinearLayoutManager(requireContext())
         binding.recycleViewTrack.adapter = trackAdapter
 
-        onTrackClickDebounce = debounce<Track>(
+        onTrackClickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false

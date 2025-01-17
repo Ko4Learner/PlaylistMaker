@@ -116,7 +116,7 @@ class PlayerViewModel(
     fun getPlaylists() {
         val playlists = mutableListOf<Playlist>()
         viewModelScope.launch {
-            playlistInteractor.getPlaylist()
+            playlistInteractor.getPlaylists()
                 .collect { playlist ->
                     playlists.addAll(playlist)
                 }
